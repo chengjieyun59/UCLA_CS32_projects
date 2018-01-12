@@ -1,0 +1,13 @@
+//
+//  City.hpp
+//  Project1
+//
+//  Created by Jie-Yun Cheng on 1/12/18.
+//  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
+//
+
+#ifndef CITY_INCLUDED
+#define CITY_INCLUDED
+// #include <stdio.h>
+
+#endif // CITY_INCLUDED
