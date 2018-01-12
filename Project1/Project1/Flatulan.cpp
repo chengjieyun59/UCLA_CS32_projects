@@ -6,9 +6,18 @@
 //  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
 //
 
-#include "Flatulan.h"
+/* #include <string>
+#include <random>
+#include <utility>
+#include <cstdlib> */
+
 #include <iostream>
 using namespace std;
+
+#include "Flatulan.h"
+#include "Player.h"
+#include "City.h"
+#include "globals.h"
 
 ///////////////////////////////////////////////////////////////////////////
 //  Flatulan implementation

@@ -16,100 +16,19 @@
 using namespace std;
 
 #include "Flatulan.h"
+#include "Player.h"
+#include "City.h"
+#include "Game.h"
+// #include "History.h"
+#include "globals.h"
 
 ///////////////////////////////////////////////////////////////////////////
-// Manifest constants
+// Manifest constants taken into globals header file
 ///////////////////////////////////////////////////////////////////////////
 
-const int MAXROWS = 20;               // max number of rows in a city
-const int MAXCOLS = 30;               // max number of columns in a city
-const int MAXFLATULANS = 100;         // max number of Flatulans allowed
-const int INITIAL_PLAYER_HEALTH = 10;
-
-const int UP      = 0;
-const int DOWN    = 1;
-const int LEFT    = 2;
-const int RIGHT   = 3;
-const int NUMDIRS = 4;
-
 ///////////////////////////////////////////////////////////////////////////
-// Type definitions
+// Type definitions taken into header files
 ///////////////////////////////////////////////////////////////////////////
-
-
-
-class Player
-{
-public:
-    // Constructor
-    Player(City *cp, int r, int c);
-    
-    // Accessors
-    int  row() const;
-    int  col() const;
-    int  age() const;
-    int  health() const;
-    bool isPassedOut() const;
-    
-    // Mutators
-    void  preach();
-    void  move(int dir);
-    void  getGassed();
-    
-private:
-    City* m_city;
-    int   m_row;
-    int   m_col;
-    int   m_health;
-    int   m_age;
-};
-
-class City
-{
-public:
-    // Constructor/destructor
-    City(int nRows, int nCols);
-    ~City();
-    
-    // Accessors
-    int     rows() const;
-    int     cols() const;
-    Player* player() const;
-    int     flatulanCount() const;
-    int     nFlatulansAt(int r, int c) const;
-    bool    determineNewPosition(int& r, int& c, int dir) const;
-    void    display() const;
-    
-    // Mutators
-    bool  addFlatulan(int r, int c);
-    bool  addPlayer(int r, int c);
-    void  preachToFlatulansAroundPlayer();
-    void  moveFlatulans();
-    
-private:
-    int       m_rows;
-    int       m_cols;
-    Player*   m_player;
-    Flatulan* m_flatulans[MAXFLATULANS];
-    int       m_nFlatulans;
-    
-    // Helper functions
-    bool isInBounds(int r, int c) const;
-};
-
-class Game
-{
-public:
-    // Constructor/destructor
-    Game(int rows, int cols, int nFlatulans);
-    ~Game();
-    
-    // Mutators
-    void play();
-    
-private:
-    City* m_city;
-};
 
 ///////////////////////////////////////////////////////////////////////////
 //  Auxiliary function declarations

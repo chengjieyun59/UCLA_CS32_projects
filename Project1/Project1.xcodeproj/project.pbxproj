@@ -12,6 +12,7 @@
 		5A910FDB20097DFC007270C0 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A910FD920097DFC007270C0 /* Player.cpp */; };
 		5A910FDE20097E12007270C0 /* City.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A910FDC20097E12007270C0 /* City.cpp */; };
 		5A910FE120097E24007270C0 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A910FDF20097E24007270C0 /* Game.cpp */; };
+		5A910FE420097FEE007270C0 /* utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A910FE220097FEE007270C0 /* utilities.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,6 +38,8 @@
 		5A910FDD20097E12007270C0 /* City.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = City.h; sourceTree = "<group>"; };
 		5A910FDF20097E24007270C0 /* Game.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Game.cpp; sourceTree = "<group>"; };
 		5A910FE020097E24007270C0 /* Game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
+		5A910FE220097FEE007270C0 /* utilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utilities.cpp; sourceTree = "<group>"; };
+		5A910FE320097FEE007270C0 /* globals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = globals.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +81,8 @@
 				5A910FDD20097E12007270C0 /* City.h */,
 				5A910FDF20097E24007270C0 /* Game.cpp */,
 				5A910FE020097E24007270C0 /* Game.h */,
+				5A910FE220097FEE007270C0 /* utilities.cpp */,
+				5A910FE320097FEE007270C0 /* globals.h */,
 			);
 			path = Project1;
 			sourceTree = "<group>";
@@ -139,6 +144,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A910FE420097FEE007270C0 /* utilities.cpp in Sources */,
 				5A910FD820097915007270C0 /* Flatulan.cpp in Sources */,
 				5A910FBA200974CF007270C0 /* main.cpp in Sources */,
 				5A910FDE20097E12007270C0 /* City.cpp in Sources */,
