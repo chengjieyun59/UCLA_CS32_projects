@@ -8,7 +8,6 @@
 
 #ifndef PLAYER_INCLUDED
 #define PLAYER_INCLUDED
-// #include <stdio.h>
 
 class City;
 

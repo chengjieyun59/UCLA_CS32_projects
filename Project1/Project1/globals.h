@@ -9,8 +9,6 @@
 #ifndef GLOBALS_INCLUDED
 #define GLOBALS_INCLUDED
 
-// #include <stdio.h>
-
 const int MAXROWS = 20;               // max number of rows in a city
 const int MAXCOLS = 30;               // max number of columns in a city
 const int MAXFLATULANS = 100;         // max number of Flatulans allowed
@@ -22,7 +20,6 @@ const int LEFT    = 2;
 const int RIGHT   = 3;
 const int NUMDIRS = 4;
 
-int decodeDirection(char dir);
 int randInt(int min, int max);
 void clearScreen();
 

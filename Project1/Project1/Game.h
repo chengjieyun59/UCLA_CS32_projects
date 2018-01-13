@@ -8,7 +8,6 @@
 
 #ifndef GAME_INCLUDED
 #define GAME_INCLUDED
-// #include <stdio.h>
 
 class City;
 

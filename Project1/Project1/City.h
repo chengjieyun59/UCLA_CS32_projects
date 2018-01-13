@@ -8,7 +8,7 @@
 
 #ifndef CITY_INCLUDED
 #define CITY_INCLUDED
-// #include <stdio.h>
+
 #include "globals.h"
 
 class Player;
