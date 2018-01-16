@@ -6,11 +6,6 @@
 //  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
 //
 
-/* #include <string>
-#include <random>
-#include <utility>
-#include <cstdlib> */
-
 #include <iostream>
 #include "Flatulan.h"
 #include "Player.h"

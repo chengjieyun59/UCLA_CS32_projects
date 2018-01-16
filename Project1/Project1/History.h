@@ -11,6 +11,9 @@
 
 #include "globals.h"
 
+class City;
+class Flatulan;
+
 class History
 {
 public:
@@ -20,6 +23,8 @@ public:
     
 private:
     
+    int m_row;
+    int m_col;
 };
 
 

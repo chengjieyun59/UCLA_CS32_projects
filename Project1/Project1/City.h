@@ -10,6 +10,7 @@
 #define CITY_INCLUDED
 
 #include "globals.h"
+#include "History.h"
 
 class Player;
 class Flatulan;
