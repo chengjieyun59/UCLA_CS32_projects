@@ -11,9 +11,6 @@
 
 #include "globals.h"
 
-class City;
-class Flatulan;
-
 class History
 {
 public:
@@ -22,7 +19,7 @@ public:
     void display() const;
     
 private:
-    
+    char countNonConverted[MAXROWS][MAXCOLS];
     int m_row;
     int m_col;
 };

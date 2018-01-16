@@ -223,3 +223,7 @@ bool City::isInBounds(int r, int c) const
 {
     return (r >= 1  &&  r <= m_rows  &&  c >= 1  &&  c <= m_cols);
 }
+
+// History& City::history(){
+    
+//}

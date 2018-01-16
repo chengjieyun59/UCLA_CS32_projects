@@ -86,7 +86,7 @@ void Game::play()
     
     while ( ! p->isPassedOut()  &&  m_city->flatulanCount() > 0)
     {
-        cout << "Move (u/d/l/r//q): ";
+        cout << "Move (u/d/l/r//h/q): "; // added the h command
         string action;
         getline(cin,action);
         if (action.size() == 0)  // player preaches
@@ -100,6 +100,10 @@ void Game::play()
                     continue;
                 case 'q':
                     return;
+                case 'h':
+                    History& history();
+                    cout << "Press enter to continue.";
+                    cin.ignore(10000,'\n');
                 case 'u':
                 case 'd':
                 case 'l':

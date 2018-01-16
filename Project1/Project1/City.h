@@ -36,6 +36,7 @@ public:
     bool  addPlayer(int r, int c);
     void  preachToFlatulansAroundPlayer();
     void  moveFlatulans();
+    History& history();
     
 private:
     int       m_rows;
