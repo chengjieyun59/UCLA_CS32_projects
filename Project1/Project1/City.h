@@ -36,7 +36,7 @@ public:
     bool  addPlayer(int r, int c);
     void  preachToFlatulansAroundPlayer();
     void  moveFlatulans();
-    History& history();
+    History& history(); // added reference
     
 private:
     int       m_rows;
@@ -47,8 +47,7 @@ private:
     
     // Helper functions
     bool isInBounds(int r, int c) const;
-    
-    History m_history;
+    History m_history; // added History object
 };
 
 #endif // CITY_INCLUDED

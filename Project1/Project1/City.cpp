@@ -202,7 +202,7 @@ void City::preachToFlatulansAroundPlayer()
         else if (rowdiff >= -1  &&  rowdiff <= 1  &&
                  coldiff >= -1  &&  coldiff <= 1)
         {
-            m_history.record(m_rows, m_cols);
+            m_history.record(fp->row(), fp->col());
             k++;
         }
         else

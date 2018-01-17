@@ -64,4 +64,3 @@ bool Flatulan::possiblyGetConverted()  // return true if converted
     // Be converted with 2/3 probability
     return randInt(0, 2) < 2;
 }
-
