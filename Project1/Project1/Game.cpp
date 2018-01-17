@@ -100,16 +100,18 @@ void Game::play()
                     continue;
                 case 'q':
                     return;
-                case 'h':
-                    m_city->history().display();
-                    cout << "Press enter to continue.";
-                    cin.ignore(10000,'\n');
                 case 'u':
                 case 'd':
                 case 'l':
                 case 'r':
                     p->move(decodeDirection(action[0]));
                     break;
+                case 'h':
+                    m_city->history().display();
+                    cout << "Press enter to continue.";
+                    cin.ignore(10000,'\n');
+                    m_city -> display();
+                    continue;
             }
         }
         m_city->moveFlatulans();
