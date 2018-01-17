@@ -18,7 +18,7 @@ using namespace std;
 ///////////////////////////////////////////////////////////////////////////
 
 City::City(int nRows, int nCols)
-: m_rows(nRows), m_cols(nCols), m_player(nullptr), m_nFlatulans(0)
+: m_rows(nRows), m_cols(nCols), m_player(nullptr), m_nFlatulans(0), m_history(nRows, nCols)
 {
     if (nRows <= 0  ||  nCols <= 0  ||  nRows > MAXROWS  ||  nCols > MAXCOLS)
     {
@@ -199,6 +199,12 @@ void City::preachToFlatulansAroundPlayer()
             m_flatulans[k] = m_flatulans[m_nFlatulans-1];
             m_nFlatulans--;
         }
+        else if (rowdiff >= -1  &&  rowdiff <= 1  &&
+                 coldiff >= -1  &&  coldiff <= 1)
+        {
+            m_history.record(m_rows, m_cols);
+            k++;
+        }
         else
             k++;
     }
@@ -224,6 +230,6 @@ bool City::isInBounds(int r, int c) const
     return (r >= 1  &&  r <= m_rows  &&  c >= 1  &&  c <= m_cols);
 }
 
-// History& City::history(){
-    
-//}
+History& City::history(){
+    return m_history;
+}

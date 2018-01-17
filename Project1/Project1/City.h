@@ -47,6 +47,8 @@ private:
     
     // Helper functions
     bool isInBounds(int r, int c) const;
+    
+    History m_history;
 };
 
 #endif // CITY_INCLUDED

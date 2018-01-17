@@ -101,7 +101,7 @@ void Game::play()
                 case 'q':
                     return;
                 case 'h':
-                    History& history();
+                    m_city->history().display();
                     cout << "Press enter to continue.";
                     cin.ignore(10000,'\n');
                 case 'u':
