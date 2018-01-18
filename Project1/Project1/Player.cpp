@@ -12,6 +12,9 @@ using namespace std;
 
 #include "Player.h"
 #include "City.h"
+// parts that should have been included:
+#include "globals.h"  // We use INITIAL_PLAYER_HEALTH, etc.
+#include <cstdlib>    // We use std::exit
 
 ///////////////////////////////////////////////////////////////////////////
 //  Player implementations

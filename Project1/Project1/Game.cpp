@@ -12,6 +12,11 @@ using namespace std;
 #include "Player.h"
 #include "City.h"
 #include "Game.h"
+// parts that should have been included:
+#include "History.h" // We use History::display
+#include "globals.h" // We use MAXFLATULANS, etc.
+#include <string>    // We use std::string
+#include <cstdlib>   // We use std::exit
 
 // Note that for utility functions like decodeDirection that are used by only one class implementation, it would be better to declare and implement them in that class's implementation file, not in globals.h
 int decodeDirection(char dir);

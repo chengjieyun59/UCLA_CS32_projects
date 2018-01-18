@@ -12,6 +12,11 @@ using namespace std;
 #include "Flatulan.h"
 #include "Player.h"
 #include "City.h"
+// parts that should have been included:
+#include "History.h"   // We use History::History, etc.
+#include "globals.h"   // We use MAXROWS, etc.
+#include <iostream>    // We use std::cout, etc.
+#include <cstdlib>     // We use std::exit
 
 ///////////////////////////////////////////////////////////////////////////
 //  City implementations
@@ -198,16 +203,16 @@ void City::preachToFlatulansAroundPlayer()
             delete m_flatulans[k];
             m_flatulans[k] = m_flatulans[m_nFlatulans-1];
             m_nFlatulans--;
-        }
+        } // adjacent, and converted
         else if (rowdiff >= -1  &&  rowdiff <= 1  &&
                  coldiff >= -1  &&  coldiff <= 1)
         {
             m_history.record(fp->row(), fp->col());
             k++;
-        }
+        } // adjacent, but unconverted
         else
             k++;
-    }
+    } // not orthogonally or diagonally adjacent
 }
 
 void City::moveFlatulans()

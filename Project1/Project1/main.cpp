@@ -15,12 +15,14 @@
 #include <cstdlib>
 using namespace std;*/
 
-#include "Flatulan.h"
+/*#include "Flatulan.h"
 #include "Player.h"
 #include "City.h"
-#include "Game.h"
 #include "History.h"
-#include "globals.h"
+#include "globals.h" */
+#include "Game.h"
+// parts that should have been included:
+using namespace std;
 
 ///////////////////////////////////////////////////////////////////////////
 //  main()

@@ -10,6 +10,8 @@
 using namespace std;
 
 #include "globals.h"
+// parts that should have been included:
+#include <utility>  // We use std::swap
 
 // Return a random int from min to max, inclusive
 int randInt(int min, int max)

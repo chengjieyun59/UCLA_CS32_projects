@@ -9,6 +9,9 @@
 #include "History.h"
 #include <iostream>
 using namespace std;
+// parts that should have been included:
+#include "globals.h"  // We use MAXROWS, etc.
+#include <cstdlib>    // We use std::exit
 
 History::History(int nRows, int nCols)
 : m_row(nRows), m_col(nCols)

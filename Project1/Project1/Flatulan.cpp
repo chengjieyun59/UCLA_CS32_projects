@@ -12,6 +12,8 @@
 #include "City.h"
 #include "globals.h"
 using namespace std;
+// parts that should have been included:
+#include <cstdlib>  // We use std::exit
 
 ///////////////////////////////////////////////////////////////////////////
 //  Flatulan implementation
