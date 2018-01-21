@@ -12,6 +12,7 @@
 #include <cassert>
 using namespace std;
 
+/*
 int main(){
     // test cases
     CarMap cm;  // maps strings to doubles
@@ -34,3 +35,4 @@ int main(){
     cm.print();
     cout << "Passed all tests" << endl;
 }
+*/

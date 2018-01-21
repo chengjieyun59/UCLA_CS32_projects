@@ -1,14 +1,13 @@
 //
-//  main.cpp
+//  testnewMap.cpp
 //  Homework1
 //
-//  Created by Jie-Yun Cheng on 1/18/18.
+//  Created by Jie-Yun Cheng on 1/21/18.
 //  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
 //
 
-// needs to be commented out when having another main function in testCarMap.cpp
-/*
-#include "Map.h"
+#include "newMap.cpp"
+#include "newMap.h"
 #include <iostream>
 #include <cassert>
 using namespace std;
@@ -26,4 +25,3 @@ int main()
     assert(m.get(0, k, v)  &&  k == "xyz"  &&  v == 9876.5);
     cout << "Passed all tests" << endl;
 }
-*/

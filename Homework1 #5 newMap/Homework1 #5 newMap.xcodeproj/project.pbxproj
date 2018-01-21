@@ -7,14 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5A910FF520115A1B007270C0 /* testMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A910FF420115A1B007270C0 /* testMap.cpp */; };
-		5A910FFD20115A42007270C0 /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A910FFB20115A42007270C0 /* Map.cpp */; };
-		5A911000201517A9007270C0 /* CarMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A910FFE201517A9007270C0 /* CarMap.cpp */; };
-		5A911007201529EF007270C0 /* testCarMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A911006201529EF007270C0 /* testCarMap.cpp */; };
+		5A91102020153743007270C0 /* testnewMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A91101F20153743007270C0 /* testnewMap.cpp */; };
+		5A9110282015377E007270C0 /* newMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A9110262015377E007270C0 /* newMap.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		5A910FEF20115A1B007270C0 /* CopyFiles */ = {
+		5A91101A20153743007270C0 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -26,17 +24,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5A910FF120115A1B007270C0 /* Homework1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Homework1; sourceTree = BUILT_PRODUCTS_DIR; };
-		5A910FF420115A1B007270C0 /* testMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = testMap.cpp; sourceTree = "<group>"; };
-		5A910FFB20115A42007270C0 /* Map.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Map.cpp; sourceTree = "<group>"; };
-		5A910FFC20115A42007270C0 /* Map.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
-		5A910FFE201517A9007270C0 /* CarMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CarMap.cpp; sourceTree = "<group>"; };
-		5A910FFF201517A9007270C0 /* CarMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CarMap.h; sourceTree = "<group>"; };
-		5A911006201529EF007270C0 /* testCarMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = testCarMap.cpp; sourceTree = "<group>"; };
+		5A91101C20153743007270C0 /* Homework1 #5 newMap */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Homework1 #5 newMap"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A91101F20153743007270C0 /* testnewMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = testnewMap.cpp; sourceTree = "<group>"; };
+		5A9110262015377E007270C0 /* newMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = newMap.cpp; sourceTree = "<group>"; };
+		5A9110272015377E007270C0 /* newMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = newMap.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		5A910FEE20115A1B007270C0 /* Frameworks */ = {
+		5A91101920153743007270C0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -46,103 +41,98 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		5A910FE820115A1B007270C0 = {
+		5A91101320153743007270C0 = {
 			isa = PBXGroup;
 			children = (
-				5A910FF320115A1B007270C0 /* Homework1 */,
-				5A910FF220115A1B007270C0 /* Products */,
+				5A91101E20153743007270C0 /* Homework1 #5 newMap */,
+				5A91101D20153743007270C0 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		5A910FF220115A1B007270C0 /* Products */ = {
+		5A91101D20153743007270C0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5A910FF120115A1B007270C0 /* Homework1 */,
+				5A91101C20153743007270C0 /* Homework1 #5 newMap */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5A910FF320115A1B007270C0 /* Homework1 */ = {
+		5A91101E20153743007270C0 /* Homework1 #5 newMap */ = {
 			isa = PBXGroup;
 			children = (
-				5A910FFB20115A42007270C0 /* Map.cpp */,
-				5A910FFC20115A42007270C0 /* Map.h */,
-				5A910FF420115A1B007270C0 /* testMap.cpp */,
-				5A910FFE201517A9007270C0 /* CarMap.cpp */,
-				5A910FFF201517A9007270C0 /* CarMap.h */,
-				5A911006201529EF007270C0 /* testCarMap.cpp */,
+				5A91101F20153743007270C0 /* testnewMap.cpp */,
+				5A9110262015377E007270C0 /* newMap.cpp */,
+				5A9110272015377E007270C0 /* newMap.h */,
 			);
-			path = Homework1;
+			path = "Homework1 #5 newMap";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5A910FF020115A1B007270C0 /* Homework1 */ = {
+		5A91101B20153743007270C0 /* Homework1 #5 newMap */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5A910FF820115A1B007270C0 /* Build configuration list for PBXNativeTarget "Homework1" */;
+			buildConfigurationList = 5A91102320153743007270C0 /* Build configuration list for PBXNativeTarget "Homework1 #5 newMap" */;
 			buildPhases = (
-				5A910FED20115A1B007270C0 /* Sources */,
-				5A910FEE20115A1B007270C0 /* Frameworks */,
-				5A910FEF20115A1B007270C0 /* CopyFiles */,
+				5A91101820153743007270C0 /* Sources */,
+				5A91101920153743007270C0 /* Frameworks */,
+				5A91101A20153743007270C0 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = Homework1;
-			productName = Homework1;
-			productReference = 5A910FF120115A1B007270C0 /* Homework1 */;
+			name = "Homework1 #5 newMap";
+			productName = "Homework1 #5 newMap";
+			productReference = 5A91101C20153743007270C0 /* Homework1 #5 newMap */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		5A910FE920115A1B007270C0 /* Project object */ = {
+		5A91101420153743007270C0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "Jie-Yun Cheng";
 				TargetAttributes = {
-					5A910FF020115A1B007270C0 = {
+					5A91101B20153743007270C0 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
-			buildConfigurationList = 5A910FEC20115A1B007270C0 /* Build configuration list for PBXProject "Homework1" */;
+			buildConfigurationList = 5A91101720153743007270C0 /* Build configuration list for PBXProject "Homework1 #5 newMap" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 5A910FE820115A1B007270C0;
-			productRefGroup = 5A910FF220115A1B007270C0 /* Products */;
+			mainGroup = 5A91101320153743007270C0;
+			productRefGroup = 5A91101D20153743007270C0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5A910FF020115A1B007270C0 /* Homework1 */,
+				5A91101B20153743007270C0 /* Homework1 #5 newMap */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		5A910FED20115A1B007270C0 /* Sources */ = {
+		5A91101820153743007270C0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5A910FFD20115A42007270C0 /* Map.cpp in Sources */,
-				5A910FF520115A1B007270C0 /* testMap.cpp in Sources */,
-				5A911000201517A9007270C0 /* CarMap.cpp in Sources */,
-				5A911007201529EF007270C0 /* testCarMap.cpp in Sources */,
+				5A91102020153743007270C0 /* testnewMap.cpp in Sources */,
+				5A9110282015377E007270C0 /* newMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		5A910FF620115A1B007270C0 /* Debug */ = {
+		5A91102120153743007270C0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -197,7 +187,7 @@
 			};
 			name = Debug;
 		};
-		5A910FF720115A1B007270C0 /* Release */ = {
+		5A91102220153743007270C0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -245,7 +235,7 @@
 			};
 			name = Release;
 		};
-		5A910FF920115A1B007270C0 /* Debug */ = {
+		5A91102420153743007270C0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -253,7 +243,7 @@
 			};
 			name = Debug;
 		};
-		5A910FFA20115A1B007270C0 /* Release */ = {
+		5A91102520153743007270C0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -264,25 +254,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5A910FEC20115A1B007270C0 /* Build configuration list for PBXProject "Homework1" */ = {
+		5A91101720153743007270C0 /* Build configuration list for PBXProject "Homework1 #5 newMap" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5A910FF620115A1B007270C0 /* Debug */,
-				5A910FF720115A1B007270C0 /* Release */,
+				5A91102120153743007270C0 /* Debug */,
+				5A91102220153743007270C0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5A910FF820115A1B007270C0 /* Build configuration list for PBXNativeTarget "Homework1" */ = {
+		5A91102320153743007270C0 /* Build configuration list for PBXNativeTarget "Homework1 #5 newMap" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5A910FF920115A1B007270C0 /* Debug */,
-				5A910FFA20115A1B007270C0 /* Release */,
+				5A91102420153743007270C0 /* Debug */,
+				5A91102520153743007270C0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 5A910FE920115A1B007270C0 /* Project object */;
+	rootObject = 5A91101420153743007270C0 /* Project object */;
 }
