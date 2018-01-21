@@ -74,12 +74,12 @@ public:
 private:
     int m_size;
     
-    struct eachItemInMap {
+    struct AllData {
         KeyType m_key;
         ValueType m_value;
     };
     
-    eachItemInMap m_data[DEFAULT_MAX_ITEMS];
+    AllData m_data[DEFAULT_MAX_ITEMS];
     // char m_data = (char)eachPair.m_key; // syntax error
 };
 

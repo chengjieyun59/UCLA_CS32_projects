@@ -6,28 +6,36 @@
 //  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
 //
 
-
 #include <string>
 #include "Map.h"
 
 Map::Map()
-:m_size(0){
-
-}         // Create an empty map (i.e., one with no key/value pairs)
+:m_size(0), m_data(){
+} // Create an empty map (i.e., one with no key/value pairs)
 
 bool Map::empty() const{
     if (m_size == 0)
         return true;
     else
         return false;
-}  // Return true if the map is empty, otherwise false.
+} // Return true if the map is empty, otherwise false.
 
 int Map::size() const{
     return m_size;
-}    // Return the number of key/value pairs in the map.
+} // Return the number of key/value pairs in the map.
 
 bool Map::insert(const KeyType& key, const ValueType& value){
-
+    for (int i = 0; i < m_size; i++)
+    {
+        if (key == m_data[i].m_key){
+            return false;
+        }
+    }
+    if (m_size < DEFAULT_MAX_ITEMS){
+        m_size++;
+        m_data[m_size-1].m_key = key;
+        m_data[m_size-1].m_value = value;
+    }
     return true;
 }
 // If key is not equal to any key currently in the map, and if the
@@ -83,7 +91,11 @@ bool Map::get(const KeyType& key, ValueType& value) const{
 // false.
 
 bool Map::get(int i, KeyType& key, ValueType& value) const{
-
+    if (i >= 0 && i < m_size)
+    {
+        key = m_data[i].m_key;
+        value = m_data[i].m_value;
+    }
     return true;
 }
 // If 0 <= i < size(), copy into the key and value parameters the
