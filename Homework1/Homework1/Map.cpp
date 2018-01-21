@@ -24,13 +24,6 @@ int Map::size() const{
 } // Return the number of key/value pairs in the map.
 
 bool Map::insert(const KeyType& key, const ValueType& value){
-    /* for (int i = 0; i < size(); i++)
-    {
-        if (key == m_data[i].m_key){
-            return false;
-        }
-    }*/
-    // may be able to use contains function?
     if (! contains(key) && size() < DEFAULT_MAX_ITEMS){
         m_size++;
         m_data[m_size-1].m_key = key;

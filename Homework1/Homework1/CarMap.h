@@ -16,23 +16,23 @@ class CarMap
 public:
     CarMap();       // Create an empty car map.
     
-    bool addCar(std::string license);
+    bool addCar(KeyType license);
     // If a car with the given license plate is not currently in the map,
     // and there is room in the map, add an entry for that car recording
     // that it has 0 gallons of gas in it, and return true.  Otherwise,
     // make no change to the map and return false.
     
-    double gas(std::string license) const;
+    double gas(KeyType license) const;
     // If a car with the given license plate is in the map, return the
     // number of gallons of gas in its tank; otherwise, return -1.
     
-    bool addGas(std::string license, double gallons);
+    bool addGas(KeyType license, ValueType gallons);
     // If no car with the given license plate is in the map or if
     // gallons is negative, make no change to the map and return
     // false.  Otherwise, increase the number of gallons of gas in the
     // indicated car by the gallons parameter and return true.
     
-    bool useGas(std::string license, double gallons);
+    bool useGas(KeyType license, ValueType gallons);
     // If no car with the given license plate is in the map or if
     // gallons is negative or if gallons > gas(), make no change to the
     // map and return false.  Otherwise, decrease the number of gallons
@@ -48,8 +48,7 @@ public:
     // no other text.
     
 private:
-    int m_car;
-    
+    Map m_carmap;
 };
 
 #endif // CARMAP_INCLUDED
