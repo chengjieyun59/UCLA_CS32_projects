@@ -13,12 +13,17 @@
 using namespace std;
 
 int main(int argc, const char * argv[]) {
+    
+    //tc03
     Map gpas;
     gpas.insert("Fred", 2.956);
+    assert(!gpas.contains(""));
     gpas.insert("Ethel", 3.538);
-    double v;
-    string k1;
-    assert(gpas.get(1,k1,v)  &&  (k1 == "Fred"  ||  k1 == "Ethel"));
-    string k2;
-    assert(gpas.get(1,k2,v)  &&  k2 == k1);
+    gpas.insert("", 4.000);
+    gpas.insert("Lucy", 2.956);
+    assert(gpas.contains(""));
+    gpas.erase("Fred");
+    assert(gpas.size() == 3  &&  gpas.contains("Lucy")  &&  gpas.contains("Ethel")  &&
+           gpas.contains(""));
+
 }

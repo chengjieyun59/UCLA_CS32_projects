@@ -6,15 +6,14 @@
 //  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
 //
 
-#include <string>
 #include "Map.h"
 
 Map::Map()
-:m_size(0), m_data(){
+:m_size(0), m_data(){ //? Take away the m_data()?
 } // Create an empty map (i.e., one with no key/value pairs)
 
 bool Map::empty() const{
-    if (m_size == 0)
+    if (size() == 0)
         return true;
     else
         return false;
@@ -25,18 +24,21 @@ int Map::size() const{
 } // Return the number of key/value pairs in the map.
 
 bool Map::insert(const KeyType& key, const ValueType& value){
-    for (int i = 0; i < m_size; i++)
+    /* for (int i = 0; i < size(); i++)
     {
         if (key == m_data[i].m_key){
             return false;
         }
-    }
-    if (m_size < DEFAULT_MAX_ITEMS){
+    }*/
+    // may be able to use contains function?
+    if (! contains(key) && size() < DEFAULT_MAX_ITEMS){
         m_size++;
         m_data[m_size-1].m_key = key;
         m_data[m_size-1].m_value = value;
+        return true;
     }
-    return true;
+    else
+        return false;
 }
 // If key is not equal to any key currently in the map, and if the
 // key/value pair can be added to the map, then do so and return true.
@@ -67,23 +69,48 @@ bool Map::insertOrUpdate(const KeyType& key, const ValueType& value){
 // capacity and is full).
 
 bool Map::erase(const KeyType& key){
-
-    return true;
+    for (int i = 0; i < size() && size() > 0; i++)
+    {
+        if (key == m_data[i].m_key){
+            if (size() == 1)
+                m_size = 0; // special case
+            for (int j = i; j < size()-1; j++)
+            {
+                m_data[j].m_key = m_data[j+1].m_key; // move every key to the left after position i
+                m_data[j].m_value = m_data[j+1].m_value;
+            }
+            m_size--;
+            return true;
+        }
+    }
+    return false;
 }
 // If key is equal to a key currently in the map, remove the key/value
 // pair with that key from the map and return true.  Otherwise, make
 // no change to the map and return false.
 
 bool Map::contains(const KeyType& key) const{
-
-    return true;
+    for (int i = 0; i < size() && size() > 0; i++)
+    {
+        if (key == m_data[i].m_key)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 // Return true if key is equal to a key currently in the map, otherwise
 // false.
 
 bool Map::get(const KeyType& key, ValueType& value) const{
-
-    return true;
+    for (int i = 0; i < size() && size() > 0; i++)
+    {
+        if (key == m_data[i].m_key){
+            value = m_data[i].m_value;
+            return true;
+        }
+    }
+    return false;
 }
 // If key is equal to a key currently in the map, set value to the
 // value in the map that that key maps to, and return true.  Otherwise,
@@ -91,7 +118,7 @@ bool Map::get(const KeyType& key, ValueType& value) const{
 // false.
 
 bool Map::get(int i, KeyType& key, ValueType& value) const{
-    if (i >= 0 && i < m_size)
+    if (i >= 0 && i < size())
     {
         key = m_data[i].m_key;
         value = m_data[i].m_value;
@@ -104,6 +131,9 @@ bool Map::get(int i, KeyType& key, ValueType& value) const{
 // return false.  (See below for details about this function.)
 
 void Map::swap(Map& other){
-
+    //int temp;
+    //temp = *Map;
+    //*Map = *other;
+    //*other = *Map;
 }
 // Exchange the contents of this map with the other one.

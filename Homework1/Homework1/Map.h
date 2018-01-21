@@ -9,6 +9,7 @@
 #ifndef MAP_INCLUDED
 #define MAP_INCLUDED
 
+#include <cstdlib>
 #include <string>
 
 using KeyType = std::string;
@@ -80,7 +81,6 @@ private:
     };
     
     AllData m_data[DEFAULT_MAX_ITEMS];
-    // char m_data = (char)eachPair.m_key; // syntax error
 };
 
 #endif // MAP_INCLUDED
