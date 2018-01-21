@@ -180,5 +180,5 @@ void Map::swap(Map& other){
         otherptr->m_data[i].m_key = temp_key[i];
         otherptr->m_data[i].m_value = temp_value[i];
     }
-}
+} //? How to NOT make an extra array temp?
 // Exchange the contents of this map with the other one.

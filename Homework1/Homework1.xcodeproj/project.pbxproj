@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		5A910FF520115A1B007270C0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A910FF420115A1B007270C0 /* main.cpp */; };
 		5A910FFD20115A42007270C0 /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A910FFB20115A42007270C0 /* Map.cpp */; };
+		5A911000201517A9007270C0 /* CarMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A910FFE201517A9007270C0 /* CarMap.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,8 @@
 		5A910FF420115A1B007270C0 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		5A910FFB20115A42007270C0 /* Map.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Map.cpp; sourceTree = "<group>"; };
 		5A910FFC20115A42007270C0 /* Map.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
+		5A910FFE201517A9007270C0 /* CarMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CarMap.cpp; sourceTree = "<group>"; };
+		5A910FFF201517A9007270C0 /* CarMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CarMap.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +66,8 @@
 				5A910FF420115A1B007270C0 /* main.cpp */,
 				5A910FFB20115A42007270C0 /* Map.cpp */,
 				5A910FFC20115A42007270C0 /* Map.h */,
+				5A910FFE201517A9007270C0 /* CarMap.cpp */,
+				5A910FFF201517A9007270C0 /* CarMap.h */,
 			);
 			path = Homework1;
 			sourceTree = "<group>";
@@ -126,6 +131,7 @@
 			files = (
 				5A910FFD20115A42007270C0 /* Map.cpp in Sources */,
 				5A910FF520115A1B007270C0 /* main.cpp in Sources */,
+				5A911000201517A9007270C0 /* CarMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

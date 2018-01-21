@@ -13,9 +13,27 @@
 #include <string>
 
 using KeyType = std::string;
-using ValueType = double;
+using ValueType = double; // type alias: a name that is a synonym for some type
 const int DEFAULT_MAX_ITEMS = 250;
+// ? Do we need to make a copy constructor?
+// Map::Map(const Map& m);
+// Map(const Map& m){}
 
+// ? Do we need to make an assignment operator?
+// Map& Map::operator = (const Map& m);
+// Map& operator = (const Map& m){}
+
+// Copy constructor is called when a new object is created from an existing object, as a copy of the existing object (see this G-Fact). And assignment operator is called when an already initialized object is assigned a new value from another existing object.
+
+/*int main()
+{
+    Map m1, m2;
+    m2 = m1; // calls assignment operator, same as "m2.operator=(m1);"
+    Test m3 = m1; // calls copy constructor, same as "Map m3(m1);"
+    getchar();
+    return 0;
+}
+ */
 class Map
 {
 public:
@@ -78,7 +96,8 @@ private:
     struct AllData {
         KeyType m_key;
         ValueType m_value;
-    };
+    }; // you may declare private structs inside the Map class
+    // two public data members in the helper structure in the private section of Map
     
     AllData m_data[DEFAULT_MAX_ITEMS];
 };
