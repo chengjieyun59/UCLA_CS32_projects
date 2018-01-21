@@ -6,6 +6,8 @@
 //  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
 //
 
+
+#include <string>
 #include "Map.h"
 
 Map::Map()
@@ -13,17 +15,18 @@ Map::Map()
 
 }         // Create an empty map (i.e., one with no key/value pairs)
 
-bool Map::empty(){
-
-    return true;
+bool Map::empty() const{
+    if (m_size == 0)
+        return true;
+    else
+        return false;
 }  // Return true if the map is empty, otherwise false.
 
-int Map::size(){
-
+int Map::size() const{
     return m_size;
 }    // Return the number of key/value pairs in the map.
 
-bool Map::insert(const std::string& key, const double& value){
+bool Map::insert(const KeyType& key, const ValueType& value){
 
     return true;
 }
@@ -33,7 +36,7 @@ bool Map::insert(const std::string& key, const double& value){
 // that either the key is already in the map, or the map has a fixed
 // capacity and is full).
 
-bool Map::update(const std::string& key, const double& value){
+bool Map::update(const KeyType& key, const ValueType& value){
 
     return true;
 }
@@ -42,7 +45,7 @@ bool Map::update(const std::string& key, const double& value){
 // the value of the second parameter; return true in this case.
 // Otherwise, make no change to the map and return false.
 
-bool Map::insertOrUpdate(const std::string& key, const double& value){
+bool Map::insertOrUpdate(const KeyType& key, const ValueType& value){
 
     return true;
 }
@@ -55,7 +58,7 @@ bool Map::insertOrUpdate(const std::string& key, const double& value){
 // that the key is not already in the map and the map has a fixed
 // capacity and is full).
 
-bool Map::erase(const std::string& key){
+bool Map::erase(const KeyType& key){
 
     return true;
 }
@@ -63,14 +66,14 @@ bool Map::erase(const std::string& key){
 // pair with that key from the map and return true.  Otherwise, make
 // no change to the map and return false.
 
-bool Map::contains(const std::string& key){
+bool Map::contains(const KeyType& key) const{
 
     return true;
 }
 // Return true if key is equal to a key currently in the map, otherwise
 // false.
 
-bool Map::get(const std::string& key, double& value){
+bool Map::get(const KeyType& key, ValueType& value) const{
 
     return true;
 }
@@ -79,7 +82,7 @@ bool Map::get(const std::string& key, double& value){
 // make no change to the value parameter of this function and return
 // false.
 
-bool Map::get(int i, std::string& key, double& value){
+bool Map::get(int i, KeyType& key, ValueType& value) const{
 
     return true;
 }
