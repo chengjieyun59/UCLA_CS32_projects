@@ -6,12 +6,41 @@
 //  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
 //
 
-
 #include "newMap.h"
 
 Map::Map()
 :m_size(0), m_data(){ //? Take away the m_data()?
 } // Create an empty map (i.e., one with no key/value pairs)
+
+Map::Map(int max_size)
+:m_size(max_size){ //? Is this how i do it?
+} // added another constructor
+
+Map::~Map()
+{
+    delete [] m_data;
+} // added a destructor
+
+Map::Map(const Map &old)
+{
+    m_size = old.m_size;
+    m_data = new AllData[m_size];
+    for (int j = 0; j < m_size; j++)
+        m_data[j] = old.m_data[j];
+} // copy constructor
+
+Map& Map::operator=(const Map &src)
+{
+    if (this != &src)
+    {
+        delete [] m_data;
+        m_size = src.m_size;
+        m_data = new AllData[m_size];
+        for (int j = 0; j < m_size; j++)
+            m_data[j] = src.m_data[j];
+    }
+    return (*this);
+}// assignment operator
 
 bool Map::empty() const{
     if (size() == 0)

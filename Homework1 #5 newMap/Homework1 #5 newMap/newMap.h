@@ -6,7 +6,6 @@
 //  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
 //
 
-
 #ifndef NEWMAP_INCLUDED
 #define NEWMAP_INCLUDED
 
@@ -21,6 +20,11 @@ class Map
 {
 public:
     Map();         // Create an empty map (i.e., one with no key/value pairs)
+    Map(int max_size); // added another constructor
+    ~Map(); // added a destructor
+    
+    Map(const Map &old); // copy constructor
+    Map &operator=(const Map &src); // assignment operator
     
     bool empty() const;  // Return true if the map is empty, otherwise false.
     
@@ -82,7 +86,8 @@ private:
     }; // you may declare private structs inside the Map class
     // two public data members in the helper structure in the private section of Map
     
-    AllData m_data[DEFAULT_MAX_ITEMS];
+    // AllData m_data[DEFAULT_MAX_ITEMS];
+    AllData* m_data;
 };
 
 #endif // NEWMAP_INCLUDED
