@@ -9,7 +9,7 @@
 #include "Map.h"
 
 Map::Map()
-:m_size(0), m_data(){ //? Take away the m_data()?
+:m_size(0){
 } // Create an empty map (i.e., one with no key/value pairs)
 
 bool Map::empty() const{

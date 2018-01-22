@@ -6,7 +6,6 @@
 //  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
 //
 
-#include "newMap.cpp"
 #include "newMap.h"
 #include <iostream>
 #include <cassert>

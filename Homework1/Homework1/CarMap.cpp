@@ -15,11 +15,10 @@ using namespace std;
 #include "Map.h"
 
 CarMap::CarMap(){
-    
 } // Create an empty car map.
 
-//? Do we have to change std::string to KeyType? And double to ValueType?
-//? does code work in an if statement?
+// The code actually executes in an if statement condition
+// so I can actually delete the current if conditions and just put in the insert function in the if condition, and insert will execute
 bool CarMap::addCar(KeyType license){
     if (!m_carmap.contains(license) && m_carmap.size() < DEFAULT_MAX_ITEMS){
         m_carmap.insert(license, 0);
@@ -44,7 +43,7 @@ double CarMap::gas(KeyType license) const{
 // number of gallons of gas in its tank; otherwise, return -1.
 
 bool CarMap::addGas(KeyType license, ValueType gallons){
-    if (!m_carmap.contains(license) || gas(license) < 0)
+    if (!m_carmap.contains(license) || gallons < 0)
         return false;
     m_carmap.update(license, gas(license) + gallons);
     return true;
@@ -55,7 +54,7 @@ bool CarMap::addGas(KeyType license, ValueType gallons){
 // indicated car by the gallons parameter and return true.
 
 bool CarMap::useGas(KeyType license, ValueType gallons){
-    if (!m_carmap.contains(license) || gas(license) < 0 || gallons > gas(license))
+    if (!m_carmap.contains(license) || gallons < 0 || gallons > gas(license))
         return false;
     m_carmap.update(license, gas(license) - gallons);
     return true;

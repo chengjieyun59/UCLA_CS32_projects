@@ -6,11 +6,13 @@
 //  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
 //
 
+
 #include "Map.h"
 #include <iostream>
 #include <cassert>
 using namespace std;
 
+/*
 int main()
 {
     // tc31
@@ -24,3 +26,4 @@ int main()
     assert(m.get(0, k, v)  &&  k == "xyz"  &&  v == 9876.5);
     cout << "Passed all tests" << endl;
 }
+*/

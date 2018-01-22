@@ -23,8 +23,8 @@ public:
     Map(int max_size); // added another constructor
     ~Map(); // added a destructor
     
-    Map(const Map &old); // copy constructor
-    Map &operator=(const Map &src); // assignment operator
+    Map(const Map& old); // copy constructor
+    Map& operator=(const Map& src); // assignment operator
     
     bool empty() const;  // Return true if the map is empty, otherwise false.
     
@@ -79,6 +79,7 @@ public:
     
 private:
     int m_size;
+    int m_max_size;
     
     struct AllData {
         KeyType m_key;

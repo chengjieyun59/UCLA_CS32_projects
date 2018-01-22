@@ -9,11 +9,13 @@
 #include "newMap.h"
 
 Map::Map()
-:m_size(0), m_data(){ //? Take away the m_data()?
+:m_size(0), m_max_size(DEFAULT_MAX_ITEMS){
+    m_data = new AllData[DEFAULT_MAX_ITEMS];
 } // Create an empty map (i.e., one with no key/value pairs)
 
 Map::Map(int max_size)
-:m_size(max_size){ //? Is this how i do it?
+:m_size(0), m_max_size(max_size){
+    m_data = new AllData[m_max_size];
 } // added another constructor
 
 Map::~Map()
@@ -21,7 +23,7 @@ Map::~Map()
     delete [] m_data;
 } // added a destructor
 
-Map::Map(const Map &old)
+Map::Map(const Map& old)
 {
     m_size = old.m_size;
     m_data = new AllData[m_size];
@@ -29,7 +31,7 @@ Map::Map(const Map &old)
         m_data[j] = old.m_data[j];
 } // copy constructor
 
-Map& Map::operator=(const Map &src)
+Map& Map::operator=(const Map& src)
 {
     if (this != &src)
     {
@@ -54,12 +56,12 @@ int Map::size() const{
 } // Return the number of key/value pairs in the map.
 
 bool Map::insert(const KeyType& key, const ValueType& value){
-    if (! contains(key) && size() < DEFAULT_MAX_ITEMS){
+    if (! contains(key) && size() < m_max_size){
+        m_data[m_size].m_key = key;
+        m_data[m_size].m_value = value;
         m_size++;
-        m_data[m_size-1].m_key = key;
-        m_data[m_size-1].m_value = value;
         return true;
-    }
+    } // ? does this actually work now?
     else
         return false;
 }
@@ -174,35 +176,20 @@ bool Map::get(int i, KeyType& key, ValueType& value) const{
 // return false.  (See below for details about this function.)
 
 void Map::swap(Map& other){
+    // declare temp
+    int temp_size = m_size;
+    int temp_max_size = m_max_size;
+    AllData* temp_data = m_data;
     
-    Map* otherptr = &other; //otherptr points to Map. This pointer stores the address of other
-    KeyType temp_key[DEFAULT_MAX_ITEMS];
-    ValueType temp_value[DEFAULT_MAX_ITEMS];
-    int temp_size;
+    // input Map b into Map a
+    m_size = other.m_size;
+    m_max_size = other.m_max_size;
+    m_data = other.m_data;
     
-    // temp = *map1
-    temp_size = size();
-    for (int i = 0; i < size() && size() > 0; i++)
-    {
-        temp_key[i] = m_data[i].m_key;
-        temp_value[i] = m_data[i].m_value;
-    }
-    
-    // *map1 = *map2
-    m_size = otherptr->m_size;
-    for (int i = 0; i < size() && size() > 0; i++)
-    {
-        m_data[i].m_key = otherptr->m_data[i].m_key;
-        m_data[i].m_value = otherptr->m_data[i].m_value;
-    }
-    
-    // *other = temp;
-    otherptr->m_size = temp_size;
-    for (int i = 0; i < size() && size() > 0; i++)
-    {
-        otherptr->m_data[i].m_key = temp_key[i];
-        otherptr->m_data[i].m_value = temp_value[i];
-    }
+    // input temp into Map b
+    other.m_size = temp_size;
+    other.m_max_size = temp_max_size;
+    other.m_data = temp_data;
 } //? How to NOT make an extra array temp?
 // Exchange the contents of this map with the other one.
 
