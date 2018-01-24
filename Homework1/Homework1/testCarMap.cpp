@@ -11,7 +11,7 @@
 #include <iostream>
 #include <cassert>
 using namespace std;
-
+/*
 int main(){
     // test cases 1
     CarMap cm;  // maps strings to doubles
@@ -49,3 +49,4 @@ int main(){
     assert(Cars.useGas("dog", 2) && Cars.gas("dog") == 3);
     Cars.print();
 }
+*/

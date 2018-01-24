@@ -19,8 +19,9 @@ const int DEFAULT_MAX_ITEMS = 250;
 class Map
 {
 public:
-    Map();         // Create an empty map (i.e., one with no key/value pairs)
-    Map(int max_size); // added another constructor
+    //Map(const int max_size = DEFAULT_MAX_ITEMS);// If you don't pass any value in the parameter, it would be DEFAULT_MAX_ITEMS.
+    Map(); // Create an empty map (i.e., one with no key/value pairs)
+    Map(int max_size); // added another constructor besides the default constructor
     ~Map(); // added a destructor
     
     Map(const Map& old); // copy constructor
@@ -87,9 +88,7 @@ private:
     }; // you may declare private structs inside the Map class
     // two public data members in the helper structure in the private section of Map
     
-    // AllData m_data[DEFAULT_MAX_ITEMS];
     AllData* m_data;
 };
 
 #endif // NEWMAP_INCLUDED
-

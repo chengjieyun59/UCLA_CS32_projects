@@ -60,9 +60,9 @@
 		5A91101E20153743007270C0 /* Homework1 #5 newMap */ = {
 			isa = PBXGroup;
 			children = (
-				5A91101F20153743007270C0 /* testnewMap.cpp */,
 				5A9110262015377E007270C0 /* newMap.cpp */,
 				5A9110272015377E007270C0 /* newMap.h */,
+				5A91101F20153743007270C0 /* testnewMap.cpp */,
 			);
 			path = "Homework1 #5 newMap";
 			sourceTree = "<group>";

@@ -8,9 +8,16 @@
 
 #include "newMap.h"
 
+/*
+Map::Map(const int max_size)
+:m_size(0), m_max_size(max_size){
+    m_data = new AllData[m_max_size];
+} // Create an empty map (i.e., one with no key/value pairs)
+*/
+
 Map::Map()
 :m_size(0), m_max_size(DEFAULT_MAX_ITEMS){
-    m_data = new AllData[DEFAULT_MAX_ITEMS];
+    m_data = new AllData[m_max_size];
 } // Create an empty map (i.e., one with no key/value pairs)
 
 Map::Map(int max_size)
@@ -61,7 +68,7 @@ bool Map::insert(const KeyType& key, const ValueType& value){
         m_data[m_size].m_value = value;
         m_size++;
         return true;
-    } // ? does this actually work now?
+    } // ? why doesn't the original one work ?
     else
         return false;
 }
@@ -94,8 +101,8 @@ bool Map::insertOrUpdate(const KeyType& key, const ValueType& value){
             return true;
         }
     }
-    if (!contains(key) && size() < DEFAULT_MAX_ITEMS)
-        if (! contains(key) && size() < DEFAULT_MAX_ITEMS){
+    if (!contains(key) && size() < m_max_size)
+        if (! contains(key) && size() < m_max_size){
             insert(key, value);
             return true;
         }
@@ -192,5 +199,3 @@ void Map::swap(Map& other){
     other.m_data = temp_data;
 } //? How to NOT make an extra array temp?
 // Exchange the contents of this map with the other one.
-
-

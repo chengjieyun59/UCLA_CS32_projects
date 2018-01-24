@@ -25,9 +25,9 @@ int Map::size() const{
 
 bool Map::insert(const KeyType& key, const ValueType& value){
     if (! contains(key) && size() < DEFAULT_MAX_ITEMS){
+        m_data[m_size].m_key = key;
+        m_data[m_size].m_value = value;
         m_size++;
-        m_data[m_size-1].m_key = key;
-        m_data[m_size-1].m_value = value;
         return true;
     }
     else
