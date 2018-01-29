@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		5ABBB0DB201D346800588F52 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5ABBB0DA201D346800588F52 /* main.cpp */; };
 		5ABBB0E3201D347D00588F52 /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5ABBB0E1201D347D00588F52 /* Map.cpp */; };
+		5ABBB0E6201E511700588F52 /* IntWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5ABBB0E4201E511700588F52 /* IntWrapper.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,8 @@
 		5ABBB0DA201D346800588F52 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		5ABBB0E1201D347D00588F52 /* Map.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Map.cpp; sourceTree = "<group>"; };
 		5ABBB0E2201D347D00588F52 /* Map.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
+		5ABBB0E4201E511700588F52 /* IntWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntWrapper.cpp; sourceTree = "<group>"; };
+		5ABBB0E5201E511700588F52 /* IntWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntWrapper.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +66,8 @@
 				5ABBB0DA201D346800588F52 /* main.cpp */,
 				5ABBB0E1201D347D00588F52 /* Map.cpp */,
 				5ABBB0E2201D347D00588F52 /* Map.h */,
+				5ABBB0E4201E511700588F52 /* IntWrapper.cpp */,
+				5ABBB0E5201E511700588F52 /* IntWrapper.h */,
 			);
 			path = Project2;
 			sourceTree = "<group>";
@@ -124,6 +129,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5ABBB0E6201E511700588F52 /* IntWrapper.cpp in Sources */,
 				5ABBB0E3201D347D00588F52 /* Map.cpp in Sources */,
 				5ABBB0DB201D346800588F52 /* main.cpp in Sources */,
 			);

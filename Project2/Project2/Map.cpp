@@ -10,40 +10,52 @@
 
 Map::Map()
 :m_size(0){
-} // Create an empty map (i.e., one with no key/value pairs)
+    head = new Node; // dummy node
+    head -> prev = head;
+    head -> next = head; // When both the previous and next points to m_head itself,
+                             // it means the list is empty
+} // Create an empty map
 
 Map::~Map()
 {
-    
-} // added a destructor
+    Node* p = head -> prev; // to delete the dummy node too
+    while(m_size >= 0)
+    {
+        Node* temp = p;
+        p = p -> prev;
+        delete temp;
+        m_size--; //will this end at 0 or -1?
+    }
+} // destructor
+// When a Map is destroyed, the nodes in the linked list must be deallocated.
 
 Map::Map(const Map& old)
-{
+: m_size(old.m_size){
     
-} // copy constructor
+} // TODO: copy constructor
+// When a brand new Map is created as a copy of an existing Map, enough new nodes must be allocated to hold a duplicate of the original list.
 
 Map& Map::operator=(const Map& src)
 {
     
     return (*this);
-}// assignment operator
-
-bool Map::empty() const{
-    if (size() == 0)
-        return true;
-    else
-        return false;
-} // Return true if the map is empty, otherwise false.
-
-int Map::size() const{
-    return m_size;
-} // Return the number of key/value pairs in the map.
+}// TODO: assignment operator
+// When an existing Map (the left-hand side) is assigned the value of another Map (the right-hand side), the result must be that the left-hand side object is a duplicate of the right-hand side object, with no memory leak of list nodes (i.e. no list node from the old value of the left-hand side should be still allocated yet inaccessible).
 
 bool Map::insert(const KeyType& key, const ValueType& value){
-    if (! contains(key) && size() < DEFAULT_MAX_ITEMS){
-        m_data[m_size].m_key = key;
-        m_data[m_size].m_value = value;
-        m_size++;
+    if (! contains(key)){
+        Node* p = head -> next;
+        p = new Node;
+        p -> m_key = key;
+        p -> m_value = value;
+
+        // put p after head
+        p -> prev = head;
+        p -> next = head -> next;
+        head -> next = p;
+        p -> next -> prev = p;
+        
+        m_size = m_size + 1;
         return true;
     }
     else
@@ -56,10 +68,10 @@ bool Map::insert(const KeyType& key, const ValueType& value){
 // capacity and is full).
 
 bool Map::update(const KeyType& key, const ValueType& value){
-    for (int i = 0; i < size() && size() > 0; i++)
+    for (Node* p = head -> next; p!= head; p = p-> next)
     {
-        if (key == m_data[i].m_key){
-            m_data[i].m_value = value;
+        if (key == p -> m_key){
+            p -> m_value = value;
             return true;
         }
     }
@@ -71,20 +83,20 @@ bool Map::update(const KeyType& key, const ValueType& value){
 // Otherwise, make no change to the map and return false.
 
 bool Map::insertOrUpdate(const KeyType& key, const ValueType& value){
-    for (int i = 0; i < size() && size() > 0; i++)
+    for (Node* p = head -> next; p!= head; p = p-> next)
     {
-        if (key == m_data[i].m_key){
-            m_data[i].m_value = value;
+        if (key == p -> m_key){
+            p -> m_value = value;
             return true;
         }
     }
-    if (!contains(key) && size() < DEFAULT_MAX_ITEMS)
-        if (! contains(key) && size() < DEFAULT_MAX_ITEMS){
-            insert(key, value);
-            return true;
-        }
-    return false;
+    if (! contains(key)){
+        insert(key, value);
+        return true;
+    }
+    return true;
 }
+// Notice that there is now no a priori limit on the maximum number of key/value pairs in the Map (so insertOrUpdate should always return true).
 // If key is equal to a key currently in the map, then make that key no
 // longer map to the value it currently maps to, but instead map to
 // the value of the second parameter; return true in this case.
@@ -97,30 +109,33 @@ bool Map::insertOrUpdate(const KeyType& key, const ValueType& value){
 // capacity and is full).
 
 bool Map::erase(const KeyType& key){
-    for (int i = 0; i < size() && size() > 0; i++)
+    Node* p = head -> next;
+    
+    // loop through the whole list until it's empty or finds the key
+    while (p != head && p -> m_key != key)
     {
-        if (key == m_data[i].m_key){
-            //if (size() == 1)
-            //m_size = 0; // special case
-            for (int j = i; j < size()-1; j++)
-            {
-                m_data[j].m_key = m_data[j+1].m_key; // move every key to the left after position i
-                m_data[j].m_value = m_data[j+1].m_value;
-            }
-            m_size--;
-            return true;
-        }
+        p = p -> next;
     }
-    return false;
+    
+    if (p == head)
+        return false; // exhausted list and couldn't find the key
+    else {
+        p -> prev -> next = p -> next; // assign p -> next to its previous node's next pointer
+        p -> next -> prev = p -> prev; // assign p -> prev to its next node's previous pointer
+        delete p; // destruct
+        m_size = m_size - 1;
+    }
+    return true;
 }
 // If key is equal to a key currently in the map, remove the key/value
 // pair with that key from the map and return true.  Otherwise, make
 // no change to the map and return false.
 
 bool Map::contains(const KeyType& key) const{
-    for (int i = 0; i < size() && size() > 0; i++)
+    // loop through the whole list
+    for (Node* p = head -> next; p!= head; p = p-> next)
     {
-        if (key == m_data[i].m_key)
+        if (key == p -> m_key)
         {
             return true;
         }
@@ -131,10 +146,10 @@ bool Map::contains(const KeyType& key) const{
 // false.
 
 bool Map::get(const KeyType& key, ValueType& value) const{
-    for (int i = 0; i < size() && size() > 0; i++)
+    for (Node* p = head -> next; p!= head; p = p-> next)
     {
-        if (key == m_data[i].m_key){
-            value = m_data[i].m_value;
+        if (key == p -> m_key){
+            value = p -> m_value;
             return true;
         }
     }
@@ -146,14 +161,17 @@ bool Map::get(const KeyType& key, ValueType& value) const{
 // false.
 
 bool Map::get(int i, KeyType& key, ValueType& value) const{
-    if (i >= 0 && i < size())
+    Node* p = head;
+    
+    while (i >= 0 && i < size())
     {
-        key = m_data[i].m_key;
-        value = m_data[i].m_value;
-        return true;
+        p = p-> next;
+        i--;
     }
-    return false;
-}
+    key = p -> m_key;
+    value = p -> m_value;
+    return true; //does this always return true now?
+}//
 // If 0 <= i < size(), copy into the key and value parameters the
 // key and value of one of the key/value pairs in the map and return
 // true.  Otherwise, leave the key and value parameters unchanged and
@@ -161,6 +179,7 @@ bool Map::get(int i, KeyType& key, ValueType& value) const{
 
 void Map::swap(Map& other){
     
+    /*
     Map* otherptr = &other; //otherptr points to Map. This pointer stores the address of other
     KeyType temp_key[DEFAULT_MAX_ITEMS];
     ValueType temp_value[DEFAULT_MAX_ITEMS];
@@ -189,5 +208,14 @@ void Map::swap(Map& other){
         otherptr->m_data[i].m_key = temp_key[i];
         otherptr->m_data[i].m_value = temp_value[i];
     }
-} //? How to NOT make an extra array temp?
+     */
+}// TODO
 // Exchange the contents of this map with the other one.
+
+bool Map::combine(const Map& m1, const Map& m2, Map& result){
+    return true;
+}// TODO
+
+void Map::subtract(const Map& m1, const Map& m2, Map& result){
+    
+}// TODO

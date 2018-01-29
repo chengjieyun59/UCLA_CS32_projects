@@ -11,10 +11,11 @@
 
 #include <cstdlib>
 #include <string>
+//#include "IntWrapper.h"       // TODO: remove this line after testing
 
 using KeyType = std::string;
-using ValueType = double; // type alias: a name that is a synonym for some type
-const int DEFAULT_MAX_ITEMS = 250;
+using ValueType = double;
+//using ValueType = IntWrapper; // TODO: replace this line after testing
 
 class Map
 {
@@ -82,23 +83,32 @@ public:
 private:
     int m_size;
     
-    struct AllData {
+    // nodes don't need to be in any order later
+    // make a circular doubly linked list
+    struct Node {
         KeyType m_key;
         ValueType m_value;
-    }; // you may declare private structs inside the Map class
-    // two public data members in the helper structure in the private section of Map
+        Node* next;
+        Node* prev;
+    };
     
-    AllData m_data[DEFAULT_MAX_ITEMS];
+    Node* head; // points to a dummy node
+    // head->next points to first element and head->prev points to last element
 };
 
+// two non-member functions
+bool combine(const Map& m1, const Map& m2, Map& result);
+void subtract(const Map& m1, const Map& m2, Map& result);
+
+// inline functions
 inline
-bool Map::combine(const Map& m1, const Map& m2, Map& result){
-    return true;
+int Map::size() const{
+    return m_size;
 }
 
 inline
-void Map::subtract(const Map& m1, const Map& m2, Map& result){
-    
+bool Map::empty() const{
+    return (size()==0);
 }
 
 #endif // MAP_INCLUDED

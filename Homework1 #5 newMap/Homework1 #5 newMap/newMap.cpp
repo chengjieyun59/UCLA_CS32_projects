@@ -33,6 +33,7 @@ Map::~Map()
 Map::Map(const Map& old)
 {
     m_size = old.m_size;
+    m_max_size = old.m_max_size;
     m_data = new AllData[m_size];
     for (int j = 0; j < m_size; j++)
         m_data[j] = old.m_data[j];
@@ -42,11 +43,15 @@ Map& Map::operator=(const Map& src)
 {
     if (this != &src)
     {
+        Map temp(src);
+        swap(temp);
+        /*
         delete [] m_data;
         m_size = src.m_size;
         m_data = new AllData[m_size];
         for (int j = 0; j < m_size; j++)
             m_data[j] = src.m_data[j];
+        */
     }
     return (*this);
 }// assignment operator
