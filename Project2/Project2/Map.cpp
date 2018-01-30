@@ -83,17 +83,11 @@ bool Map::update(const KeyType& key, const ValueType& value){
 // Otherwise, make no change to the map and return false.
 
 bool Map::insertOrUpdate(const KeyType& key, const ValueType& value){
-    for (Node* p = head -> next; p!= head; p = p-> next)
-    {
-        if (key == p -> m_key){
-            p -> m_value = value;
-            return true;
-        }
-    }
     if (! contains(key)){
         insert(key, value);
         return true;
     }
+    update(key, value);
     return true;
 }
 // Notice that there is now no a priori limit on the maximum number of key/value pairs in the Map (so insertOrUpdate should always return true).
@@ -134,12 +128,8 @@ bool Map::erase(const KeyType& key){
 bool Map::contains(const KeyType& key) const{
     // loop through the whole list
     for (Node* p = head -> next; p!= head; p = p-> next)
-    {
         if (key == p -> m_key)
-        {
             return true;
-        }
-    }
     return false;
 }
 // Return true if key is equal to a key currently in the map, otherwise
@@ -161,16 +151,18 @@ bool Map::get(const KeyType& key, ValueType& value) const{
 // false.
 
 bool Map::get(int i, KeyType& key, ValueType& value) const{
-    Node* p = head;
+    if (i < 0 || i > size())
+        return false;
     
-    while (i >= 0 && i < size())
+    Node* p = head;
+    while (i >= 0)
     {
         p = p-> next;
         i--;
     }
     key = p -> m_key;
     value = p -> m_value;
-    return true; //does this always return true now?
+    return true;
 }//
 // If 0 <= i < size(), copy into the key and value parameters the
 // key and value of one of the key/value pairs in the map and return
@@ -178,44 +170,21 @@ bool Map::get(int i, KeyType& key, ValueType& value) const{
 // return false.  (See below for details about this function.)
 
 void Map::swap(Map& other){
-    
-    /*
-    Map* otherptr = &other; //otherptr points to Map. This pointer stores the address of other
-    KeyType temp_key[DEFAULT_MAX_ITEMS];
-    ValueType temp_value[DEFAULT_MAX_ITEMS];
+    Node* temp;
     int temp_size;
     
-    //temp = *map1
+    temp = head;
     temp_size = size();
-    for (int i = 0; i < size() && size() > 0; i++)
-    {
-        temp_key[i] = m_data[i].m_key;
-        temp_value[i] = m_data[i].m_value;
-    }
     
-    //*map1 = *map2
-    m_size = otherptr->m_size;
-    for (int i = 0; i < size() && size() > 0; i++)
-    {
-        m_data[i].m_key = otherptr->m_data[i].m_key;
-        m_data[i].m_value = otherptr->m_data[i].m_value;
-    }
-    
-    //*other = temp;
-    otherptr->m_size = temp_size;
-    for (int i = 0; i < size() && size() > 0; i++)
-    {
-        otherptr->m_data[i].m_key = temp_key[i];
-        otherptr->m_data[i].m_value = temp_value[i];
-    }
-     */
-}// TODO
+    head = other.head;
+    m_size = other.m_size;
+}
 // Exchange the contents of this map with the other one.
 
-bool Map::combine(const Map& m1, const Map& m2, Map& result){
+bool combine(const Map& m1, const Map& m2, Map& result){
     return true;
 }// TODO
 
-void Map::subtract(const Map& m1, const Map& m2, Map& result){
+void subtract(const Map& m1, const Map& m2, Map& result){
     
 }// TODO

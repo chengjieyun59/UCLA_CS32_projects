@@ -77,9 +77,6 @@ public:
     void swap(Map& other);
     // Exchange the contents of this map with the other one.
     
-    bool combine(const Map& m1, const Map& m2, Map& result);
-    void subtract(const Map& m1, const Map& m2, Map& result);
-    
 private:
     int m_size;
     
@@ -98,7 +95,7 @@ private:
 
 // two non-member functions
 bool combine(const Map& m1, const Map& m2, Map& result);
-void subtract(const Map& m1, const Map& m2, Map& result);
+void subtract(const Map& m1, const Map& m2, Map& result); // Should I include this here?
 
 // inline functions
 inline
