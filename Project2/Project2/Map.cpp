@@ -29,17 +29,41 @@ Map::~Map()
 } // destructor
 // When a Map is destroyed, the nodes in the linked list must be deallocated.
 
-Map::Map(const Map& old)
-: m_size(old.m_size){
+Map::Map(const Map& src)
+: m_size(src.m_size){
+    head = new Node; // dummy node
+    Node *temp = head;
+    Node *temp_src = src.head; // use temp_src, so won't accidentally modify src
     
-} // TODO: copy constructor
+    while (temp_src->next != src.head) // if hasn't looped through the whole list
+    {
+        // copy temp_src into newNode
+        Node *newNode = new Node;
+        newNode -> m_key = temp_src -> m_key;
+        newNode -> m_value = temp_src -> m_value;
+        
+        // doubly linked
+        newNode -> prev = temp;
+        temp -> next = newNode;
+        temp = newNode; // assign
+        temp_src = temp_src -> next; // iterate
+    }
+    // make circular
+    head -> prev = temp;
+    temp -> next = head;
+} // copy constructor
 // When a brand new Map is created as a copy of an existing Map, enough new nodes must be allocated to hold a duplicate of the original list.
 
 Map& Map::operator=(const Map& src)
 {
-    
+    // need to make sure that left hand side and right hand side aren't already the same
+    if (this != &src)
+    {
+        Map temp(src); // temp holds the right hand side
+        swap(temp); // now left hand side holds temp
+    } // temp is gone now
     return (*this);
-}// TODO: assignment operator
+}// assignment operator
 // When an existing Map (the left-hand side) is assigned the value of another Map (the right-hand side), the result must be that the left-hand side object is a duplicate of the right-hand side object, with no memory leak of list nodes (i.e. no list node from the old value of the left-hand side should be still allocated yet inaccessible).
 
 bool Map::insert(const KeyType& key, const ValueType& value){
