@@ -37,8 +37,10 @@ Map::Map(const Map& src)
     
     while (temp_src->next != src.head) // if hasn't looped through the whole list
     {
-        // copy temp_src into newNode
+        // enough new nodes must be allocated to hold a duplicate of the original list
         Node *newNode = new Node;
+        
+        // copy temp_src into newNode
         newNode -> m_key = temp_src -> m_key;
         newNode -> m_value = temp_src -> m_value;
         
@@ -177,6 +179,7 @@ bool Map::get(const KeyType& key, ValueType& value) const{
 bool Map::get(int i, KeyType& key, ValueType& value) const{
     if (i < 0 || i > size())
         return false;
+    // Notice also that, as in Homework 1, if a Map has a size of n, then the values of the first parameter to the three-parameter form of get for which that function retrieves a key and a value and returns true are 0, 1, 2, ..., n-1; for other values, it returns false without setting its second and third parameters. This is the same visible behavior as in Homework 1.
     
     Node* p = head;
     while (i >= 0)
@@ -187,7 +190,8 @@ bool Map::get(int i, KeyType& key, ValueType& value) const{
     key = p -> m_key;
     value = p -> m_value;
     return true;
-}//
+    // Another requirement is that as in Problem 5 of Homework 1, the number of statement executions when swapping two maps must be the same no matter how many key/value pairs are in the maps.
+}
 // If 0 <= i < size(), copy into the key and value parameters the
 // key and value of one of the key/value pairs in the map and return
 // true.  Otherwise, leave the key and value parameters unchanged and
@@ -202,13 +206,65 @@ void Map::swap(Map& other){
     
     head = other.head;
     m_size = other.m_size;
+    
+    other.head = temp;
+    other.m_size = temp_size;
 }
 // Exchange the contents of this map with the other one.
 
+// Non-member functions
+// Notice that combine & subtract are non-member functions: They are not members of Map or any other class, so they must not access private members of Map. Be sure these functions behave correctly in the face of aliasing: What if m1 and result refer to the same Map, for example?
 bool combine(const Map& m1, const Map& m2, Map& result){
+    
+    
+    
+    
+    
     return true;
 }// TODO
+/*
+When this function returns, result must consist of pairs determined by these rules:
+1. If a key appears in exactly one of m1 and m2, then result must contain a pair consisting of that key and its corresponding value.
+2. If a key appears in both m1 and m2, with the same corresponding value in both, then result must contain exactly one pair with that key and value.
+3. When this function returns, result must contain no pairs other than those required by these rules. (You must not assume result is empty when it is passed in to this function; it might not be.)
+4. If there exists a key that appears in both m1 and m2, but with different corresponding values, then this function returns false; if there is no key like this, the function returns true. Even if the function returns false, result must be constituted as defined by the above rules.
+ 
+ For example, suppose a Map maps s-t-r-i-n-g-s to d-o-u-b-l-e-s. If m1 consists of the three pairs (in any order)
+ 
+ "Fred"  123      "Ethel"  456      "Lucy"  789
+ and m2 consists of (in any order)
+ 
+ "Lucy"  789      "Ricky"  321
+ then no matter what value it had before, result must end up as a map consisting of (in any order)
+ 
+ "Fred"  123      "Ricky"  321      "Lucy"  789     "Ethel"  456
+ and combine must return true. If instead, m1 were as before, and m2 consisted of
+ 
+ "Lucy"  654      "Ricky"  321
+ then no matter what value it had before, result must end up as a map consisting of (in any order)
+ 
+ "Fred"  123      "Ricky"  321      "Ethel"  456
+ and combine must return false.
+*/
 
 void subtract(const Map& m1, const Map& m2, Map& result){
     
+    
+    
+    
+    
+    return;
 }// TODO
+/*
+ When this function returns, result must contain one copy of all the pairs in m1 whose keys don't appear in m2; it must not contain any other pairs. (You must not assume result is empty when it is passed in to this function; it may not be.)
+ 
+ For example, if m1 consists of the three pairs (in any order)
+ 
+ "Fred"  123      "Ethel"  456      "Lucy"  789
+ and m2 consists of (in any order)
+ 
+ "Lucy"  789      "Ricky"  321      "Ethel"  654
+ then no matter what value it had before, result must end up as a map consisting of
+ 
+ "Fred"  123
+*/

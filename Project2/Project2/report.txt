@@ -1,0 +1,141 @@
+Project 2 report by Jie-Yun Cheng
+
+/////////////////////////////////////////////
+// PART A: Design of my doubly linked list //
+/////////////////////////////////////////////
+
+Professor Nachenberg said that dummy node may be confusing at first, but once you understand it, it saves a lot of time and lines of code, but he never used it, because it’s not as straightforward. The TA for discussion 1E also said it saves lines.
+
+I designed a doubly linked list as required. To reduce the number of special cases that I have to handle (like empty map or tail points to nullptr), I included a dummy node and made the list circular, inspired by 1E TA during her discussion. This would also make insertion way easier as I didn’t have to check for nullptr and consider edge cases. And since the nodes inserted don’t need to be in chronological order, this wouldn’t be a problem. So my list nodes aren’t in any particular order. My nodes contain a pointer to head, next, and prev. So my head -> next points to the first element and head -> prev points to the last element, if you have the say what’s first and what’s last in a circular linked list.
+
+///////////////////////////////////////////////////
+// PART B: Pseudocode for non-trivial algorithms //
+///////////////////////////////////////////////////
+
+0. constructor
+
+
+1. destructor
+
+
+2. copy constructor
+
+
+3. assignment operator
+
+
+4. insert
+
+
+5. update
+
+
+6. insertOrUpdate
+
+
+7. get (with 2 parameters)
+
+
+8. get (with 3 parameters)
+
+
+9. swap
+
+
+10. combine
+
+
+11. subtract
+
+
+
+////////////////////////
+// PART C: Test cases //
+////////////////////////
+    // test empty function
+    Map a;
+    assert(a.empty());
+    
+    // test size function
+    assert(a.size() == 0);
+
+    // test insert function
+    a.insert("A", 10);
+    a.insert("B", 44);
+    a.insert("C", 10);
+    string all;
+    double total = 0;
+    
+    // test get function with 2 parameters
+    Map m;  // maps strings to doubles
+    ValueType v = -1234.5;
+    assert( !m.get("abc", v)  &&  v == -1234.5); // v unchanged by get failure
+    m.insert("xyz", 9876.5);
+    assert(m.size() == 1);
+    KeyType k = "hello";
+    assert(m.get(0, k, v)  &&  k == "xyz"  &&  v == 9876.5);
+    
+    // test get function with 3 parameters
+    for (int n = 0; n < a.size(); n++)
+    {
+        string k;
+        double v;
+        a.get(n, k, v);
+        all += k;
+        total += v;
+    } // must result in the output being exactly one of the following: ABC64, ACB64, BAC64, BCA64, CAB64, or CBA64
+    cout << all << total; // would print CBA64 for my circular doubly linked list
+    
+    // test swap function
+    Map m1;
+    m1.insert("Fred", 2.956);
+    Map m2;
+    m2.insert("Ethel", 3.538);
+    m2.insert("Lucy", 2.956);
+    m1.swap(m2);
+
+    // test contains function
+    assert(m1.size() == 2  &&  m1.contains("Ethel")  &&  m1.contains("Lucy")  &&
+           m2.size() == 1  &&  m2.contains("Fred"));
+    
+    // test erase function
+    Map gpas;
+    gpas.insert("Fred", 2.956);
+    assert(!gpas.contains(""));
+    gpas.insert("Ethel", 3.538);
+    double va;
+    string k1;
+    assert(gpas.get(1,k1,va)  &&  (k1 == "Fred"  ||  k1 == "Ethel"));
+    string k2;
+    assert(gpas.get(1,k2,va)  &&  k2 == k1);
+    gpas.insert("", 4.000);
+    gpas.insert("Lucy", 2.956);
+    assert(gpas.contains(""));
+    
+    gpas.erase("Fred");
+    assert(gpas.size() == 3  &&  gpas.contains("Lucy")  &&  gpas.contains("Ethel")  &&
+           gpas.contains(""));
+    
+    // test a combination of functions
+    Map m3;
+    assert(!m3.erase("Ricky"));
+    assert(m3.insert("Fred", 123));
+    assert(m3.insert("Ethel", 456));
+    assert(m3.size() == 2);
+    v = 42;
+    assert(!m3.get("Lucy", v)  &&  v == 42);
+    assert(m3.get("Fred", v)  &&  v == 123);
+    v = 42;
+    KeyType x = "Lucy";
+    assert(m3.get(0, x, v)  &&
+           ((x == "Fred"  &&  v == 123)  ||  (x == "Ethel"  &&  v == 456)));
+    KeyType x2 = "Ricky";
+    assert(m3.get(1, x2, v)  && ((x2 == "Fred"  &&  v == 123)  ||  (x2 == "Ethel"  &&  v == 456))  && x != x2);
+    
+    // test copy constructor
+    Map m4 = m3;
+    assert(m4.get(1, x2, v)  && ((x2 == "Fred"  &&  v == 123)  ||  (x2 == "Ethel"  &&  v == 456))  && x != x2);
+    
+    // test assignment operator
+    m2 = m3;
+    assert(m2.get(1, x2, v)  && ((x2 == "Fred"  &&  v == 123)  ||  (x2 == "Ethel"  &&  v == 456))  && x != x2);
