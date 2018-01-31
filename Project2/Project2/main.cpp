@@ -57,7 +57,7 @@ void test()
     m1.swap(m2);
     assert(m1.size() == 2  &&  m1.contains("Ethel")  &&  m1.contains("Lucy")  &&
            m2.size() == 1  &&  m2.contains("Fred"));
-    
+
     // test erase function
     Map gpas;
     gpas.insert("Fred", 2.956);
@@ -91,6 +91,19 @@ void test()
            ((x == "Fred"  &&  v == 123)  ||  (x == "Ethel"  &&  v == 456)));
     KeyType x2 = "Ricky";
     assert(m3.get(1, x2, v)  && ((x2 == "Fred"  &&  v == 123)  ||  (x2 == "Ethel"  &&  v == 456))  && x != x2);
+    
+    // test update function
+    m3.update("Fred", 999);
+    assert(m3.get(0, x, v)  &&
+           ((x == "Fred"  &&  v == 999)  ||  (x == "Ethel"  &&  v == 456)));
+    
+    // test insertOrUpdate function
+    m3.insertOrUpdate("Fred", 555);
+    assert(m3.get(0, x, v)  &&
+           ((x == "Fred"  &&  v == 555)  ||  (x == "Ethel"  &&  v == 456)));
+    m3.insertOrUpdate("Mariam", 333);
+    assert(m3.get(0, x, v)  &&
+           ((x == "Mariam"  &&  v == 333)  ||  (x == "Ethel"  &&  v == 456)));
     
     // test copy constructor
     Map m4 = m3;

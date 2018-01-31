@@ -13,39 +13,107 @@ I designed a doubly linked list as required. To reduce the number of special cas
 ///////////////////////////////////////////////////
 
 0. constructor
-
+Construct the dummy node
+Make the head’s previous point to head itself
+Make the head’s next point to head itself
+// This creates an empty map
 
 1. destructor
-
+make a pointer p that points to the dummy node
+while haven’t exhausted the linked list
+    save p into temp
+    make p points to its previous node
+    delete temp
+    iterate
 
 2. copy constructor
-
+take in the source parameter
+construct the dummy node
+assign the current head to temp
+assign the source to temp source
+while hasn't looped through the whole list
+    create a newNode so enough nodes can be allocated to hold a whole duplicate of the original list
+    copy the key and value of temp source into newNode
+    doubly link the newNode and temp
+    assign newNode to temp
+    iterate
+make the list circular
 
 3. assignment operator
-
+make sure the left hand side isn’t equal to the right hand side
+    declare a temp map that holds the right hand side
+    use the swap function so the left hand side now holds temp
+return
 
 4. insert
-
+if the list doesn’t contain the key
+    create a node p that points to the first element
+    store key and value into node p
+    put p after head by creating/ reassigning the four linkers
+    size increases by one
+    return true since key could be added and had been added
+return false otherwise
 
 5. update
-
+make node p point to the first element
+loop through the nodes as long as the list isn’t exhausted
+    if key is found at that node
+    	update the node’s value
+    	return true now that value is updated
+return false otherwise
 
 6. insertOrUpdate
+if the list doesn’t contain the key
+    insert the key and value
+    return true now that key and value are inserted
+otherwise if the list contains the key, update the value in the same node
+return true now that value is updated
+
+7. erase
+make node p point to the first element
+loop through the whole list until it's empty or key is found
+if p ends up pointing at head
+    return false because the key wasn’t found after looping through the whole list
+else
+    assign p -> next to its previous node's next pointer
+    assign p -> prev to its next node's previous pointer
+    destruct
+    size decreases by one
+return true now that the node is erased
+
+8. contains
+loop through the whole list
+    if key is found
+        return true
+return false
+
+9. get (with 2 parameters)
+loop through the whole list
+    if key is found
+        let the value parameter take the value in the node
+        return true now that the value is gotten
+return false if key isn’t found after exhausting the list
+
+10. get (with 3 parameters)
+if index i is out of bound
+    return false
+create node p that points to head
+loop through the first i element
+    move to the next node
+    iterate
+get the key and value at index i
+return true now that the key and value are found
+
+11. swap
+create a temp node and size
+save the current head to temp
+save the inputted parameter head to the current head
+save the temp to the inputted parameter head
+
+12. combine
 
 
-7. get (with 2 parameters)
-
-
-8. get (with 3 parameters)
-
-
-9. swap
-
-
-10. combine
-
-
-11. subtract
+13. subtract
 
 
 
@@ -131,6 +199,19 @@ I designed a doubly linked list as required. To reduce the number of special cas
            ((x == "Fred"  &&  v == 123)  ||  (x == "Ethel"  &&  v == 456)));
     KeyType x2 = "Ricky";
     assert(m3.get(1, x2, v)  && ((x2 == "Fred"  &&  v == 123)  ||  (x2 == "Ethel"  &&  v == 456))  && x != x2);
+    
+    // test update function
+    m3.update("Fred", 999);
+    assert(m3.get(0, x, v)  &&
+           ((x == "Fred"  &&  v == 999)  ||  (x == "Ethel"  &&  v == 456)));
+    
+    // test insertOrUpdate function
+    m3.insertOrUpdate("Fred", 555);
+    assert(m3.get(0, x, v)  &&
+           ((x == "Fred"  &&  v == 555)  ||  (x == "Ethel"  &&  v == 456)));
+    m3.insertOrUpdate("Mariam", 333);
+    assert(m3.get(0, x, v)  &&
+           ((x == "Mariam"  &&  v == 333)  ||  (x == "Ethel"  &&  v == 456)));
     
     // test copy constructor
     Map m4 = m3;

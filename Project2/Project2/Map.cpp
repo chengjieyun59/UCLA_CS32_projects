@@ -84,8 +84,7 @@ bool Map::insert(const KeyType& key, const ValueType& value){
         m_size = m_size + 1;
         return true;
     }
-    else
-        return false;
+    return false;
 }
 // If key is not equal to any key currently in the map, and if the
 // key/value pair can be added to the map, then do so and return true.
