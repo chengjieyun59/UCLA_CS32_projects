@@ -112,6 +112,29 @@ void test()
     // test assignment operator
     m2 = m3;
     //assert(m2.get(1, x2, v)  && ((x2 == "Fred"  &&  v == 123)  ||  (x2 == "Ethel"  &&  v == 456))  && x != x2);
+    
+    // test combine function
+    Map m100;
+    assert(m100.insert("Fred", 123) && m100.insert("Ethel", 456) && m100.insert("Lucy", 789));
+    Map m200;
+    assert(m200.insert("Lucy", 789) && m200.insert("Ricky", 321));
+    Map result300;
+    assert(combine(m100, m200, result300) == true);
+    KeyType k300;
+    ValueType v300;
+    assert(result300.contains("Fred") && result300.get("Fred", v300) == true && v300 == 123);
+    assert(result300.contains("Ricky") && result300.get("Ricky", v300) == true && v300 == 321);
+    assert(result300.contains("Lucy") && result300.get("Lucy", v300) == true && v300 == 789);
+    assert(result300.contains("Ethel") && result300.get("Ethel", v300) == true && v300 == 456);
+
+    assert(m200.update("Lucy", 654));
+    assert(combine(m100, m200, result300) == false);
+    assert(result300.contains("Fred") && result300.get("Fred", v300) == true && v300 == 123);
+    assert(result300.contains("Ricky") && result300.get("Ricky", v300) == true && v300 == 321);
+    assert(result300.contains("Lucy") == false);
+    assert(result300.contains("Ethel") && result300.get("Ethel", v300) == true && v300 == 456);
+
+    // test subtract function
 }
 
 int main()

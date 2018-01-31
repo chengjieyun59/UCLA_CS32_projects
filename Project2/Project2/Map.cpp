@@ -214,36 +214,45 @@ void Map::swap(Map& other){
 // Non-member functions
 // Notice that combine & subtract are non-member functions: They are not members of Map or any other class, so they must not access private members of Map. Be sure these functions behave correctly in the face of aliasing: What if m1 and result refer to the same Map, for example?
 bool combine(const Map& m1, const Map& m2, Map& result){
+    // only the 3-parameter get function can loop through each index without needing head, prev, or next
+    Map temp_result;
+    KeyType key;
+    ValueType value1;
+    ValueType value2;
+    bool return_bool;
+    return_bool = true; // 4.2
     
+    for (int i = 0; i < m1.size(); i++)
+    {
+        m1.get(i, key, value1);
+        if (m2.get(key, value2) == true && value1 == value2)
+            temp_result.insert(key, value1); // 2
+        else if (m2.contains(key) == false)
+            temp_result.insert(key, value1); // 1.1
+        else if (m2.get(key, value2) == true && value1 != value2)
+            return_bool = false; // return later // 4.1
+    }
     
+    for (int i = 0; i < m2.size(); i++)
+    {
+        m2.get(i, key, value2);
+        if (m1.get(key, value1) == true)
+            break; // already added into temp_result
+        else if (m1.contains(key) == false)
+            temp_result.insert(key, value2); // 1.2.
+    }
     
-    
-    
-    return true;
-}// TODO
+    result.swap(temp_result);
+    return return_bool;
+}
 /*
 When this function returns, result must consist of pairs determined by these rules:
-1. If a key appears in exactly one of m1 and m2, then result must contain a pair consisting of that key and its corresponding value.
+1.1. If a key appears only in m1, then result must contain a pair consisting of that key and its corresponding value.
+1.2. If a key appears only in m2, then result must contain a pair consisting of that key and its corresponding value.
 2. If a key appears in both m1 and m2, with the same corresponding value in both, then result must contain exactly one pair with that key and value.
 3. When this function returns, result must contain no pairs other than those required by these rules. (You must not assume result is empty when it is passed in to this function; it might not be.)
-4. If there exists a key that appears in both m1 and m2, but with different corresponding values, then this function returns false; if there is no key like this, the function returns true. Even if the function returns false, result must be constituted as defined by the above rules.
- 
- For example, suppose a Map maps s-t-r-i-n-g-s to d-o-u-b-l-e-s. If m1 consists of the three pairs (in any order)
- 
- "Fred"  123      "Ethel"  456      "Lucy"  789
- and m2 consists of (in any order)
- 
- "Lucy"  789      "Ricky"  321
- then no matter what value it had before, result must end up as a map consisting of (in any order)
- 
- "Fred"  123      "Ricky"  321      "Lucy"  789     "Ethel"  456
- and combine must return true. If instead, m1 were as before, and m2 consisted of
- 
- "Lucy"  654      "Ricky"  321
- then no matter what value it had before, result must end up as a map consisting of (in any order)
- 
- "Fred"  123      "Ricky"  321      "Ethel"  456
- and combine must return false.
+4.1. If there exists a key that appears in both m1 and m2, but with different corresponding values, then this function returns false;
+4.2. if there is no key like this, the function returns true. Even if the function returns false, result must be constituted as defined by the above rules.
 */
 
 void subtract(const Map& m1, const Map& m2, Map& result){
@@ -253,7 +262,7 @@ void subtract(const Map& m1, const Map& m2, Map& result){
     
     
     return;
-}// TODO
+} // TODO
 /*
  When this function returns, result must contain one copy of all the pairs in m1 whose keys don't appear in m2; it must not contain any other pairs. (You must not assume result is empty when it is passed in to this function; it may not be.)
  
