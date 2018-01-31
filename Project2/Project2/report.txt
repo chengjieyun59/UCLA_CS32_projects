@@ -111,16 +111,33 @@ save the inputted parameter head to the current head
 save the temp to the inputted parameter head
 
 12. combine
-
-
+declare temp_result, key, value1, value2, and return_bool
+loop through map 1
+    get the key and value of map 1 at this index
+    if map 2 has the key and the same corresponding value
+        insert the key and value to the temp_result
+    else if map 2 doesn’t have the same key
+        insert the key and value to the temp_result
+    else if the value at map 2 doesn’t correspond to the value of map 1
+        save the return false for later
+loop through map 2
+    get the key and value of map 2 at this index
+    if map 1 doesn’t contain the same key
+    add the key and value to temp_result
+swap the result with temp_result
+return true or false
 
 13. subtract
-
-
+loop through map 1
+    get the key and value of map 1 at this index
+    if map 2 doesn’t contain the key
+        insert the key and value in temp result
+swap the result with temp_result
 
 ////////////////////////
 // PART C: Test cases //
 ////////////////////////
+
     // test empty function
     Map a;
     assert(a.empty());
