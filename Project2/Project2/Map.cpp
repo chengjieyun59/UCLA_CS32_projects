@@ -214,7 +214,6 @@ void Map::swap(Map& other){
 // Non-member functions
 // Notice that combine & subtract are non-member functions: They are not members of Map or any other class, so they must not access private members of Map. Be sure these functions behave correctly in the face of aliasing: What if m1 and result refer to the same Map, for example?
 bool combine(const Map& m1, const Map& m2, Map& result){
-    // only the 3-parameter get function can loop through each index without needing head, prev, or next
     Map temp_result;
     KeyType key;
     ValueType value1;
@@ -222,6 +221,7 @@ bool combine(const Map& m1, const Map& m2, Map& result){
     bool return_bool;
     return_bool = true; // 4.2
     
+    // only the 3-parameter get function can loop through each index without needing head, prev, or next
     for (int i = 0; i < m1.size(); i++)
     {
         m1.get(i, key, value1);
@@ -256,23 +256,18 @@ When this function returns, result must consist of pairs determined by these rul
 */
 
 void subtract(const Map& m1, const Map& m2, Map& result){
+    Map temp_result;
+    KeyType key;
+    ValueType value;
     
-    
-    
-    
-    
-    return;
-} // TODO
+    for (int i = 0; i < m1.size(); i++)
+    {
+        m1.get(i, key, value);
+        if (m2.contains(key) == false)
+            temp_result.insert(key, value);
+    }
+    result.swap(temp_result);
+}
 /*
  When this function returns, result must contain one copy of all the pairs in m1 whose keys don't appear in m2; it must not contain any other pairs. (You must not assume result is empty when it is passed in to this function; it may not be.)
- 
- For example, if m1 consists of the three pairs (in any order)
- 
- "Fred"  123      "Ethel"  456      "Lucy"  789
- and m2 consists of (in any order)
- 
- "Lucy"  789      "Ricky"  321      "Ethel"  654
- then no matter what value it had before, result must end up as a map consisting of
- 
- "Fred"  123
 */

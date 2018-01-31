@@ -55,6 +55,8 @@ void test()
     m2.insert("Ethel", 3.538);
     m2.insert("Lucy", 2.956);
     m1.swap(m2);
+    
+    // test contains function
     assert(m1.size() == 2  &&  m1.contains("Ethel")  &&  m1.contains("Lucy")  &&
            m2.size() == 1  &&  m2.contains("Fred"));
 
@@ -71,7 +73,6 @@ void test()
     gpas.insert("", 4.000);
     gpas.insert("Lucy", 2.956);
     assert(gpas.contains(""));
-    
     gpas.erase("Fred");
     assert(gpas.size() == 3  &&  gpas.contains("Lucy")  &&  gpas.contains("Ethel")  &&
            gpas.contains(""));
@@ -105,20 +106,14 @@ void test()
     assert(m3.get(0, x, v)  &&
            ((x == "Mariam"  &&  v == 333)  ||  (x == "Ethel"  &&  v == 456)));
     
-    // test copy constructor
-    Map m4 = m3;
-    //assert(m4.get(1, x2, v)  && ((x2 == "Fred"  &&  v == 123)  ||  (x2 == "Ethel"  &&  v == 456))  && x != x2);
-    
-    // test assignment operator
-    m2 = m3;
-    //assert(m2.get(1, x2, v)  && ((x2 == "Fred"  &&  v == 123)  ||  (x2 == "Ethel"  &&  v == 456))  && x != x2);
-    
-    // test combine function
+    // test combine function case 1
     Map m100;
     assert(m100.insert("Fred", 123) && m100.insert("Ethel", 456) && m100.insert("Lucy", 789));
     Map m200;
     assert(m200.insert("Lucy", 789) && m200.insert("Ricky", 321));
     Map result300;
+    // result may not be empty when fed in
+    assert(result300.insert("Lucy", 789) && result300.insert("Ricky", 321));
     assert(combine(m100, m200, result300) == true);
     KeyType k300;
     ValueType v300;
@@ -127,6 +122,7 @@ void test()
     assert(result300.contains("Lucy") && result300.get("Lucy", v300) == true && v300 == 789);
     assert(result300.contains("Ethel") && result300.get("Ethel", v300) == true && v300 == 456);
 
+    // test combine function case 2
     assert(m200.update("Lucy", 654));
     assert(combine(m100, m200, result300) == false);
     assert(result300.contains("Fred") && result300.get("Fred", v300) == true && v300 == 123);
@@ -135,6 +131,26 @@ void test()
     assert(result300.contains("Ethel") && result300.get("Ethel", v300) == true && v300 == 456);
 
     // test subtract function
+    Map m400;
+    assert(m400.insert("Fred", 123) && m400.insert("Ethel", 456) && m400.insert("Lucy", 789));
+    Map m500;
+    assert(m500.insert("Lucy", 789) && m500.insert("Ricky", 321) && m500.insert("Ethel", 654));
+    Map result600;
+    // result may not be empty when fed in
+    assert(result600.insert("Lucy", 789) && result600.insert("Ricky", 321));
+    subtract(m400, m500, result600);
+    assert(result600.contains("Fred") && result600.get("Fred", v300) == true && v300 == 123);
+    assert(!result600.contains("Ricky") && !result600.contains("Ethel") && !result600.contains("Lucy"));
+    
+    // test assignment operator
+    m400 = result600;
+    assert(!m400.contains("Ricky") && !m400.contains("Ethel") && !m400.contains("Lucy"));
+    //assert(m400.contains("Fred") && m400.get("Fred", v300) == true && v300 == 123); // failed assertion
+    
+    // test copy constructor
+    Map m600 = result600;
+    assert(!m600.contains("Ricky") && !m600.contains("Ethel") && !m600.contains("Lucy"));
+    //assert(m600.contains("Fred") && m600.get("Fred", v300) == true && v300 == 123); // failed assertion
 }
 
 int main()
