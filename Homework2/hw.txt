@@ -4,13 +4,106 @@ Homework 2 report by Jie-Yun Cheng
 // Problem 2 //
 ///////////////
 
+ string maze[10] = {
+                "XXXXXXXXXX",
+                "X...X..X.X",
+                "X..XX....X",
+                "X.X.XXXX.X",
+                "XXX......X",
+                "X...X.XX.X",
+                "X.X.X..X.X",
+                "X.XXXX.X.X",
+                "X..X...X.X",
+                "XXXXXXXXXX"
+            };
+
+The starting point is (4,3) and the ending point is (1,8). The upper left corner is (0,0) and the lower right corner is (9,9). For our code, the order of direction for checking if we can move to any nearby cell is: east, south, west, and then north. 
+
+The order of execution is:
+Push (4,3) on stack.                          // stack: (4,3)
+Pop (4,3) off.                                // stack: empty
+Push (4,4) then (5,3) then (3,3) on stack.    // stack: (4,4), (5,3), (3,3)
+Pop (3,3) off. Nothing to push on stack.      // stack: (4,4), (5,3)
+Pop (5,3) off.                                // stack: (4,4)
+Push (6,3) then (5,2) on stack.               // stack: (4,4), (6,3), (5,2)
+Pop (5,2) off.                                // stack: (4,4), (6,3)
+Push (5,1) on stack.                          // stack: (4,4), (6,3), (5,1)
+Pop (5,1) off.                                // stack: (4,4), (6,3)
+Push (6,1) on stack.                          // stack: (4,4), (6,3), (6,1)
+Pop (6,1) off.                                // stack: (4,4), (6,3)
+Push (7,1) on stack.                          // stack: (4,4), (6,3), (7,1)
+Pop (7,1) off.                                // stack: (4,4), (6,3) 
+Push (8,1) on stack.                          // stack: (4,4), (6,3), (8,1)
+Pop (8,1) off.                                // stack: (4,4), (6,3)
+Push (8,2) on stack.                          // stack: (4,4), (6,3), (8,2)
+Pop (8,2) off. Nothing to push on stack.      // stack: (4,4), (6,3)
+Pop (6,3) off. Nothing to push on stack.      // stack: (4,4)
+Pop (4,4) off.                                // stack: empty
+Push (4,5) on stack.                          // stack: (4,5)
+Pop (4,5) off.                                // stack: empty
+Push (4,6) and (5,5) on stack.                // stack: (4,6), (5,5)
+Pop (5,5) off.                                // stack: (4,6)
+. . . and so on.
 
 
+In order, the first 12 (r,c) coordinates popped off the stack are:
+(4,3)
+(3,3)
+(5,3)
+(5,2)
+(5,1)
+(6,1)
+(7,1)
+(8,1)
+(8,2)
+(6,3)
+(4,4)
+(4,5)
 
 ///////////////
 // Problem 4 //
 ///////////////
 
+The order of execution is:
+Enqueue (4,3) at back of queue.               // queue: (4,3)
+Pop (4,3) off from the front.                 // queue: empty
+Push (4,4) then (5,3) then (3,3).             // queue: (4,4), (5,3), (3,3)
+Pop (4,4) off.                                // queue: (5,3), (3,3)
+Push (4,5).                                   // queue: (5,3), (3,3), (4,5)
+Pop (5,3) off from the front.                 // queue: (3,3), (4,5)
+Push (6,3) then (5,2).                        // queue: (3,3), (4,5), (6,3), (5,2)
+Pop (3,3) off. Nothing to push on.            // queue: (4,5), (6,3), (5,2)
+Pop (4,5) off.                                // queue: (6,3), (5,2)
+Push (4,6) and (5,5).                         // queue: (6,3), (5,2), (4,6), (5,5)
+Pop (6,3) off. Nothing to push on.            // queue: (5,2), (4,6), (5,5)
+Pop (5,2) off.                                // queue: (4,6), (5,5)
+Push (5,1) on.                                // queue: (4,6), (5,5), (5,1)
+Pop (4,6) off.                                // queue: (5,5), (5,1)
+Push (4,7) on.                                // queue: (5,5), (5,1), (4,7)
+Pop (5,5) off.                                // queue: (5,1), (4,7)
+Push (6,5) on.                                // queue: (5,1), (4,7), (6,5)
+Pop (5,1) off.                                // queue: (4,7), (6,5)
+Push (6,1) on.                                // queue: (4,7), (6,5), (6,1)
+Pop (4,7) off.                                // queue: (6,5), (6,1)
+Push (4,8) on.                                // queue: (6,5), (6,1), (4,8)
+Pop (6,5) off.                                // queue: (6,1), (4,8)
+. . . and so on.
 
+In order, the first 12 (r,c) coordinates popped from the queue are:
+(4,3)
+(4,4)
+(5,3)
+(3,3)
+(4,5)
+(6,3)
+(5,2)
+(4,6)
+(5,5)
+(5,1)
+(4,7)
+(6,5)
 
+The code for problem 1 uses a stack implementation, which is a depth first search, meaning that we will exhaust a whole path before going through another path. A stack is last in first out, LIFO, algorithm.
+
+The code for problem 2 uses a queue implementation, which is a breadth first search, meaning that we search like a ripple moving outward, being able to find the fastest route to an ending point. A queue is first in first out, FIFO, algorithm.
 

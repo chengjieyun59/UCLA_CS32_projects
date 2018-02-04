@@ -24,6 +24,41 @@ private:
 bool pathExists(string maze[], int nRows, int nCols, int sr, int sc, int er, int ec)
 {
     
+    /*
+     Nachenberg's slide:
+     1.   Insert starting point onto the queue.
+     2.  Mark the starting point as “discovered.”
+     3.  If the queue is empty, there is    NO SOLUTION and we’re done!
+     4.  Remove the top point from the queue.
+     5.  If we’re at the endpoint, DONE!  Otherwise…
+     6.  If slot to the WEST is open & is undiscovered
+            Mark (curx-1,cury) as “discovered”
+            INSERT (curx-1,cury) on queue.
+     7.  If slot to the EAST is open & is undiscovered
+            Mark (curx+1,cury) as “discovered”
+            INSERT (curx+1,cury) on queue.
+     8.  If slot to the NORTH is open & is undiscovered
+            Mark (curx,cury-1) as “discovered”
+            INSERT (curx,cury-1) on queue.
+     9.  If slot to the SOUTH is open & is undiscovered
+            Mark (curx,cury+1) as “discovered”
+            INSERT (curx,cury+1) on queue.
+     10. GOTO step #3
+     */
+    
+    /*
+     queue<Coord> coordQueue;    // declare a queue of Coords
+     
+     Coord a(5,6);
+     coordQueue.push(a);            // enqueue item at back of queue
+     coordQueue.push(Coord(3,4));   // enqueue item at back of queue
+     
+     Coord b = coordQueue.front();  // look at front item
+     coordQueue.pop();              // remove the front item from queue
+     if (coordQueue.empty())        // Is the queue empty?
+     cout << "empty!" << endl;
+     cout << coordQueue.size() << endl;  // num of elements
+     */
     return true;
 }
 // Return true if there is a path from (sr,sc) to (er,ec) through the maze; return false otherwise
@@ -36,15 +71,21 @@ using namespace std;
 
 int main()
 {
-    queue<Coord> coordQueue;    // declare a queue of Coords
+    string maze[10] = {
+        "XXXXXXXXXX",
+        "X...X..X.X",
+        "X..XX....X",
+        "X.X.XXXX.X",
+        "XXX......X",
+        "X...X.XX.X",
+        "X.X.X..X.X",
+        "X.XXXX.X.X",
+        "X..X...X.X",
+        "XXXXXXXXXX"
+    };
     
-    Coord a(5,6);
-    coordQueue.push(a);            // enqueue item at back of queue
-    coordQueue.push(Coord(3,4));   // enqueue item at back of queue
-
-    Coord b = coordQueue.front();  // look at front item
-    coordQueue.pop();              // remove the front item from queue
-    if (coordQueue.empty())        // Is the queue empty?
-        cout << "empty!" << endl;
-    cout << coordQueue.size() << endl;  // num of elements
+    if (pathExists(maze, 10,10, 4,3, 1,8))
+        cout << "Solvable!" << endl;
+    else
+        cout << "Out of luck!" << endl;
 }

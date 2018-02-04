@@ -37,6 +37,28 @@ bool pathExists(string maze[], int nRows, int nCols, int sr, int sc, int er, int
      cout << coordStack.size() << endl;  // num of elements
      */
     
+    /*
+     Professor Nachenberg's slide:
+     1.   PUSH starting point onto the stack.
+     2.  Mark the starting point as “discovered.”
+     3.  If the stack is empty, there is     NO SOLUTION and we’re done!
+     4.  POP the top point off of the stack.
+     5.  If we’re at the endpoint, DONE!  Otherwise…
+     6.  If slot to the WEST is open & is undiscovered
+            Mark (curx-1,cury) as “discovered”
+            PUSH (curx-1,cury) on stack.
+     7.  If slot to the EAST is open & is undiscovered
+            Mark (curx+1,cury) as “discovered”
+            PUSH (curx+1,cury) on stack.
+     8.  If slot to the NORTH is open & is undiscovered
+            Mark (curx,cury-1) as “discovered”
+            PUSH (curx,cury-1) on stack.
+     9.  If slot to the SOUTH is open & is undiscovered
+            Mark (curx,cury+1) as “discovered”
+            PUSH (curx,cury+1) on stack.
+     10. GOTO step #3
+     */
+    
     /* pseudocode:
      Push the starting coordinate (sr,sc) onto the coordinate stack and
      update maze[sr][sc] to indicate that the algorithm has encountered
