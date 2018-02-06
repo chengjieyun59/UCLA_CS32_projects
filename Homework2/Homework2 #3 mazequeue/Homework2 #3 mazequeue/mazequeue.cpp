@@ -34,6 +34,9 @@ bool pathExists(string maze[], int nRows, int nCols, int sr, int sc, int er, int
         Coord curr = coordQueue.front();
         int r = curr.r();           // get the current front item's row and column
         int c = curr.c();
+        
+        // cout << "(" << r << "," << c << "), "; // The coordinates being popped in order are: (4,3), (4,4), (5,3), (3,3), (4,5), (6,3), (5,2), (4,6), (5,5), (5,1), (4,7), (6,5), (6,1), (4,8), (6,6), (7,1), (5,8), (3,8), (7,6), (8,1), (6,8), (2,8), (8,6), (8,2), (7,8), (2,7), (1,8)
+        
         coordQueue.pop();           // remove the front item from stack
         
         if (r == er && c == ec)     // If the current (r,c) coordinate is equal to the ending coordinate,

@@ -34,6 +34,9 @@ bool pathExists(string maze[], int nRows, int nCols, int sr, int sc, int er, int
         Coord curr = coordStack.top();
         int r = curr.r();           // get the current top item's row and column
         int c = curr.c();
+        
+        // cout << "(" << r << "," << c << "), "; // The coordinates being popped in order are: (4,3), (3,3), (5,3), (5,2), (5,1), (6,1), (7,1), (8,1), (8,2), (6,3), (4,4), (4,5), (5,5), (6,5), (6,6), (7,6), (8,6), (8,5), (8,4), (4,6), (4,7), (4,8), (3,8), (2,8), (1,8)
+
         coordStack.pop();           // remove the top item from stack
         
         if (r == er && c == ec)     // If the current (r,c) coordinate is equal to the ending coordinate,

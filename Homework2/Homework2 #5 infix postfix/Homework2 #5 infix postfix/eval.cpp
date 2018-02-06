@@ -14,8 +14,31 @@
 #include <cassert>
 using namespace std;
 
+// declarations of additional functions
+bool valid(string infix);
+string conversion(string infix);
+
 int evaluate(string infix, const Map& values, string& postfix, int& result){
     
+    
+    
+    /*
+     pseudocode for the evaluation of the postfix expression:
+     
+     Initialize the operand stack to empty
+     For each character ch in the postfix string
+     if ch is an operand
+     push the value that ch represents onto the operand stack
+     else // ch is a binary operator
+     set operand2 to the top of the operand stack
+     pop the stack
+     set operand1 to the top of the operand stack
+     pop the stack
+     apply the operation that ch represents to operand1 and
+     operand2, and push the result onto the stack
+     When the loop is finished, the operand stack will contain one item,
+     the result of evaluating the expression
+     */
     return 0;
 }
 // Evaluates an integer arithmetic expression
@@ -33,6 +56,73 @@ int evaluate(string infix, const Map& values, string& postfix, int& result){
 //   that corresponds to it) attempts to divide by zero, then result
 //   is unchanged and the function returns 3; otherwise, result is
 //   set to the value of the expression and the function returns 0.
+
+// implementations of additional functions
+bool valid(string infix){
+    
+    return true;
+}
+
+string conversion(string infix) {
+    string postfix = ""; // Initialize postfix to empty
+    stack<char> operatorStack; // Initialize the operator stack to empty
+    
+    for (int i = 0; i < infix.size(); i++) // For each character ch in the infix string
+    {
+        char ch = infix[i];
+        switch (ch) {
+            // for operands
+            case operand: // TODO
+                postfix += ch; // append to end of postfix
+                break;
+                
+            // for parenthesis
+            case '(':
+                operatorStack.push(ch);
+                break;
+            case ')':
+                while (operatorStack.top() != '(') // until meets a matching '('
+                {
+                    postfix += operatorStack.top(); //  append char onto the postfix string
+                    operatorStack.pop(); // pop operators off the stack
+                }
+                operatorStack.pop(); // pop the matching '('
+                break;
+                
+            // for operators: Pop all operators with greater or equal precedence off the stack and append them on the postfix string. Stop when you reach an operator with lower precedence or a (. Push the new operator on the stack.
+            case '*':
+            case '/':
+                while (!operatorStack.empty() && operatorStack.top() != '(' && operatorStack.top() != '+' && operatorStack.top() != '-')
+                {
+                    postfix += operatorStack.top();
+                    operatorStack.pop();
+                }
+                operatorStack.push(ch);
+                break;
+                
+            //always of less than or equal precedence
+            case '+':
+            case '-':
+                while (!operatorStack.empty() && operatorStack.top() != '(')
+                {
+                    postfix += operatorStack.top();
+                    operatorStack.pop();
+                }
+                operatorStack.push(ch);
+                break;
+                
+            default: // this covers ' '
+                break;
+        }
+    }
+    
+    while (!operatorStack.empty())
+    {
+        postfix += operatorStack.top();
+        operatorStack.pop();
+    } // When all infix tokens are gone, pop each operator and append it to the postfix string
+    return postfix;
+} // converting from infix to postfix
 
 /*
 Carrano's pseudocode for the infix to postfix conversion step:
@@ -66,27 +156,10 @@ While the stack is not empty
     pop the stack
 */
 
-/*
-pseudocode for the evaluation of the postfix expression:
-
-Initialize the operand stack to empty
-For each character ch in the postfix string
-    if ch is an operand
-        push the value that ch represents onto the operand stack
-    else // ch is a binary operator
-        set operand2 to the top of the operand stack
-        pop the stack
-        set operand1 to the top of the operand stack
-        pop the stack
-        apply the operation that ch represents to operand1 and
-            operand2, and push the result onto the stack
-When the loop is finished, the operand stack will contain one item,
-    the result of evaluating the expression
-*/
-
 
 int main()
 {
+    /*
     char vars[] = { 'a', 'e', 'i', 'o', 'u', 'y', '#' };
     int  vals[] = {  3,  -9,   6,   2,   4,   1  };
     Map m;
@@ -119,4 +192,5 @@ int main()
     assert(evaluate("((a))", m, pf, answer) == 0  &&
            pf == "a"  &&  answer == 3);
     cout << "Passed all tests" << endl;
+     */
 }
