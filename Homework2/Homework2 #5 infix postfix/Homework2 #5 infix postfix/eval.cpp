@@ -16,14 +16,14 @@ using namespace std;
 
 // declarations of additional functions
 int howValid(string infix, const Map& m);
-string conversion(string infix, const Map& m);
+string conversion(string infix);
 
 int evaluate(string infix, const Map& values, string& postfix, int& result)
 {
     int status = howValid(infix, values);
     
     if (status == 0 || status == 2)
-        postfix = conversion(infix, values);
+        postfix = conversion(infix);
     if (status == 1 || status == 2)
         return status;
     
@@ -142,7 +142,7 @@ int howValid(string infix, const Map& m)
 // return 3: infix syntax valid, all lower case operand letters appear in the values map, but attempts to divide by zero. Done in evaluate function
 // return 0 otherwise
 
-string conversion(string infix, const Map& m)
+string conversion(string infix)
 {
     string postfix = ""; // Initialize postfix to empty
     stack<char> operatorStack; // Initialize the operator stack to empty

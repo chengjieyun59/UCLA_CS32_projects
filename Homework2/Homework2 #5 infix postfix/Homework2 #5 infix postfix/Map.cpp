@@ -43,8 +43,10 @@ void Map::swap(Map& other) {
 
 int Map::find(const KeyType& key) const {
     // Do a linear search through the array.
-    for (int pos = 0; pos < m_size; pos++) if (m_data[pos].m_key == key)
-        return pos; return -1;
+    for (int pos = 0; pos < m_size; pos++)
+        if (m_data[pos].m_key == key)
+            return pos;
+    return -1;
 }
 
 bool Map::doInsertOrUpdate(const KeyType& key, const ValueType& value, bool mayInsert, bool mayUpdate)
