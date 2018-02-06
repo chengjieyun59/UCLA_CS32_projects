@@ -15,6 +15,7 @@
 using namespace std;
 
 // declarations of additional functions
+bool isValid(string infix, const Map& m);
 string conversion(string infix, const Map& m, bool& isValid);
 
 int evaluate(string infix, const Map& values, string& postfix, int& result){
@@ -57,15 +58,36 @@ int evaluate(string infix, const Map& values, string& postfix, int& result){
 //   set to the value of the expression and the function returns 0.
 
 // implementations of additional functions
-string conversion(string infix, const Map& m, bool& isValid) {
-    string postfix = ""; // Initialize postfix to empty
-    stack<char> operatorStack; // Initialize the operator stack to empty
+bool isValid(string infix, const Map& m){
     stack<char> parenBalanced; // to check if parentheses are balanced
-    isValid = true;
+    char ch;
     
     for (int i = 0; i < infix.size(); i++) // For each character ch in the infix string
     {
-        char ch = infix[i];
+        ch = infix[i];
+        
+        if (ch == '(')
+            parenBalanced.push(ch); // push to stack if it's an open parenthesis
+        else if (ch == ')')
+            parenBalanced.pop(); // pop from stack if it's a closed parenthesis
+        else if (ch != '*' && ch != '/' && ch != '+' && ch != '-' && ch != ' ')
+            if (!m.contains(ch) || !islower(ch))
+                return false;
+    }
+    if (!parenBalanced.empty()) // if (number of open parenthesis) != (number of closed parenthesis)
+        return false;
+    return true;
+}
+
+string conversion(string infix, const Map& m, bool& isValid) {
+    string postfix = ""; // Initialize postfix to empty
+    stack<char> operatorStack; // Initialize the operator stack to empty
+    isValid = true;
+    char ch;
+    
+    for (int i = 0; i < infix.size(); i++) // For each character ch in the infix string
+    {
+        ch = infix[i];
         switch (ch) {
             case ' ':
                 continue;
@@ -111,24 +133,8 @@ string conversion(string infix, const Map& m, bool& isValid) {
                 {
                     postfix += ch; // append to end of postfix
                 }
-                else if (!m.contains(ch) || !islower(ch))
-                {
-                    isValid = false;
-                    return infix;
-                }
                 break;
         }
-        
-        if (infix[i] == '(')
-            parenBalanced.push(infix[i]);
-        if (infix[i] == ')')
-            parenBalanced.pop();
-    }
-    
-    if (!parenBalanced.empty())
-    {
-        isValid = false;
-        return infix;
     }
     
     while (!operatorStack.empty())
@@ -147,25 +153,13 @@ int main()
     for (int k = 0; vars[k] != '#'; k++)
         m.insert(vars[k], vals[k]);
     string pf;
-    int answer;
+    // int answer;
     
-    bool is;
-    conversion("(a+(i-o)", m, is);
-    assert(is == false); // unbalanced parenthesis is not valid
-    
-    conversion("A+(i-o)", m, is);
-    assert(is == false); // uppercase letter is not valid
-    
-    conversion("5/o", m, is);
-    assert(is == false); // number is not valid
-    
-    conversion("(a+e)*o/y", m, is);
-    assert(is == true); // valid expression
+    assert(isValid("(a+(i-o)", m) == false);
+    assert(isValid("A+(i-o)", m) == false);
+    assert(isValid("(a+e)*o/y", m) == true); // valid expression
+    assert(isValid("(e-o/(y + y)) * i", m) == true); // valid expression
 
-    conversion("(e-o/(y + y)) * i", m, is);
-    assert(is == true); // valid expression
-
-    
     /*
     assert(evaluate("a+ e", m, pf, answer) == 0  &&
            pf == "ae+"  &&  answer == -6);
