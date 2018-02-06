@@ -7,6 +7,9 @@
 //
 
 #include <string>
+#include <iostream>
+#include <stack>
+#include <string>
 using namespace std;
 
 class Coord
@@ -23,78 +26,51 @@ private:
 
 bool pathExists(string maze[], int nRows, int nCols, int sr, int sc, int er, int ec)
 {
-    /*
-     stack<Coord> coordStack;     // declare a stack of Coords
-     
-     Coord a(5,6);
-     coordStack.push(a);             // push the coordinate (5,6)
-     coordStack.push(Coord(3,4));    // push the coordinate (3,4)
-     
-     Coord b = coordStack.top();     // look at top item in the stack
-     coordStack.pop();               // remove the top item from stack
-     if (coordStack.empty())         // Is the stack empty?
-     cout << "empty!" << endl;
-     cout << coordStack.size() << endl;  // num of elements
-     */
+    stack<Coord> coordStack;        // declare a stack of Coords
+    coordStack.push(Coord(sr,sc));  // Push the starting coordinate (sr,sc) onto the coordinate stack
+    maze[sr][sc] = '#';             // update maze[sr][sc] to indicate that the algorithm has encountered it
     
-    /*
-     Professor Nachenberg's slide:
-     1.   PUSH starting point onto the stack.
-     2.  Mark the starting point as “discovered.”
-     3.  If the stack is empty, there is     NO SOLUTION and we’re done!
-     4.  POP the top point off of the stack.
-     5.  If we’re at the endpoint, DONE!  Otherwise…
-     6.  If slot to the WEST is open & is undiscovered
-            Mark (curx-1,cury) as “discovered”
-            PUSH (curx-1,cury) on stack.
-     7.  If slot to the EAST is open & is undiscovered
-            Mark (curx+1,cury) as “discovered”
-            PUSH (curx+1,cury) on stack.
-     8.  If slot to the NORTH is open & is undiscovered
-            Mark (curx,cury-1) as “discovered”
-            PUSH (curx,cury-1) on stack.
-     9.  If slot to the SOUTH is open & is undiscovered
-            Mark (curx,cury+1) as “discovered”
-            PUSH (curx,cury+1) on stack.
-     10. GOTO step #3
-     */
-    
-    /* pseudocode:
-     Push the starting coordinate (sr,sc) onto the coordinate stack and
-     update maze[sr][sc] to indicate that the algorithm has encountered
-     it (i.e., set maze[sr][sc] to have a value other than '.').
-     While the stack is not empty,
-     {   Pop the top coordinate off the stack. This gives you the current
-     (r,c) location that your algorithm is exploring.
-     If the current (r,c) coordinate is equal to the ending coordinate,
-     then we've solved the maze so return true!
-     Check each place you can move from the current cell as follows:
-     If you can move EAST and haven't encountered that cell yet,
-     then push the coordinate (r,c+1) onto the stack and update
-     maze[r][c+1] to indicate the algorithm has encountered it.
-     If you can move SOUTH and haven't encountered that cell yet,
-     then push the coordinate (r+1,c) onto the stack and update
-     maze[r+1][c] to indicate the algorithm has encountered it.
-     If you can move WEST and haven't encountered that cell yet,
-     then push the coordinate (r,c-1) onto the stack and update
-     maze[r][c-1] to indicate the algorithm has encountered it.
-     If you can move NORTH and haven't encountered that cell yet,
-     then push the coordinate (r-1,c) onto the stack and update
-     maze[r-1][c] to indicate the algorithm has encountered it.
-     }
-     There was no solution, so return false
-     */
-    return true;
+    while (!coordStack.empty())     // while the stack is not empty
+    {
+        Coord curr = coordStack.top();
+        int r = curr.r();           // get the current top item's row and column
+        int c = curr.c();
+        coordStack.pop();           // remove the top item from stack
+        
+        if (r == er && c == ec)     // If the current (r,c) coordinate is equal to the ending coordinate,
+            return true;            // then we've solved the maze so return true!
+        
+        // If you can move EAST/SOUTH/WEST/NORTH and haven't encountered that cell yet, then push the coordinate (r+/-1,c+/-1) onto the stack, and update maze[r+/-1][c+/-1] to indicate the algorithm has encountered it.
+        if (maze[r][c+1] != '#' && maze[r][c+1] != 'X' && maze[r][c+1] == '.')
+        {
+            coordStack.push(Coord(r, c+1));
+            maze[r][c+1] = '#';
+        } // CAN MOVE EAST
+        
+        if (maze[r+1][c] != '#' && maze[r+1][c] != 'X' && maze[r+1][c] == '.')
+        {
+            coordStack.push(Coord(r+1, c));
+            maze[r+1][c] = '#';
+        } // CAN MOVE SOUTH
+        
+        if (maze[r][c-1] != '#' && maze[r][c-1] != 'X' && maze[r][c-1] == '.')
+        {
+            coordStack.push(Coord(r, c-1));
+            maze[r][c-1] = '#';
+        } // CAN MOVE WEST
+        
+        if (maze[r-1][c] != '#' && maze[r-1][c] != 'X' && maze[r-1][c] == '.')
+        {
+            coordStack.push(Coord(r-1, c));
+            maze[r-1][c] = '#';
+        } // CAN MOVE NORTH
+    }
+    return false; // if all path are exhausted and haven't arrived at (er,ec) then maze is not solvable
 }
 // Return true if there is a path from (sr,sc) to (er,ec) through the maze; return false otherwise
 // Your implementation must use a stack data structure, specifically, a stack of Coords. You may either write your own stack class, or use the stack type from the C++ Standard Library.
 
 // TODO: comment out the main function
-#include <iostream>
-#include <stack>
-#include <string>
-using namespace std;
-
 int main()
 {
     string maze[10] = {
