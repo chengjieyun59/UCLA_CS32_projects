@@ -15,8 +15,7 @@
 using namespace std;
 
 // declarations of additional functions
-bool valid(string infix);
-string conversion(string infix);
+string conversion(string infix, const Map& m, bool& isValid);
 
 int evaluate(string infix, const Map& values, string& postfix, int& result){
     
@@ -58,24 +57,19 @@ int evaluate(string infix, const Map& values, string& postfix, int& result){
 //   set to the value of the expression and the function returns 0.
 
 // implementations of additional functions
-bool valid(string infix){
-    
-    return true;
-}
-
-string conversion(string infix) {
+string conversion(string infix, const Map& m, bool& isValid) {
     string postfix = ""; // Initialize postfix to empty
     stack<char> operatorStack; // Initialize the operator stack to empty
+    stack<char> parenBalanced; // to check if parentheses are balanced
+    isValid = true;
     
     for (int i = 0; i < infix.size(); i++) // For each character ch in the infix string
     {
         char ch = infix[i];
         switch (ch) {
-            // for operands
-            case operand: // TODO
-                postfix += ch; // append to end of postfix
-                break;
-                
+            case ' ':
+                continue;
+
             // for parenthesis
             case '(':
                 operatorStack.push(ch);
@@ -111,9 +105,30 @@ string conversion(string infix) {
                 operatorStack.push(ch);
                 break;
                 
-            default: // this covers ' '
+            // for operands
+            default:
+                if (m.contains(ch))
+                {
+                    postfix += ch; // append to end of postfix
+                }
+                else if (!m.contains(ch) || !islower(ch))
+                {
+                    isValid = false;
+                    return infix;
+                }
                 break;
         }
+        
+        if (infix[i] == '(')
+            parenBalanced.push(infix[i]);
+        if (infix[i] == ')')
+            parenBalanced.pop();
+    }
+    
+    if (!parenBalanced.empty())
+    {
+        isValid = false;
+        return infix;
     }
     
     while (!operatorStack.empty())
@@ -124,42 +139,8 @@ string conversion(string infix) {
     return postfix;
 } // converting from infix to postfix
 
-/*
-Carrano's pseudocode for the infix to postfix conversion step:
-
-Initialize postfix to empty
-Initialize the operator stack to empty
-For each character ch in the infix string
-    Switch (ch)
-        case operand:
-            append ch to end of postfix
-            break
-        case '(':
-            push ch onto the operator stack
-            break
-        case ')':
-            // pop stack until matching '('
-        While stack top is not '('
-            append the stack top to postfix
-            pop the stack
-        pop the stack  // remove the '('
-        break
-    case operator:
-        While the stack is not empty and the stack top is not '('
-                and precedence of ch <= precedence of stack top
-            append the stack top to postfix
-            pop the stack
-        push ch onto the stack
-        break
-While the stack is not empty
-    append the stack top to postfix
-    pop the stack
-*/
-
-
 int main()
 {
-    /*
     char vars[] = { 'a', 'e', 'i', 'o', 'u', 'y', '#' };
     int  vals[] = {  3,  -9,   6,   2,   4,   1  };
     Map m;
@@ -167,6 +148,25 @@ int main()
         m.insert(vars[k], vals[k]);
     string pf;
     int answer;
+    
+    bool is;
+    conversion("(a+(i-o)", m, is);
+    assert(is == false); // unbalanced parenthesis is not valid
+    
+    conversion("A+(i-o)", m, is);
+    assert(is == false); // uppercase letter is not valid
+    
+    conversion("5/o", m, is);
+    assert(is == false); // number is not valid
+    
+    conversion("(a+e)*o/y", m, is);
+    assert(is == true); // valid expression
+
+    conversion("(e-o/(y + y)) * i", m, is);
+    assert(is == true); // valid expression
+
+    
+    /*
     assert(evaluate("a+ e", m, pf, answer) == 0  &&
            pf == "ae+"  &&  answer == -6);
     answer = 999;
