@@ -6,7 +6,6 @@
 //  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
 //
 
-#include <string>
 #include <iostream>
 #include <stack>
 #include <string>
@@ -41,25 +40,25 @@ bool pathExists(string maze[], int nRows, int nCols, int sr, int sc, int er, int
             return true;            // then we've solved the maze so return true!
         
         // If you can move EAST/SOUTH/WEST/NORTH and haven't encountered that cell yet, then push the coordinate (r+/-1,c+/-1) onto the stack, and update maze[r+/-1][c+/-1] to indicate the algorithm has encountered it.
-        if (maze[r][c+1] != '#' && maze[r][c+1] != 'X' && maze[r][c+1] == '.')
+        if (maze[r][c+1] != '#' && maze[r][c+1] != 'X' && maze[r][c+1] == '.' && c < nCols)
         {
             coordStack.push(Coord(r, c+1));
             maze[r][c+1] = '#';
         } // CAN MOVE EAST
         
-        if (maze[r+1][c] != '#' && maze[r+1][c] != 'X' && maze[r+1][c] == '.')
+        if (maze[r+1][c] != '#' && maze[r+1][c] != 'X' && maze[r+1][c] == '.' && r < nRows)
         {
             coordStack.push(Coord(r+1, c));
             maze[r+1][c] = '#';
         } // CAN MOVE SOUTH
         
-        if (maze[r][c-1] != '#' && maze[r][c-1] != 'X' && maze[r][c-1] == '.')
+        if (maze[r][c-1] != '#' && maze[r][c-1] != 'X' && maze[r][c-1] == '.' && c > 0)
         {
             coordStack.push(Coord(r, c-1));
             maze[r][c-1] = '#';
         } // CAN MOVE WEST
         
-        if (maze[r-1][c] != '#' && maze[r-1][c] != 'X' && maze[r-1][c] == '.')
+        if (maze[r-1][c] != '#' && maze[r-1][c] != 'X' && maze[r-1][c] == '.' && r > 0)
         {
             coordStack.push(Coord(r-1, c));
             maze[r-1][c] = '#';
