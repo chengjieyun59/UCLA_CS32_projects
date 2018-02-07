@@ -103,7 +103,8 @@ In order, the first 12 (r,c) coordinates popped from the queue are:
 (4,7)
 (6,5)
 
-The code for problem 1 uses a stack implementation, which is a depth first search, meaning that we will exhaust a whole path before going through another path. A stack is last in first out, LIFO, algorithm.
+Both stack and queue implementations can determine correctly whether a maze is solvable or not. The difference is in the order of what coordinates get popped off first and whether it always finds the fastest route.
 
-The code for problem 2 uses a queue implementation, which is a breadth first search, meaning that we search like a ripple moving outward, being able to find the fastest route to an ending point. A queue is first in first out, FIFO, algorithm.
+The code for problem 1 uses a stack implementation, which is a depth first search, meaning that we will exhaust a whole path before going through another path. A stack is last in first out, LIFO, algorithm. The coordinates that were pushed onto the stack last were popped off first. A stack would discover the coordinates by going in the same direction, like south, until it has reached the end of that direction, and it would turn to another direction or hit a dead end. A stack does not necessarily find the fastest, most optimal path.
 
+The code for problem 2 uses a queue implementation, which is a breadth first search, meaning that we search like a ripple moving outward, being able to find the fastest route to an ending point. For most cases, a queue is better in terms of solving a maze fast or finding the fastest route between two points on Google map. A queue is first in first out, FIFO, algorithm. The coordinates that were enqueued first were popped off first. 
