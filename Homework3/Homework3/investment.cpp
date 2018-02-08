@@ -20,8 +20,8 @@ public:
     virtual ~Investment();
     virtual string name() const;
     virtual bool fungible() const;
-    virtual void description() const;
-    virtual void purchasePrice() const;
+    virtual string description() const;
+    virtual int purchasePrice() const;
 private:
     string m_name;
     int m_value;
@@ -36,7 +36,7 @@ class Painting: public Investment
 public:
     Painting(string name, int value);
     virtual ~Painting();
-    virtual void description() const;
+    virtual string description() const;
 };
 
 /////////////////
@@ -49,7 +49,7 @@ public:
     Stock(string name, int value, string ticker);
     virtual ~Stock();
     virtual bool fungible() const;
-    virtual void description() const;
+    virtual string description() const;
 private:
     string m_ticker;
 };
@@ -63,7 +63,7 @@ class House: public Investment
 public:
     House(string name, int value);
     virtual ~House();
-    virtual void description() const;
+    virtual string description() const;
 private:
     string m_name;
     int m_value;
@@ -88,14 +88,14 @@ bool Investment::fungible() const
     return false;
 }
 
-void Investment::description() const
+string Investment::description() const
 {
-    cout << "investment";
+    return "investment";
 }
 
-void Investment::purchasePrice() const
+int Investment::purchasePrice() const
 {
-    cout << m_value;
+    return m_value;
 }
 
 Painting::Painting(string name, int value)
@@ -106,9 +106,9 @@ Painting::~Painting()
     cout << "Destroying " << name() << ", a painting" << endl;
 }
 
-void Painting::description() const
+string Painting::description() const
 {
-    cout << "painting";
+    return "painting";
 }
 
 Stock::Stock(string name, int value, string ticker)
@@ -124,9 +124,9 @@ bool Stock::fungible() const
     return true;
 }
 
-void Stock::description() const
+string Stock::description() const
 {
-    cout << "stock trading as " << m_ticker;
+    return ("stock trading as " + m_ticker);
 }
 
 House::House(string name, int value)
@@ -137,9 +137,9 @@ House::~House()
     cout << "Destroying the house " << m_name << endl;
 }
 
-void House::description() const
+string House::description() const
 {
-    cout << "house";
+    return "house";
 }
 
 /////////////////////
