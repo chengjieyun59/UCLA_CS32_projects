@@ -18,10 +18,10 @@ class Investment
 public:
     Investment(string name, int value);
     virtual ~Investment();
-    virtual string name() const;
+    string name() const;
+    int purchasePrice() const;
     virtual bool fungible() const;
-    virtual string description() const;
-    virtual int purchasePrice() const;
+    virtual string description() const = 0;
 private:
     string m_name;
     int m_value;
@@ -64,9 +64,6 @@ public:
     House(string name, int value);
     virtual ~House();
     virtual string description() const;
-private:
-    string m_name;
-    int m_value;
 };
 
 ////////////////////////////
@@ -83,19 +80,14 @@ string Investment::name() const
     return m_name;
 }
 
-bool Investment::fungible() const
-{
-    return false;
-}
-
-string Investment::description() const
-{
-    return "investment";
-}
-
 int Investment::purchasePrice() const
 {
     return m_value;
+}
+
+bool Investment::fungible() const
+{
+    return false;
 }
 
 Painting::Painting(string name, int value)
@@ -134,7 +126,7 @@ House::House(string name, int value)
 
 House::~House()
 {
-    cout << "Destroying the house " << m_name << endl;
+    cout << "Destroying the house " << name() << endl;
 }
 
 string House::description() const
@@ -156,6 +148,8 @@ void display(const Investment* inv)
 
 int main(int argc, const char * argv[]) {
     Investment* portfolio[4];
+    // Investment test("testing", 1); // this should throw an error
+    
     portfolio[0] = new Painting("Salvator Mundi", 450300000);
     // Stock holdings have a name, value, and ticker symbol
     portfolio[1] = new Stock("Alphabet", 100000, "GOOGL");
