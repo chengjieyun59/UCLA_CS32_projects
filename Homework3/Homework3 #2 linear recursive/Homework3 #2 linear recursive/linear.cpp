@@ -72,7 +72,17 @@ int firstFalse(const double a[], int n)
 // 4. Return the subscript of the smallest double in the array (i.e., the one whose value is <= the value of all elements).  If more than one element has the same smallest value, return the smallest subscript of such an element.  If the array has no elements to examine, return -1.
 int indexOfMin(const double a[], int n)
 {
-    return -999;  // This is incorrect.
+    if (n <= 0)
+        return -1; // If the array has no elements to examine, return -1
+    if (n == 1)
+        return 0; // base case: if there's only 1 element, that element must be the smallest
+
+    int minindex = indexOfMin(a+1, n-1); // assume magic function works correctly
+    
+    if (a[0] <= a[minindex+1]) // if this new starting element is smaller than or equal to the next one, then reset minindex to zero and start counting again
+        return 0;
+    else
+        return (minindex + 1); // if the original min element is still minimum, keep incrementing
 }
 
 // 5. If all n2 elements of a2 appear in the n1 element array a1, in
@@ -104,7 +114,7 @@ int main()
     double var1[] = {1, -2, 3, -4, 5, -6}; // last neg, 3 neg
     double var2[] = {1, 2, -3, -4, 5, 6}; // 2 neg
     double var3[] = {-1, -2, 3, -4, 5, 6}; // first neg, 3 neg
-    double var4[] = {30, 9, 76, 22, 4, 1}; // all pos
+    double var4[] = {30, 1, 76, 22, 4, 1}; // all pos
     double var5[] = {1}; // all pos, 1 element
     double var6[] = {}; // empty array
 
@@ -116,6 +126,7 @@ int main()
     // test cases //
     ////////////////
     
+
     // function 1
     assert(allTrue(var1, size) == false && allTrue(var2, size) == false && allTrue(var3, size) == false);
     assert(allTrue(var4, size) == true && allTrue(var5, size5) == true);
@@ -124,10 +135,15 @@ int main()
     // function 2
     assert(countFalse(var1, size) == 3 && countFalse(var2, size) == 2 && countFalse(var3, size) == 3);
     assert(countFalse(var4, size) == 0 && countFalse(var5, size5) == 0 && countFalse(var6, size6) == 0);
-    
+
     // function 3
     assert(firstFalse(var1, size) == 1 && firstFalse(var2, size) == 2 && firstFalse(var3, size) == 0);
     assert(firstFalse(var4, size) == -1 && firstFalse(var5, size5) == -1 && firstFalse(var6, size6) == -1);
 
+    // function 4
+    assert(indexOfMin(var1, size) == 5 && indexOfMin(var2, size) == 3 && indexOfMin(var3, size) == 3);
+    assert(indexOfMin(var4, size) == 1 && indexOfMin(var5, size5) == 0 && indexOfMin(var6, size6) == -1);
+    
+    
 }
 
