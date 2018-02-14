@@ -7,6 +7,8 @@
 //
 
 #include <iostream>
+#include <cassert>
+using namespace std;
 
 // Return the number of ways that all n2 elements of a2 appear
 // in the n1 element array a1 in the same order (though not
@@ -89,11 +91,43 @@ void split(double a[], int n, double splitter,
 // If n <= 1, do nothing.
 void order(double a[], int n)
 {
-    return;  // This is not always correct.
+    if (n <= 1)
+        return;
+    
+    int firstNotGreater;
+    int firstLess;
+    
+    split(a, n, a[0], firstNotGreater, firstLess); // start sorting from the first element as the splitter
+    order(a, firstNotGreater + 1); // sort the first half that's bigger than the splitter
+    order(a + firstLess, n - firstLess); // sort the second half that's smaller than the splitter
 }
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    return 0;
+int main() {
+    //////////////////////////////////
+    // test: countIncludes function //
+    //////////////////////////////////
+    double a1[] = {10, 50, 40, 20, 50, 40, 30};
+    double b1[] = {10, 20, 40};
+    double b2[] = {10, 40, 30};
+    double b3[] = {20, 10, 40};
+    double b4[] = {50, 40, 30};
+    
+    //assert(countIncludes(a1, 7, b1, 3) == 1);
+    //assert(countIncludes(a1, 7, b2, 3) == 2);
+    //assert(countIncludes(a1, 7, b3, 3) == 0);
+    //assert(countIncludes(a1, 7, b4, 3) == 3);
+    
+    //////////////////////////
+    // test: order function //
+    //////////////////////////
+    double sorteda1[] = {50, 50, 40, 40, 30, 20, 10};
+    double a[] = {10, 50, 20, 700, 50, 30};
+    double sorteda[] = {700, 50, 50, 30, 20, 10};
+    
+    order(a1, 7);
+    assert(std::equal(std::begin(a1), std::end(a1), std::begin(sorteda1)));
+    // cannot do assert(a==sorteda); because this does not compare arrays element-wise
+    
+    order(a, 6);
+    assert(std::equal(std::begin(a), std::end(a), std::begin(sorteda)));
 }
