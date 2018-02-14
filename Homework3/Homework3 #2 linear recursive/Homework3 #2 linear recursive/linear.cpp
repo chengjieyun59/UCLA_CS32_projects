@@ -90,19 +90,24 @@ int indexOfMin(const double a[], int n)
 // return true; otherwise (i.e., if the array a1 does not include
 // a2 as a not-necessarily-contiguous subsequence), return false.
 // (Of course, if a2 is empty (i.e., n2 is 0), return true.)
-// For example, if a1 is the 7 element array
-//    10 50 40 20 50 40 30
-// then the function should return true if a2 is
-//    50 20 30
-// or
-//    50 40 40
-// and it should return false if a2 is
-//    50 30 20
-// or
-//    10 20 20
 bool includes(const double a1[], int n1, const double a2[], int n2)
 {
-    return false;  // This is not always correct.
+    if (n1 < n2 && n2 == 0) // exhausted n2 and found all n2 elements in n1
+        return true;
+    
+    else if (n2 < 0 || n1 < 0)
+        return false;
+
+    else if (n2 >= 0 && n1 >= 0)
+    {
+        if (a2[0] == a1[0])
+            return (includes(a1+1, n1-1, a2+1, n2-1)); // if matching, then move to the next in both array
+        else // if (a2[0] != a1[0])
+            return (includes(a1+1, n1-1, a2, n2)); // if not matching, increment a1 only
+    }
+    
+    else// if (n1 < n2 && n1 == 0) // exhausted n1, but there are still elements in n2
+        return false;
 }
 
 
@@ -122,10 +127,15 @@ int main()
     int size5 = 1;
     int size6 = 0;
     
+    double a1[] = {10, 50, 40, 20, 50, 40, 30};
+    double b1[] = {50, 20, 30};
+    double b2[] = {50, 40, 40};
+    double b3[] = {50, 30, 20};
+    double b4[] = {10, 20, 20};
+    
     ////////////////
     // test cases //
     ////////////////
-    
 
     // function 1
     assert(allTrue(var1, size) == false && allTrue(var2, size) == false && allTrue(var3, size) == false);
@@ -144,6 +154,11 @@ int main()
     assert(indexOfMin(var1, size) == 5 && indexOfMin(var2, size) == 3 && indexOfMin(var3, size) == 3);
     assert(indexOfMin(var4, size) == 1 && indexOfMin(var5, size5) == 0 && indexOfMin(var6, size6) == -1);
     
-    
+    // function 5
+    assert(includes(var1, size, var5, size5) == true);
+    assert(includes(var4, size, var5, size5) == true);
+    assert(includes(var4, size, var6, size6) == true);
+    assert(includes(a1, 6, b1, 3) == true && includes(a1, 6, b2, 3) == true);
+    assert(includes(a1, 6, b3, 3) == false && includes(a1, 6, b4, 3) == false);
 }
 

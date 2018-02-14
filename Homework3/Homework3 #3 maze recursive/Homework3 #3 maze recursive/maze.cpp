@@ -30,37 +30,26 @@ bool pathExists(string maze[], int nRows, int nCols, int sr, int sc, int er, int
  
     // CAN MOVE NORTH
     if (maze[sr-1][sc] != '#' && maze[sr-1][sc] != 'X' && maze[sr-1][sc] == '.' && sr > 0)
-    {
-        //maze[sr-1][sc] = '#';
         if(pathExists(maze, nRows, nCols, sr-1, sc, er, ec) == true)
             return true;
-    }
     
     // CAN MOVE WEST
     if (maze[sr][sc-1] != '#' && maze[sr][sc-1] != 'X' && maze[sr][sc-1] == '.' && sc > 0)
-    {
-        //maze[sr][sc-1] = '#';
         if (pathExists(maze, nRows, nCols, sr, sc-1, er, ec) == true)
             return true;
-    }
     
     // CAN MOVE SOUTH
     if (maze[sr+1][sc] != '#' && maze[sr+1][sc] != 'X' && maze[sr+1][sc] == '.' && sr < nRows)
-    {
-        //maze[sr+1][sc] = '#';
         if (pathExists(maze, nRows, nCols, sr+1, sc, er, ec) == true)
             return true;
-    }
     
     // CAN MOVE EAST
     if (maze[sr][sc+1] != '#' && maze[sr][sc+1] != 'X' && maze[sr][sc+1] == '.' && sc < nCols)
-    {
-        //maze[sr][sc+1] = '#';
         if (pathExists(maze, nRows, nCols, sr, sc+1, er, ec) == true)
             return true;
-    }
-    
+
     return false;
+    
     /* recursive pseudocode
     If the start location is equal to the ending location, then we've solved the maze, so return true.
     Mark the start location as visted.
@@ -75,9 +64,7 @@ bool pathExists(string maze[], int nRows, int nCols, int sr, int sc, int er, int
 
 }
 // Return true if there is a path from (sr,sc) to (er,ec) through the maze; return false otherwise
-// Your implementation must use a stack data structure, specifically, a stack of Coords. You may either write your own stack class, or use the stack type from the C++ Standard Library.
 
-// TODO: comment out the main function
 int main()
 {
     string maze[10] = {
@@ -98,4 +85,3 @@ int main()
     else
         cout << "Out of luck!" << endl;
 }
-
