@@ -17,11 +17,11 @@ class Investment
 {
 public:
     Investment(string name, int value);
-    virtual ~Investment();
+    virtual ~Investment(); // destructors must always be virtual
     string name() const;
     int purchasePrice() const;
     virtual bool fungible() const;
-    virtual string description() const = 0;
+    virtual string description() const = 0; // now this is an abstract base class, so cannot declare an Investment variable in main. Also the code inside an Investment description would never have been called anyway, so it'd be dummy code
 private:
     string m_name;
     int m_value;
@@ -73,30 +73,30 @@ public:
 Investment::Investment(string name, int value)
 : m_name(name), m_value(value) {}
 
-Investment::~Investment() {}
+Investment::~Investment() {} // empty destructor since it shouldn't print anything
 
 string Investment::name() const
 {
     return m_name;
-}
+} // this will access the private member variable m_name to be used for other subclasses
 
 int Investment::purchasePrice() const
 {
     return m_value;
-}
+} // this will access the private member variable m_value to be used for other subclasses
 
 bool Investment::fungible() const
 {
     return false;
-}
+} // saves code for Painting and House that would have returned false
 
 Painting::Painting(string name, int value)
-: Investment(name, value) {}
+: Investment(name, value) {} // uses Investment's constructor to get m_name and m_value through the public function
 
 Painting::~Painting()
 {
-    cout << "Destroying " << name() << ", a painting" << endl;
-}
+    cout << "Destroying " << name() << ", a " << description() << endl;
+} // virtual distructor
 
 string Painting::description() const
 {
@@ -104,7 +104,7 @@ string Painting::description() const
 }
 
 Stock::Stock(string name, int value, string ticker)
-: Investment(name, value), m_ticker(ticker) {}
+: Investment(name, value), m_ticker(ticker) {} // only Stock has an m_ticker that needs to be constructed
 
 Stock::~Stock()
 {
@@ -126,7 +126,7 @@ House::House(string name, int value)
 
 House::~House()
 {
-    cout << "Destroying the house " << name() << endl;
+    cout << "Destroying the " << description() << " " << name() << endl;
 }
 
 string House::description() const

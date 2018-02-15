@@ -22,12 +22,12 @@ using namespace std;
 
 bool pathExists(string maze[], int nRows, int nCols, int sr, int sc, int er, int ec)
 {
-    maze[sr][sc] = '#'; // simplify problem by dropping bread crumb
-    // cout << "(" << sr << "," << sc << "), "; // prints out (4,3), (3,3), (5,3), (5,2), (5,1), (6,1), (7,1), (8,1), (8,2), (6,3), (4,4), (4,5), (5,5), (6,5), (6,6), (7,6), (8,6), (8,5), (8,4), (4,6), (4,7), (4,8), (3,8), (2,8), (1,8), Solvable!
-
     if (sr == er && sc == ec)     // If the current (r,c) coordinate is equal to the ending coordinate,
         return true;            // then we've solved the maze so return true!
  
+    maze[sr][sc] = '#'; // simplify problem by dropping bread crumb
+    // cout << "(" << sr << "," << sc << "), "; // prints out (4,3), (3,3), (5,3), (5,2), (5,1), (6,1), (7,1), (8,1), (8,2), (6,3), (4,4), (4,5), (5,5), (6,5), (6,6), (7,6), (8,6), (8,5), (8,4), (4,6), (4,7), (4,8), (3,8), (2,8), (1,8), Solvable!
+
     // CAN MOVE NORTH
     if (maze[sr-1][sc] != '#' && maze[sr-1][sc] != 'X' && maze[sr-1][sc] == '.' && sr > 0)
         if(pathExists(maze, nRows, nCols, sr-1, sc, er, ec) == true)

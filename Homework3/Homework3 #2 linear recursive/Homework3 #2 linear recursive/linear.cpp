@@ -25,13 +25,11 @@ bool somePredicate(double x)
 // 1. Return false if the somePredicate function returns false for at least one of the array elements; return true otherwise.
 bool allTrue(const double a[], int n)
 {
-    if (n == 0)
+    if (n <= 0)
         return true;
-    if (n<=0)
-        return false;
     if (n == 1)
         return somePredicate(a[0]); // reached base case and no numbers have failed somePredicate
-    return (allTrue(a+1, n-1) && somePredicate(*a)); // why must this be *a and can't be a[n]?
+    return (allTrue(a+1, n-1) && somePredicate(a[0]));
 }
 
 // 2. Return the number of elements in the array for which the somePredicate function returns false.
@@ -39,7 +37,7 @@ int countFalse(const double a[], int n)
 {
     if (n <= 0)
         return 0;
-    else if (somePredicate(a[0]) == false)
+    if (somePredicate(a[0]) == false)
         return (countFalse(a+1, n-1) + 1); // increment if somePredicate function returns false and keep checking the next element
     return countFalse(a+1, n-1); // if (somePredicate(a[0]) == true), just keep che-cking the next element
     
@@ -63,7 +61,7 @@ int firstFalse(const double a[], int n)
         return -1;
     if (somePredicate(a[0]) == false)
         return 0;
-    else if (firstFalse(a+1, n-1) == -1)
+    else if (firstFalse(a+1, n-1) == -1) // if the element isn't found after exhausting the list, return -1
         return -1;
     else // if (somePredicate(a[0]) == true)
         return (firstFalse(a+1, n-1) + 1); // increment the index

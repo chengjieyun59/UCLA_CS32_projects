@@ -40,7 +40,7 @@ int countIncludes(const double a1[], int n1, const double a2[], int n2)
     else// if (n1 < n2 && n1 == 0) // exhausted n1, but there are still elements in n2
         return 0;
     
-    return 0;  // This is incorrect.
+    return 0;
 }
 
 // Exchange two doubles
@@ -115,7 +115,7 @@ void order(double a[], int n)
     int firstLess;
     
     split(a, n, a[0], firstNotGreater, firstLess); // start sorting from the first element as the splitter
-    order(a, firstNotGreater + 1); // sort the first half that's bigger than the splitter
+    order(a, firstNotGreater); // sort the first half that's bigger than the splitter
     order(a + firstLess, n - firstLess); // sort the second half that's smaller than the splitter
 }
 
