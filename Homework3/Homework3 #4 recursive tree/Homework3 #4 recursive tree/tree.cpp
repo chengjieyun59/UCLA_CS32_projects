@@ -14,16 +14,33 @@ using namespace std;
 // in the n1 element array a1 in the same order (though not
 // necessarily consecutively).  The empty sequence appears in a
 // sequence of length n1 in 1 way, even if n1 is 0.
-// For example, if a1 is the 7 element array
-//    10 50 40 20 50 40 30
-// then for this value of a2     the function must return
-//    10 20 40            1
-//    10 40 30            2
-//    20 10 40            0
-//    50 40 30            3
 int countIncludes(const double a1[], int n1, const double a2[], int n2)
 {
-    return -999;  // This is incorrect.
+    if (n2 <= 0)
+        return 1; // if a2 is empty, a1 definitely includes a2
+    
+    if (n1 < n2 && n2 == 0) // exhausted n2 and found all n2 elements in n1
+        return 1;
+    
+    if (n1 < 0)
+        n1 = 0;  // If any of the parameters n1, n2, or n is negative, act as if it were zero.
+    
+    else if (n2 >= 0 && n1 >= 0)
+    {
+        // if matching, then check both pathways
+        // first part: the same element in a2 may appear again later in a1
+        // second part: just keep incrementing both
+        if (a2[0] == a1[0])
+            return (countIncludes(a1+1, n1-1, a2, n2)) + (countIncludes(a1+1, n1-1, a2+1, n2-1));
+        
+        else // if (a2[0] != a1[0])
+            return (countIncludes(a1+1, n1-1, a2, n2)); // if not matching, increment a1 only
+    }
+    
+    else// if (n1 < n2 && n1 == 0) // exhausted n1, but there are still elements in n2
+        return 0;
+    
+    return 0;  // This is incorrect.
 }
 
 // Exchange two doubles
@@ -107,15 +124,23 @@ int main() {
     // test: countIncludes function //
     //////////////////////////////////
     double a1[] = {10, 50, 40, 20, 50, 40, 30};
+    double a2[] = {};
     double b1[] = {10, 20, 40};
     double b2[] = {10, 40, 30};
     double b3[] = {20, 10, 40};
     double b4[] = {50, 40, 30};
+    double b5[] = {};
     
-    //assert(countIncludes(a1, 7, b1, 3) == 1);
-    //assert(countIncludes(a1, 7, b2, 3) == 2);
-    //assert(countIncludes(a1, 7, b3, 3) == 0);
-    //assert(countIncludes(a1, 7, b4, 3) == 3);
+    assert(countIncludes(a1, 7, b1, 3) == 1);
+    assert(countIncludes(a1, 7, b2, 3) == 2);
+    assert(countIncludes(a1, 7, b3, 3) == 0);
+    assert(countIncludes(a1, 7, b4, 3) == 3);
+    
+    assert(countIncludes(a2, 0, b5, 0) == 1);
+    assert(countIncludes(a2, -1, b5, 0) == 1);
+    assert(countIncludes(a2, 0, b5, -1) == 1);
+    
+    assert(countIncludes(b1, 3, a1, 7) == 0);
     
     //////////////////////////
     // test: order function //
@@ -125,9 +150,9 @@ int main() {
     double sorteda[] = {700, 50, 50, 30, 20, 10};
     
     order(a1, 7);
-    assert(std::equal(std::begin(a1), std::end(a1), std::begin(sorteda1)));
+    assert(equal(begin(a1), end(a1), begin(sorteda1)));
     // cannot do assert(a==sorteda); because this does not compare arrays element-wise
     
     order(a, 6);
-    assert(std::equal(std::begin(a), std::end(a), std::begin(sorteda)));
+    assert(equal(begin(a), end(a), begin(sorteda)));
 }
