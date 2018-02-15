@@ -6,14 +6,6 @@
 //  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
 //
 
-//
-//  mazestack.cpp
-//  Homework2
-//
-//  Created by Jie-Yun Cheng on 2/3/18.
-//  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
-//
-
 #include <iostream>
 #include <string>
 using namespace std;

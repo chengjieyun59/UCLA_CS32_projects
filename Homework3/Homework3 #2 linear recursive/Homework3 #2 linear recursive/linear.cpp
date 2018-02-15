@@ -90,22 +90,19 @@ int indexOfMin(const double a[], int n)
 // (Of course, if a2 is empty (i.e., n2 is 0), return true.)
 bool includes(const double a1[], int n1, const double a2[], int n2)
 {
-    if (n1 < n2 && n2 == 0) // exhausted n2 and found all n2 elements in n1
+    if (n2 <= 0) // exhausted n2 and found all n2 elements in n1
         return true;
     
-    else if (n2 < 0 || n1 < 0)
+    if (n2 > n1) //a2 is larger than a1
+        return false;
+    
+    if (n1 <= 0)
         return false;
 
-    else if (n2 >= 0 && n1 >= 0)
-    {
-        if (a2[0] == a1[0])
-            return (includes(a1+1, n1-1, a2+1, n2-1)); // if matching, then move to the next in both array
-        else // if (a2[0] != a1[0])
-            return (includes(a1+1, n1-1, a2, n2)); // if not matching, increment a1 only
-    }
-    
-    else// if (n1 < n2 && n1 == 0) // exhausted n1, but there are still elements in n2
-        return false;
+    if (a2[0] == a1[0])
+        return (includes(a1+1, n1-1, a2+1, n2-1)); // if matching, then move to the next in both array
+    else // if (a2[0] != a1[0])
+        return (includes(a1+1, n1-1, a2, n2)); // if not matching, increment a1 only
 }
 
 
@@ -156,7 +153,7 @@ int main()
     assert(includes(var1, size, var5, size5) == true);
     assert(includes(var4, size, var5, size5) == true);
     assert(includes(var4, size, var6, size6) == true);
-    assert(includes(a1, 6, b1, 3) == true && includes(a1, 6, b2, 3) == true);
-    assert(includes(a1, 6, b3, 3) == false && includes(a1, 6, b4, 3) == false);
+    assert(includes(a1, 7, b1, 3) == true && includes(a1, 7, b2, 3) == true);
+    assert(includes(a1, 7, b3, 3) == false && includes(a1, 7, b4, 3) == false);
 }
 

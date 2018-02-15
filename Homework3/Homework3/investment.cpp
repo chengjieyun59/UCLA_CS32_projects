@@ -146,7 +146,7 @@ void display(const Investment* inv)
     cout << ": " << inv->description() << " bought for $" << inv->purchasePrice() << endl;
 }
 
-int main(int argc, const char * argv[]) {
+int main() {
     Investment* portfolio[4];
     // Investment test("testing", 1); // this should throw an error
     

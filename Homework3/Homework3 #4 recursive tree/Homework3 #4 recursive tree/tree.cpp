@@ -19,28 +19,20 @@ int countIncludes(const double a1[], int n1, const double a2[], int n2)
     if (n2 <= 0)
         return 1; // if a2 is empty, a1 definitely includes a2
     
-    if (n1 < n2 && n2 == 0) // exhausted n2 and found all n2 elements in n1
-        return 1;
-    
-    if (n1 < 0)
-        n1 = 0;  // If any of the parameters n1, n2, or n is negative, act as if it were zero.
-    
-    else if (n2 >= 0 && n1 >= 0)
-    {
-        // if matching, then check both pathways
-        // first part: the same element in a2 may appear again later in a1
-        // second part: just keep incrementing both
-        if (a2[0] == a1[0])
-            return (countIncludes(a1+1, n1-1, a2, n2)) + (countIncludes(a1+1, n1-1, a2+1, n2-1));
-        
-        else // if (a2[0] != a1[0])
-            return (countIncludes(a1+1, n1-1, a2, n2)); // if not matching, increment a1 only
-    }
-    
-    else// if (n1 < n2 && n1 == 0) // exhausted n1, but there are still elements in n2
+    if (n2 > n1)
         return 0;
     
-    return 0;
+    if (n1 <= 0)
+        return 0;
+    
+    // if matching, then check both pathways
+    // first part: the same element in a2 may appear again later in a1
+    // second part: just keep incrementing both
+    if (a2[0] == a1[0])
+        return (countIncludes(a1+1, n1-1, a2, n2)) + (countIncludes(a1+1, n1-1, a2+1, n2-1));
+    else // if (a2[0] != a1[0])
+        return (countIncludes(a1+1, n1-1, a2, n2)); // if not matching, increment a1 only
+
 }
 
 // Exchange two doubles
