@@ -4,6 +4,9 @@
 #include "GraphObject.h"
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
+class GameWorld;
+class StudentWorld;
+
 class Actor: public GraphObject
 {
 public:
@@ -13,11 +16,13 @@ public:
     virtual void attacked() = 0;
     bool isInBound(int x, int y);
     bool isAlive();
+    StudentWorld* getWorld();
     
     // may need to use GraphObject's functions: getX(); getY(); moveTo(double x, double y); setSize(double size);
     
 private:
     bool m_isAlive;
+    
 }; // Each actor has its own x,y location in space, its own internal state (e.g., a Snagglegon knows its location, what direction it’s moving, etc.) and its own special algorithms that control its actions in the game based on its own state and the state of the other objects in the world.
 
 class Star: public Actor
@@ -35,7 +40,7 @@ private:
 class NachenBlaster: public Actor
 {
 public:
-    NachenBlaster(int imageID, double startX, double startY, int dir, double size, int depth);
+    NachenBlaster(int imageID, double startX, double startY, int dir, double size, int depth, double hitPoint, double cabbagePoint);
     virtual ~NachenBlaster();
     virtual void doSomething();
     virtual void attacked();
@@ -52,6 +57,7 @@ protected:
 private:
     int m_hitPt;
     int m_cabbagePt;
+    // GameWorld* m_gw;
 }; // the algorithm that controls the ship object is the user’s own brain and hand, and the keyboard
 // page 23-25
 

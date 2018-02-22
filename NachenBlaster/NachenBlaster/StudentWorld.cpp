@@ -31,6 +31,9 @@ StudentWorld::~StudentWorld()
 
 int StudentWorld::init()
 {
+    if (m_NachenBlaster == nullptr)
+        m_NachenBlaster = new NachenBlaster(IID_NACHENBLASTER, 0, 128, 0, 1.0, 0, 50, 30);
+    
     for (int i = 0; i < 30; i++)
         m_vStar.push_back(new Star(IID_STAR, randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3));
     
@@ -39,6 +42,10 @@ int StudentWorld::init()
 
 int StudentWorld::move()
 {
+    //////////
+    // Star //
+    //////////
+    
     for(int i = 0; i < m_vStar.size(); i++)
     {
         if(m_vStar[i] -> isAlive() == true)
@@ -60,8 +67,7 @@ int StudentWorld::move()
     
     /*
     // Pseudocode:
-    // The term "actors" refers to all aliens, the NachenBlaster, goodies, // stars, explosions, projectiles, stars, etc.
-    // Give each actor a chance to do something, incl. the NachenBlaster
+    // The term "actors" refers to all aliens, the NachenBlaster, goodies, stars, explosions, projectiles, stars, etc. Give each actor a chance to do something, incl. the NachenBlaster
     for each of the actors in the game world { // iterate over active actor that’s active in the game
         if (actor[i] is still active/alive) {
             // tell each actor to do something (e.g. move)

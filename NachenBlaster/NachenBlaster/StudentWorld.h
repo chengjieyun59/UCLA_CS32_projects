@@ -28,8 +28,8 @@ public:
     // need to use GameWorld's function: getKey(int& ch);
 
 private:
-    Actor* m_vActor;
-    NachenBlaster* m_vNachenBlaster;
+    vector<Actor*> m_vActor;
+    NachenBlaster* m_NachenBlaster;
     vector<Star*> m_vStar;
     
 };
