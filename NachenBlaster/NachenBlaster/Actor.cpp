@@ -1,6 +1,7 @@
 #include "Actor.h"
 #include "StudentWorld.h"
 #include <iostream>
+using namespace std;
 
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
 
@@ -10,7 +11,7 @@ Actor::Actor(StudentWorld* World, int imageID, double startX, double startY, int
 
 Actor::~Actor()
 {
-    delete getWorld();
+    // delete getWorld(); // wrong!!!! Delete all the memories that only this class made
 }
 
 bool Actor::isInBound(int x, int y)
@@ -20,18 +21,23 @@ bool Actor::isInBound(int x, int y)
     return false;
 }
 
+void Actor::setAlive(string aliveStatus)
+{
+    if(aliveStatus == "Dead")
+        m_isAlive = false;
+    else
+        m_isAlive = true;
+}
+
 bool Actor::isAlive()
 {
-    /*
-    if (isInBound(getX(), getY()) == true)
-        m_isAlive = true;
-    else
-        m_isAlive = false;
-    cout << m_isAlive;
+    if (isInBound(getX(), getY()) == false)
+        setAlive("Dead");
+    // cout << m_isAlive; // TODO: delete this flag for debugging
     
     return m_isAlive;
-    */
-    return true;
+
+    //return true;
 }
 
 StudentWorld* Actor::getWorld()
@@ -54,12 +60,10 @@ Star::~Star()
 
 void Star::doSomething()
 {
-    double x = getX();
-    double y = getY();
-    moveTo(x-1, y);
+    moveTo(getX()-1, getY());
     
-    if (isAlive() == false)
-        Star::~Star();
+    //if (isAlive() == false)
+        //Star::~Star();
     /*
     StudentWorld* sw;
     if (isAlive() == false)

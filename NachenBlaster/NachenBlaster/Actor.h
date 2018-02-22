@@ -2,6 +2,7 @@
 #define ACTOR_H_
 
 #include "GraphObject.h"
+#include <string>
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 class GameWorld;
@@ -16,6 +17,7 @@ public:
     virtual void attacked() = 0;
     bool isInBound(int x, int y);
     bool isAlive();
+    virtual void setAlive(std::string aliveStatus);
     StudentWorld* getWorld();
     
     // may need to use GraphObject's functions: getX(); getY(); moveTo(double x, double y); setSize(double size);
@@ -33,6 +35,7 @@ public:
     virtual ~Star();
     virtual void doSomething();
     virtual void attacked();
+    
     
 private:
     

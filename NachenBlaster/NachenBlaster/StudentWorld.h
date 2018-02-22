@@ -31,7 +31,7 @@ private:
     vector<Actor*> m_vActor;
     
     NachenBlaster* m_NachenBlaster;
-    Star* m_Star;
+    // Star* m_Star;
 };
 
 #endif // STUDENTWORLD_H_

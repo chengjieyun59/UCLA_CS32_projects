@@ -48,7 +48,8 @@ int StudentWorld::move()
 {
     vector<Actor*>::iterator a;
     
-    for(a = m_vActor.begin(); a != m_vActor.end(); a++)
+    // if actor is alive
+    for(a = m_vActor.begin(); a != m_vActor.end();a++)
     {
         if((*a)->isAlive())
         {
@@ -60,13 +61,21 @@ int StudentWorld::move()
                 increaseScoreAppropriately();
                 return GWSTATUS_FINISHED_LEVEL;
              */
+            
         }
-        else
+    }
+    
+    // if actor is dead
+    // auto keyword is suggested by TA Jason Mao
+    for(auto a2 = m_vActor.begin(); a2 != m_vActor.end();)
+    {
+        if((*a2)->isAlive() == false)
         {
-            Actor *tobeDeleted = *a;
-            a = m_vActor.erase(a);
-            delete tobeDeleted;
+            // Actor *tobeDeleted = *a;
+            delete *a2; // delete the pointer first
+            a2 = m_vActor.erase(a2); // delete the object that the pointer pointed to
         }
+        else a2++;
     }
     
     // Each tick, there is a 1/15 chance a new star is created
@@ -91,9 +100,10 @@ int StudentWorld::move()
 void StudentWorld::cleanUp()
 {
     vector<Actor*>::iterator a;
-    for(a = m_vActor.begin(); a != m_vActor.end(); a++)
+    for(a = m_vActor.begin(); a != m_vActor.end();)
     {
         delete *a;
-        //a = m_vActor.erase(a);
+        a = m_vActor.erase(a);
     }
+    
 } // Every actor in the entire game (the NachenBlaster and every alien, goodie, projectile, star, explosion object, etc.) must be deleted and removed from the StudentWorld’s container of active objects, resulting in an empty level. NachenBlaster lost a life (e.g., its hit points reached zero due to being shot) or has completed the current level
