@@ -31,73 +31,69 @@ StudentWorld::~StudentWorld()
 
 int StudentWorld::init()
 {
-    if (m_NachenBlaster == nullptr)
-        m_NachenBlaster = new NachenBlaster(IID_NACHENBLASTER, 0, 128, 0, 1.0, 0, 50, 30);
+    NachenBlaster* nb = new NachenBlaster(this);
+    m_vActor.push_back(nb); // create a NachenBlaster and add to Actor vector
     
+    // create 30 stars
     for (int i = 0; i < 30; i++)
-        m_vStar.push_back(new Star(IID_STAR, randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3));
+    {
+        Star* s = new Star(this, IID_STAR, randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3);
+        m_vActor.push_back(s);
+    }
     
     return GWSTATUS_CONTINUE_GAME;
 } // spec page 16
 
 int StudentWorld::move()
 {
-    //////////
-    // Star //
-    //////////
+    vector<Actor*>::iterator a;
     
-    for(int i = 0; i < m_vStar.size(); i++)
+    for(a = m_vActor.begin(); a != m_vActor.end(); a++)
     {
-        if(m_vStar[i] -> isAlive() == true)
-            m_vStar[i] -> doSomething();
-        
-        else // if the star moves off the screen, delete it
+        if((*a)->isAlive())
         {
-            vector<Star*>::iterator s = m_vStar.begin();
-            delete *(s+i);
-            s = m_vStar.erase(m_vStar.begin() + i);
-        }
-    }
-    
-    // Each tick, there is a 1/15 chance a new star is created
-    int n = randInt(0, 14);
-    if (n == 0)
-        m_vStar.push_back(new Star(IID_STAR, randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3));
-    
-    
-    /*
-    // Pseudocode:
-    // The term "actors" refers to all aliens, the NachenBlaster, goodies, stars, explosions, projectiles, stars, etc. Give each actor a chance to do something, incl. the NachenBlaster
-    for each of the actors in the game world { // iterate over active actor that’s active in the game
-        if (actor[i] is still active/alive) {
-            // tell each actor to do something (e.g. move)
-            actor[i]->doSomething();
-            
+            (*a)->doSomething();
+            /*
             if (theNachenBlasterDiedDuringThisTick())
                 return GWSTATUS_PLAYER_DIED;
             if (theNachenBlasterCompletedTheCurrentLevel()) {
                 increaseScoreAppropriately();
                 return GWSTATUS_FINISHED_LEVEL;
-            }
+             */
+        }
+        else
+        {
+            Actor *tobeDeleted = *a;
+            a = m_vActor.erase(a);
+            delete tobeDeleted;
         }
     }
+    
+    // Each tick, there is a 1/15 chance a new star is created
+    if (randInt(0, 14) == 0)
+        m_vActor.push_back(new Star(this, IID_STAR, randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3));
+    
+    /*
     // It is possible that one actor (e.g., a cabbage projectile) may destroy another actor (e.g., a Smallgon) during the current tick. If an actor has died earlier in the current tick, then the dead actor must not have a chance to do something during the current tick (since it’s dead).
+     
     // Remove newly-dead actors after each tick
     removeDeadGameObjects(); // delete dead game objects
+     
     // Update the Game Status Line
     updateDisplayText(); // update the score/lives/level text at screen top
     // the player hasn’t completed the current level and hasn’t died, so
     // continue playing the current level return GWSTATUS_CONTINUE_GAME;
     */
+    
     return GWSTATUS_CONTINUE_GAME;
 } // spec page 17
 
 void StudentWorld::cleanUp()
 {
-    for(vector<Star*>::iterator s = m_vStar.begin(); s != m_vStar.end(); )
+    vector<Actor*>::iterator a;
+    for(a = m_vActor.begin(); a != m_vActor.end(); a++)
     {
-        delete *s;
-        s = m_vStar.erase(s);
+        delete *a;
+        //a = m_vActor.erase(a);
     }
-    // every actor in the entire game (the NachenBlaster and every alien, goodie, projectile, star, explosion object, etc.) must be deleted and removed from the StudentWorld’s container of active objects, resulting in an empty level.
-} // NachenBlaster lost a life (e.g., its hit points reached zero due to being shot) or has completed the current level
+} // Every actor in the entire game (the NachenBlaster and every alien, goodie, projectile, star, explosion object, etc.) must be deleted and removed from the StudentWorld’s container of active objects, resulting in an empty level. NachenBlaster lost a life (e.g., its hit points reached zero due to being shot) or has completed the current level

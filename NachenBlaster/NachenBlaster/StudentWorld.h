@@ -29,9 +29,9 @@ public:
 
 private:
     vector<Actor*> m_vActor;
-    NachenBlaster* m_NachenBlaster;
-    vector<Star*> m_vStar;
     
+    NachenBlaster* m_NachenBlaster;
+    Star* m_Star;
 };
 
 #endif // STUDENTWORLD_H_

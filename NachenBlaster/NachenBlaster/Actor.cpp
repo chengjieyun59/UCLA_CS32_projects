@@ -1,10 +1,11 @@
 #include "Actor.h"
 #include "StudentWorld.h"
+#include <iostream>
 
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
 
-Actor::Actor(int imageID, double startX, double startY, int dir, double size, int depth)
-:GraphObject(imageID, startX, startY, dir, size, depth), m_isAlive(true)
+Actor::Actor(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
+:GraphObject(imageID, startX, startY, dir, size, depth), m_isAlive(true), m_world(World)
 {} // page 22 // todo: IDs: IID_NACHENBLASTER IID_SMALLGON IID_SMOREGON IID_SNAGGLEGON IID_REPAIR_GOODIE IID_LIFE_GOODIE IID_TORPEDO_GOODIE IID_TORPEDO IID_TURNIP IID_CABBAGE IID_STAR IID_EXPLOSION
 
 Actor::~Actor()
@@ -14,52 +15,64 @@ Actor::~Actor()
 
 bool Actor::isInBound(int x, int y)
 {
-    if (x <= VIEW_WIDTH && x >= 0 && y <= VIEW_HEIGHT && y >= 0)
+    if (x < VIEW_WIDTH && x >= 0 && y < VIEW_HEIGHT && y >= 0)
         return true;
     return false;
 }
 
 bool Actor::isAlive()
 {
+    /*
     if (isInBound(getX(), getY()) == true)
         m_isAlive = true;
     else
         m_isAlive = false;
+    cout << m_isAlive;
     
     return m_isAlive;
+    */
+    return true;
 }
 
-StudentWorld* getWorld()
+StudentWorld* Actor::getWorld()
 {
-    string assetDir;    
-    StudentWorld sw(assetDir);
-    StudentWorld* sw_ptr = new StudentWorld(assetDir);
-    return sw_ptr;
+    //string assetDir;
+    //StudentWorld sw(assetDir);
+    //StudentWorld* sw_ptr = new StudentWorld(assetDir);
+    return m_world;
 }
 // a method in one of its base classes that returns a pointer to a StudentWorld), and then uses this pointer to call the getKey() method.
 
-Star::Star(int imageID, double startX, double startY, int dir, double size, int depth)
-:Actor(IID_STAR, randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3)
+Star::Star(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
+:Actor(World, IID_STAR, randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3)
 {}
 
 Star::~Star()
-{}
+{
+    
+} // empty destructor
 
 void Star::doSomething()
 {
     double x = getX();
     double y = getY();
     moveTo(x-1, y);
-    //if (isAlive == false)
-        //StudentWorld::~StudentWorld();
     
+    if (isAlive() == false)
+        Star::~Star();
+    /*
+    StudentWorld* sw;
+    if (isAlive() == false)
+        //sw -> ~StudentWorld();
+        ~sw();
+    */
 }
 
 void Star::attacked()
 {} // do nothing
 
-NachenBlaster::NachenBlaster(int imageID, double startX, double startY, int dir, double size, int depth, double hitPoint, double cabbagePoint)
-:Actor(IID_NACHENBLASTER, 0, 128, 0, 1.0, 0), m_hitPt(50), m_cabbagePt(30)
+NachenBlaster::NachenBlaster(StudentWorld* World) // (StudentWorld* world)
+:Actor(World, IID_NACHENBLASTER, 0, 128, 0, 1.0, 0), m_hitPt(50), m_cabbagePt(30)
 {}
 
 NachenBlaster::~NachenBlaster()
@@ -77,10 +90,10 @@ void NachenBlaster::doSomething()
             double x = getX();
             double y = getY();
             switch (value) {
-                case KEY_PRESS_LEFT:   if(isInBound(x-1, y)) moveTo(x-1, y); break;
-                case KEY_PRESS_RIGHT:  if(isInBound(x+1, y)) moveTo(x+1, y); break;
-                case KEY_PRESS_DOWN:   if(isInBound(x, y-1)) moveTo(x, y-1); break;
-                case KEY_PRESS_UP:     if(isInBound(x, y+1)) moveTo(x, y+1); break;
+                case KEY_PRESS_LEFT:   if(isInBound(x-6, y)) moveTo(x-6, y); break;
+                case KEY_PRESS_RIGHT:  if(isInBound(x+6, y)) moveTo(x+6, y); break;
+                case KEY_PRESS_DOWN:   if(isInBound(x, y-6)) moveTo(x, y-6); break;
+                case KEY_PRESS_UP:     if(isInBound(x, y+6)) moveTo(x, y+6); break;
                 // case KEY_PRESS_SPACE: add a cabbage in front of the NachenBlaster...;
                 // KEY_PRESS_ESCAPE, KEY_PRESS_TAB
                 default:

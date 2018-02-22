@@ -10,7 +10,7 @@ class StudentWorld;
 class Actor: public GraphObject
 {
 public:
-    Actor(int imageID, double startX, double startY, int dir = 0, double size = 1.0, int depth = 0);
+    Actor(StudentWorld* World, int imageID, double startX, double startY, int dir = 0, double size = 1.0, int depth = 0);
     virtual ~Actor();
     virtual void doSomething() = 0; // move around, cause damage, grant bonuses, etc.
     virtual void attacked() = 0;
@@ -22,13 +22,14 @@ public:
     
 private:
     bool m_isAlive;
+    StudentWorld* m_world;
     
 }; // Each actor has its own x,y location in space, its own internal state (e.g., a Snagglegon knows its location, what direction it’s moving, etc.) and its own special algorithms that control its actions in the game based on its own state and the state of the other objects in the world.
 
 class Star: public Actor
 {
 public:
-    Star(int imageID, double startX, double startY, int dir, double size, int depth);
+    Star(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth);
     virtual ~Star();
     virtual void doSomething();
     virtual void attacked();
@@ -40,7 +41,7 @@ private:
 class NachenBlaster: public Actor
 {
 public:
-    NachenBlaster(int imageID, double startX, double startY, int dir, double size, int depth, double hitPoint, double cabbagePoint);
+    NachenBlaster(StudentWorld* world); //(int imageID, double startX, double startY, int dir, double size, int depth, double hitPoint, double cabbagePoint);
     virtual ~NachenBlaster();
     virtual void doSomething();
     virtual void attacked();
