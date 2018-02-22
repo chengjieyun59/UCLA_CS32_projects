@@ -7,15 +7,19 @@
 class Actor: public GraphObject
 {
 public:
-    Actor();
+    Actor(int imageID, double startX, double startY, int dir = 0, double size = 1.0, int depth = 0)
+    :GraphObject(imageID, startX, startY, dir, size, depth)
+    {} // page 22 // todo: imageID isn't always IID_NACHENBLASTER
+    
     virtual ~Actor();
     virtual void doSomething() = 0; // move around, cause damage, grant bonuses, etc.
-    
+    // virtual void attacked() = 0;
+    // bool isAlive() = 0;
     
     // may need to use GraphObject's functions: getX(); getY(); moveTo(double x, double y); setSize(double size);
     
 private:
-    
+    bool m_isAlive;
 }; // Each actor has its own x,y location in space, its own internal state (e.g., a Snagglegon knows its location, what direction it’s moving, etc.) and its own special algorithms that control its actions in the game based on its own state and the state of the other objects in the world.
 
 class Star: public Actor
@@ -27,18 +31,22 @@ public:
     
 private:
     
-}; // 
+}; // page 26
 
 class NachenBlaster: public Actor
 {
 public:
-    NachenBlaster();
+    NachenBlaster(int imageID, double startX, double startY, int dir = 0, double size = 1.0, int depth = 0)
+    :Actor(IID_NACHENBLASTER, 0, 128, 0, 1.0, 0), m_hitPoints(50), m_cabbagePoints(30)
+    {}
     virtual ~NachenBlaster();
     virtual void doSomething();
     
 private:
-    
+    int m_hitPoints;
+    int m_cabbagePoints;
 }; // the algorithm that controls the ship object is the user’s own brain and hand, and the keyboard
+// page 23-25
 
 class Explosion: public Actor
 {
