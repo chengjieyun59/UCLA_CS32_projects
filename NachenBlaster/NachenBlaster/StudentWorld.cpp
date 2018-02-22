@@ -1,6 +1,15 @@
 #include "StudentWorld.h"
 #include "GameConstants.h"
 #include <string>
+
+// include STL data sturctures
+#include <vector>
+#include <list>
+#include <stack>
+#include <queue>
+#include <set>
+#include <map>
+
 using namespace std;
 
 GameWorld* createStudentWorld(string assetDir)

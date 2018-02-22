@@ -13,6 +13,8 @@ public:
     virtual int init();
     virtual int move();
     virtual void cleanUp();
+    
+    // need to use GameWorld's function: getKey(int& ch);
 
 private:
 };
