@@ -24,14 +24,32 @@ StudentWorld::StudentWorld(string assetDir)
 {
 }
 
+StudentWorld::~StudentWorld()
+{
+    cleanUp();
+}
+
 int StudentWorld::init()
 {
+    for (int i = 0; i < 30; i++)
+        m_vStar.push_back(new Star(IID_STAR, randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3));
     
     return GWSTATUS_CONTINUE_GAME;
 } // spec page 16
 
 int StudentWorld::move()
 {
+    for(int i = 0; i < m_vStar.size(); i++)
+    {
+        if(m_vStar[i] -> isAlive() == true)
+            m_vStar[i] -> doSomething();
+    }
+    
+    // Each tick, there is a 1/15 chance a new star is created
+    int n = randInt(0, 14);
+    if (n == 0)
+        m_vStar.push_back(new Star(IID_STAR, randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3));
+    
     
     /*
     // Pseudocode:
@@ -63,5 +81,10 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp()
 {
+    for(vector<Star*>::iterator s = m_vStar.begin(); s != m_vStar.end(); )
+    {
+        delete *s;
+        s = m_vStar.erase(s);
+    }
     // every actor in the entire game (the NachenBlaster and every alien, goodie, projectile, star, explosion object, etc.) must be deleted and removed from the StudentWorld’s container of active objects, resulting in an empty level.
 } // NachenBlaster lost a life (e.g., its hit points reached zero due to being shot) or has completed the current level

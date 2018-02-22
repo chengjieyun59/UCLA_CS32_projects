@@ -7,14 +7,12 @@
 class Actor: public GraphObject
 {
 public:
-    Actor(int imageID, double startX, double startY, int dir = 0, double size = 1.0, int depth = 0)
-    :GraphObject(imageID, startX, startY, dir, size, depth)
-    {} // page 22 // todo: imageID isn't always IID_NACHENBLASTER
-    
+    Actor(int imageID, double startX, double startY, int dir = 0, double size = 1.0, int depth = 0);
     virtual ~Actor();
     virtual void doSomething() = 0; // move around, cause damage, grant bonuses, etc.
-    // virtual void attacked() = 0;
-    // bool isAlive() = 0;
+    virtual void attacked() = 0;
+    bool isInBound(int x, int y);
+    bool isAlive();
     
     // may need to use GraphObject's functions: getX(); getY(); moveTo(double x, double y); setSize(double size);
     
@@ -25,9 +23,10 @@ private:
 class Star: public Actor
 {
 public:
-    Star();
+    Star(int imageID, double startX, double startY, int dir, double size, int depth);
     virtual ~Star();
     virtual void doSomething();
+    virtual void attacked();
     
 private:
     
@@ -36,15 +35,23 @@ private:
 class NachenBlaster: public Actor
 {
 public:
-    NachenBlaster(int imageID, double startX, double startY, int dir = 0, double size = 1.0, int depth = 0)
-    :Actor(IID_NACHENBLASTER, 0, 128, 0, 1.0, 0), m_hitPoints(50), m_cabbagePoints(30)
-    {}
+    NachenBlaster(int imageID, double startX, double startY, int dir, double size, int depth);
     virtual ~NachenBlaster();
     virtual void doSomething();
+    virtual void attacked();
+    
+protected:
+    void incHitPt(int howMuch);
+    void decHitPt(int howMuch);
+    int getHitPt() const;
+    
+    void incCabbagePt(int howMuch);
+    void dcCabbagePt(int howMuch);
+    int getCabbagePt() const;
     
 private:
-    int m_hitPoints;
-    int m_cabbagePoints;
+    int m_hitPt;
+    int m_cabbagePt;
 }; // the algorithm that controls the ship object is the user’s own brain and hand, and the keyboard
 // page 23-25
 
@@ -54,6 +61,7 @@ public:
     Explosion();
     virtual ~Explosion();
     virtual void doSomething();
+    virtual void attacked() = 0;
     
 private:
     
@@ -68,7 +76,8 @@ class Alien: public Actor
 public:
     Alien();
     virtual ~Alien();
-    virtual void doSomething();
+    virtual void doSomething(); // Hint: studentWorldPtr->zapAllZappableActors(getX(), getY());
+    virtual void attacked() = 0;
     
 private:
     
@@ -80,6 +89,7 @@ public:
     Smallgon();
     virtual ~Smallgon();
     virtual void doSomething();
+    virtual void attacked() = 0;
     
 private:
     
@@ -91,6 +101,7 @@ public:
     Smoregon();
     virtual ~Smoregon();
     virtual void doSomething();
+    virtual void attacked() = 0;
     
 private:
     
@@ -102,6 +113,7 @@ public:
     Snagglegon();
     virtual ~Snagglegon();
     virtual void doSomething();
+    virtual void attacked() = 0;
     
 private:
     
@@ -117,6 +129,7 @@ public:
     Projectile();
     virtual ~Projectile();
     virtual void doSomething();
+    virtual void attacked() = 0;
     
 private:
     
@@ -128,6 +141,7 @@ public:
     Cabbage();
     virtual ~Cabbage();
     virtual void doSomething();
+    virtual void attacked() = 0;
     
 private:
     
@@ -139,6 +153,7 @@ public:
     Turnip();
     virtual ~Turnip();
     virtual void doSomething();
+    virtual void attacked() = 0;
     
 private:
     
@@ -150,6 +165,7 @@ public:
     FlatulenceTorpedo();
     virtual ~FlatulenceTorpedo();
     virtual void doSomething();
+    virtual void attacked() = 0;
     
 private:
     
@@ -165,6 +181,7 @@ public:
     Goodie();
     virtual ~Goodie();
     virtual void doSomething();
+    virtual void attacked() = 0;
     
 private:
     
@@ -176,6 +193,7 @@ public:
     RGoodie();
     virtual ~RGoodie();
     virtual void doSomething();
+    virtual void attacked() = 0;
     
 private:
     
@@ -187,6 +205,7 @@ public:
     ELGoodie();
     virtual ~ELGoodie();
     virtual void doSomething();
+    virtual void attacked() = 0;
     
 private:
     
@@ -198,6 +217,7 @@ public:
     FTGoodie();
     virtual ~FTGoodie();
     virtual void doSomething();
+    virtual void attacked() = 0;
     
 private:
     
