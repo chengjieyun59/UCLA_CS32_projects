@@ -43,6 +43,13 @@ int StudentWorld::move()
     {
         if(m_vStar[i] -> isAlive() == true)
             m_vStar[i] -> doSomething();
+        
+        else // if the star moves off the screen, delete it
+        {
+            vector<Star*>::iterator s = m_vStar.begin();
+            delete *(s+i);
+            s = m_vStar.erase(m_vStar.begin() + i);
+        }
     }
     
     // Each tick, there is a 1/15 chance a new star is created

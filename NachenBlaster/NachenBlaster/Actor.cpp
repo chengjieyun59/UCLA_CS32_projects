@@ -39,7 +39,7 @@ void Star::doSomething()
     double x = getX();
     double y = getY();
     moveTo(x-1, y);
-    //if (isInBound(getX(), getY()) == false)
+    //if (isAlive == false)
         //StudentWorld::~StudentWorld();
     
 }
