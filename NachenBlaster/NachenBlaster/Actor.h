@@ -20,8 +20,6 @@ public:
     virtual void setAlive(std::string aliveStatus);
     StudentWorld* getWorld();
     
-    // may need to use GraphObject's functions: getX(); getY(); moveTo(double x, double y); setSize(double size);
-    
 private:
     bool m_isAlive;
     StudentWorld* m_world;
@@ -44,7 +42,8 @@ private:
 class NachenBlaster: public Actor
 {
 public:
-    NachenBlaster(StudentWorld* world); //(int imageID, double startX, double startY, int dir, double size, int depth, double hitPoint, double cabbagePoint);
+    NachenBlaster(StudentWorld* world);
+    //instead of NachenBlaster(int imageID, double startX, double startY, int dir, double size, int depth, double hitPoint, double cabbagePoint);
     virtual ~NachenBlaster();
     virtual void doSomething();
     virtual void attacked();
@@ -61,10 +60,10 @@ protected:
 private:
     int m_hitPt;
     int m_cabbagePt;
-    // GameWorld* m_gw;
 }; // the algorithm that controls the ship object is the user’s own brain and hand, and the keyboard
 // page 23-25
 
+/*
 class Explosion: public Actor
 {
 public:
@@ -232,5 +231,6 @@ public:
 private:
     
 };
+*/
 
 #endif // ACTOR_H_

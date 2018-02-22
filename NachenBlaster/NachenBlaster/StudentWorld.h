@@ -25,13 +25,10 @@ public:
                 p->zap();
      }
      */
-    // need to use GameWorld's function: getKey(int& ch);
 
 private:
     vector<Actor*> m_vActor;
-    
     NachenBlaster* m_NachenBlaster;
-    // Star* m_Star;
 };
 
 #endif // STUDENTWORLD_H_
