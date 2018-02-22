@@ -1,0 +1,23 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "536BF2E2C9D9843C508081623DAFE86BD8ABC4E4",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "536BF2E2C9D9843C508081623DAFE86BD8ABC4E4" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "AEB8D2DA-3A7C-4A78-9593-DCF6D78369A0",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "536BF2E2C9D9843C508081623DAFE86BD8ABC4E4" : "UCLA_CS32_projects\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "P3sanityCheck",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "P3sanityCheck\/P3sanityCheck.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/chengjieyun59\/UCLA_CS32_projects.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "536BF2E2C9D9843C508081623DAFE86BD8ABC4E4"
+    }
+  ]
+}
