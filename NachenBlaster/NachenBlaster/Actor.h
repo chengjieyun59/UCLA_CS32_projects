@@ -7,6 +7,7 @@
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 class GameWorld;
 class StudentWorld;
+//class GameController;
 
 class Actor: public GraphObject
 {
@@ -18,10 +19,12 @@ public:
     bool isAlive();
     virtual void setAlive(std::string aliveStatus);
     StudentWorld* getWorld();
+    //GameController* getControl();
     
 private:
     bool m_isAlive;
     StudentWorld* m_world;
+    //GameController* m_control;
     
 }; // Each actor has its own x,y location in space, its own internal state (e.g., a Snagglegon knows its location, what direction it’s moving, etc.) and its own special algorithms that control its actions in the game based on its own state and the state of the other objects in the world.
 
@@ -68,58 +71,6 @@ public:
 
 private:
     int m_size;
-};
-
-///////////
-// Alien //
-///////////
-
-class Alien: public Actor
-{
-public:
-    Alien();
-    virtual ~Alien();
-    virtual void doSomething()=0; // Hint: studentWorldPtr->zapAllZappableActors(getX(), getY());
-    virtual void attacked() = 0;
-    
-private:
-    
-};
-
-class Smallgon: public Alien
-{
-public:
-    Smallgon();
-    virtual ~Smallgon();
-    virtual void doSomething();
-    virtual void attacked();
-    
-private:
-    
-};
-
-class Smoregon: public Alien
-{
-public:
-    Smoregon();
-    virtual ~Smoregon();
-    virtual void doSomething();
-    virtual void attacked();
-    
-private:
-    
-};
-
-class Snagglegon: public Alien
-{
-public:
-    Snagglegon();
-    virtual ~Snagglegon();
-    virtual void doSomething();
-    virtual void attacked();
-    
-private:
-    
 };
 
 ////////////////
@@ -217,6 +168,62 @@ public:
     FTGoodie(StudentWorld* World, int imageID, double startX, double startY);
     virtual ~FTGoodie();
     virtual void doSomething();
+    
+private:
+    
+};
+
+///////////
+// Alien //
+///////////
+
+class Alien: public Actor
+{
+public:
+    Alien(StudentWorld* World, int level, int imageID, double startX, double startY, int dir, double size, int depth, int hitPoint, int flightLength, double speed);
+    virtual ~Alien();
+    virtual void doSomething()=0; // Hint: studentWorldPtr->zapAllZappableActors(getX(), getY());
+    virtual void attacked() = 0;
+    
+private:
+    int m_hitpoints;
+    int m_flightlength;
+    double m_speed;
+    int m_level;
+};
+
+class Smallgon: public Alien
+{
+public:
+    Smallgon(StudentWorld* World, int level, int imageID, double startX, double startY, int hitPoint, int flightLength, double speed);
+    virtual ~Smallgon();
+    virtual void doSomething();
+    virtual void attacked();
+    
+private:
+
+    
+};
+
+class Smoregon: public Alien
+{
+public:
+    Smoregon(StudentWorld* World, int level, int imageID, double startX, double startY, int hitPoint, int flightLength, double speed);
+    virtual ~Smoregon();
+    virtual void doSomething();
+    virtual void attacked();
+    
+private:
+    
+};
+
+class Snagglegon: public Alien
+{
+public:
+    Snagglegon(StudentWorld* World, int level, int imageID, double startX, double startY, int hitPoint, int flightLength, double speed);
+    virtual ~Snagglegon();
+    virtual void doSomething();
+    virtual void attacked();
     
 private:
     
