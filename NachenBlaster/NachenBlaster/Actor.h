@@ -14,7 +14,6 @@ public:
     Actor(StudentWorld* World, int imageID, double startX, double startY, int dir = 0, double size = 1.0, int depth = 0);
     virtual ~Actor();
     virtual void doSomething() = 0; // move around, cause damage, grant bonuses, etc.
-    virtual void attacked() = 0;
     bool isInBound(int x, int y);
     bool isAlive();
     virtual void setAlive(std::string aliveStatus);
@@ -41,7 +40,7 @@ public:
     //instead of NachenBlaster(int imageID, double startX, double startY, int dir, double size, int depth, double hitPoint, double cabbagePoint);
     virtual ~NachenBlaster();
     virtual void doSomething();
-    virtual void attacked();
+    void attacked();
     
 protected:
     void incHitPt(int howMuch);
@@ -80,7 +79,7 @@ class Alien: public Actor
 public:
     Alien();
     virtual ~Alien();
-    virtual void doSomething(); // Hint: studentWorldPtr->zapAllZappableActors(getX(), getY());
+    virtual void doSomething()=0; // Hint: studentWorldPtr->zapAllZappableActors(getX(), getY());
     virtual void attacked() = 0;
     
 private:
@@ -93,7 +92,7 @@ public:
     Smallgon();
     virtual ~Smallgon();
     virtual void doSomething();
-    virtual void attacked() = 0;
+    virtual void attacked();
     
 private:
     
@@ -105,7 +104,7 @@ public:
     Smoregon();
     virtual ~Smoregon();
     virtual void doSomething();
-    virtual void attacked() = 0;
+    virtual void attacked();
     
 private:
     
@@ -117,7 +116,7 @@ public:
     Snagglegon();
     virtual ~Snagglegon();
     virtual void doSomething();
-    virtual void attacked() = 0;
+    virtual void attacked();
     
 private:
     
@@ -130,22 +129,23 @@ private:
 class Projectile: public Actor
 {
 public:
-    Projectile();
+    Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth);
     virtual ~Projectile();
-    virtual void doSomething();
-    virtual void attacked() = 0;
+    virtual void doSomething()=0;
+    double getDir();
+    void setDir(int dirStatus);
     
 private:
+    int m_dir;
     
 };
 
 class Cabbage: public Projectile
 {
 public:
-    Cabbage();
+    Cabbage(StudentWorld* World, int imageID, double startX, double startY);
     virtual ~Cabbage();
     virtual void doSomething();
-    virtual void attacked() = 0;
     
 private:
     
@@ -154,22 +154,20 @@ private:
 class Turnip: public Projectile
 {
 public:
-    Turnip();
+    Turnip(StudentWorld* World, int imageID, double startX, double startY);
     virtual ~Turnip();
     virtual void doSomething();
-    virtual void attacked() = 0;
     
 private:
     
 };
 
-class FlatulenceTorpedo: public Projectile
+class Torpedo: public Projectile
 {
 public:
-    FlatulenceTorpedo();
-    virtual ~FlatulenceTorpedo();
+    Torpedo(StudentWorld* World, int imageID, double startX, double startY, int dir);
+    virtual ~Torpedo();
     virtual void doSomething();
-    virtual void attacked() = 0;
     
 private:
     
@@ -184,8 +182,7 @@ class Goodie: public Actor
 public:
     Goodie();
     virtual ~Goodie();
-    virtual void doSomething();
-    virtual void attacked() = 0;
+    virtual void doSomething()=0;
     
 private:
     
@@ -197,7 +194,6 @@ public:
     RGoodie();
     virtual ~RGoodie();
     virtual void doSomething();
-    virtual void attacked() = 0;
     
 private:
     
@@ -209,7 +205,6 @@ public:
     ELGoodie();
     virtual ~ELGoodie();
     virtual void doSomething();
-    virtual void attacked() = 0;
     
 private:
     
@@ -221,7 +216,6 @@ public:
     FTGoodie();
     virtual ~FTGoodie();
     virtual void doSomething();
-    virtual void attacked() = 0;
     
 private:
     
