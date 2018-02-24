@@ -32,11 +32,6 @@ public:
     Star(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth);
     virtual ~Star();
     virtual void doSomething();
-    virtual void attacked();
-    
-    
-private:
-    
 }; // page 26
 
 class NachenBlaster: public Actor
@@ -63,18 +58,18 @@ private:
 }; // the algorithm that controls the ship object is the user’s own brain and hand, and the keyboard
 // page 23-25
 
-/*
 class Explosion: public Actor
 {
 public:
-    Explosion();
+    Explosion(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth);
     virtual ~Explosion();
     virtual void doSomething();
-    virtual void attacked() = 0;
-    
+    double getSize();
+    void setSize(int sizeStatus);
+
 private:
-    
-}; //
+    int m_size;
+};
 
 ///////////
 // Alien //
@@ -231,6 +226,5 @@ public:
 private:
     
 };
-*/
 
 #endif // ACTOR_H_

@@ -53,9 +53,6 @@ void Star::doSomething()
     moveTo(getX()-1, getY());
 }
 
-void Star::attacked()
-{} // do nothing
-
 NachenBlaster::NachenBlaster(StudentWorld* World)
 :Actor(World, IID_NACHENBLASTER, 0, 128, 0, 1.0, 0), m_hitPt(50), m_cabbagePt(30)
 {}
@@ -101,4 +98,32 @@ int NachenBlaster::getHitPt() const {return m_hitPt;}
 void NachenBlaster::incCabbagePt(int howMuch){m_cabbagePt += howMuch;}
 void NachenBlaster::dcCabbagePt(int howMuch){m_cabbagePt -= howMuch;}
 int NachenBlaster::getCabbagePt() const {return m_cabbagePt;}
+
+Explosion::Explosion(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
+:Actor(World, IID_EXPLOSION, startX, startY, 0, size, 0), m_size(size)
+{}
+
+Explosion::~Explosion()
+{}
+
+void Explosion::setSize(int sizeStatus)
+{
+    m_size = sizeStatus;
+}
+
+double Explosion::getSize()
+{
+    return m_size;
+}
+
+void Explosion::doSomething()
+{
+    if (getSize() < 6.0)
+    {
+        setSize(1.5 * getSize());
+    } // First four powers of 1.5: 1.5, 2.25, 3.375, 5.0625
+    
+    if (getSize() == 5.0625)
+        setAlive("Dead");
+}
 
