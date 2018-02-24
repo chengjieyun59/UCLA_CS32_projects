@@ -180,9 +180,21 @@ private:
 class Goodie: public Actor
 {
 public:
-    Goodie();
+    Goodie(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth);
     virtual ~Goodie();
     virtual void doSomething()=0;
+    
+private:
+    
+};
+
+
+class ELGoodie: public Goodie // extra life goodies
+{
+public:
+    ELGoodie(StudentWorld* World, int imageID, double startX, double startY);
+    virtual ~ELGoodie();
+    virtual void doSomething();
     
 private:
     
@@ -191,19 +203,8 @@ private:
 class RGoodie: public Goodie // repair goodies
 {
 public:
-    RGoodie();
+    RGoodie(StudentWorld* World, int imageID, double startX, double startY);
     virtual ~RGoodie();
-    virtual void doSomething();
-    
-private:
-    
-};
-
-class ELGoodie: public Goodie // extra life goodies
-{
-public:
-    ELGoodie();
-    virtual ~ELGoodie();
     virtual void doSomething();
     
 private:
@@ -213,7 +214,7 @@ private:
 class FTGoodie: public Goodie // flatulence torpedo goodies
 {
 public:
-    FTGoodie();
+    FTGoodie(StudentWorld* World, int imageID, double startX, double startY);
     virtual ~FTGoodie();
     virtual void doSomething();
     

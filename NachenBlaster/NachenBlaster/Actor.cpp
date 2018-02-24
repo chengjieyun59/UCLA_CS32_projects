@@ -227,3 +227,112 @@ void Torpedo::doSomething()
     moveTo(getX()-6, getY()); // TODO: The Flatulence Torpedo must move itself 8 pixels to the left (if it was fired by a Snagglegon) or 8 pixels to the right (if it was fired by the NachenBlaster).
     // Finally, after the Flatulence Torpedo has moved itself, the Flatulence Torpedo must AGAIN check to see if has collided with an enemy, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.), but does not move any further during this tick.
 }
+
+Goodie::Goodie(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
+:Actor(World, imageID, startX, startY, 0, 0.5, 1)
+{}
+
+Goodie::~Goodie()
+{}
+
+void Goodie::doSomething()
+{}
+
+ELGoodie::ELGoodie(StudentWorld* World, int imageID, double startX, double startY)
+:Goodie(World, IID_LIFE_GOODIE, startX, startY, 0, 0.5, 1)
+{}
+
+ELGoodie::~ELGoodie()
+{}
+
+void ELGoodie::doSomething()
+{
+    if(isAlive() == false)
+        return;
+    
+    /*
+     3.
+     if(if the NachenBlaster collides with a Extra Life Goodie)
+     {
+        a. Inform the StudentWorld object that the user is to receive 100 more points.
+     
+        setAlive("dead");
+        playSound(SOUND_GOODIE);
+     
+        d. Inform the StudentWorld object that the NachenBlaster is to gain one extra
+     life.
+     
+        return;
+     }
+     */
+    moveTo(getX()-0.75, getY()-0.75);
+    
+    // TODO: The Extra Life Goodie must then again check to see if it collided with the NachenBlaster, and if so, perform the steps outlined in item #3 above.
+}
+
+RGoodie::RGoodie(StudentWorld* World, int imageID, double startX, double startY)
+:Goodie(World, IID_REPAIR_GOODIE, startX, startY, 0, 0.5, 1)
+{}
+
+RGoodie::~RGoodie()
+{}
+
+void RGoodie::doSomething()
+{
+    if(isAlive() == false)
+        return;
+    
+    /*
+     3.
+     if(if the NachenBlaster collides with a Repair Goodie)
+     {
+     a. Inform the StudentWorld object that the user is to receive 100 more points.
+     
+     setAlive("dead");
+     playSound(SOUND_GOODIE);
+     
+     d. Inform the NachenBlaster object that it just got 10 additional hit points (any
+     additional hit points must NOT cause the NachenBlaster to exceed 50 hit
+     points).
+     
+     return;
+     }
+     */
+    moveTo(getX()-0.75, getY()-0.75);
+    
+    // TODO: The Repair Goodie must then again check to see if it collided with the NachenBlaster, and if so, perform the steps outlined in item #3 above.
+}
+
+FTGoodie::FTGoodie(StudentWorld* World, int imageID, double startX, double startY)
+:Goodie(World, IID_TORPEDO_GOODIE, startX, startY, 0, 0.5, 1)
+{}
+
+FTGoodie::~FTGoodie()
+{}
+
+void FTGoodie::doSomething()
+{
+    if(isAlive() == false)
+        return;
+    
+    /*
+     3.
+     if(if the NachenBlaster collides with a Flatulence Torpedo Goodie)
+     {
+     a. Inform the StudentWorld object that the user is to receive 100 more points.
+     
+     setAlive("dead");
+     playSound(SOUND_GOODIE);
+     
+     d. Inform the NachenBlaster object that it just received 5 Flatulence Torpedoes.
+     There is no maximum number of torpedoes that the NachenBlaster may have.
+     
+     return;
+     }
+     */
+    moveTo(getX()-0.75, getY()-0.75);
+    
+    // TODO: The Flatulence Torpedo Goodie must then again check to see if it collided with the NachenBlaster, and if so, perform the steps outlined in item #3 above.
+}
+
+
