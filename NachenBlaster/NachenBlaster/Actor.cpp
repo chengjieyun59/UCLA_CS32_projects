@@ -36,6 +36,11 @@ bool Actor::isAlive()
     return m_isAlive;
 }
 
+double Actor::euclidian_dist(double x1, double y1, double x2, double y2)
+{
+    return sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+}
+
 StudentWorld* Actor::getWorld()
 {
     return m_world;
@@ -48,7 +53,7 @@ GameController* Actor::getControl()
 }
 */
 
-Star::Star(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
+Star::Star(StudentWorld* World, double startX)
 :Actor(World, IID_STAR, startX, randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3)
 {}
 
@@ -61,7 +66,7 @@ void Star::doSomething()
 }
 
 NachenBlaster::NachenBlaster(StudentWorld* World)
- :Actor(World, IID_NACHENBLASTER, 0, 128, 0, 1.0, 0), m_hitPt(50), m_cabbagePt(30)
+ :Actor(World, IID_NACHENBLASTER, 0, 128, 0, 1.0, 0), m_hitPt(50), m_cabbagePt(30), m_torpedoPt(0)
 {}
 
 NachenBlaster::~NachenBlaster()
@@ -78,51 +83,82 @@ void NachenBlaster::doSomething()
         {
             double x = getX();
             double y = getY();
-            switch (value) {
+            switch (value)
+            {
+                case KEY_PRESS_SPACE:
+                    if(getCabbagePt() >= 5)
+                    {
+                        // TODO:
+                        //Cabbage* c = new Cabbage(this, getX()+12, getY());
+                        //playSound(SOUND_PLAYER_SHOOT);
+                        setCabbagePt(getCabbagePt() - 5);
+                    } break;
+                    // TODO Hint: When you create a new cabbage object in the proper location, give it to the StudentWorld to manage (e.g., animate) along with the other game objects.
+                    
+                case KEY_PRESS_TAB:
+                    if(getTorpedoPt() > 0)
+                    {
+                        // TODO:
+                        //Torpedo* c = new Torpedo(this, getX()+12, getY(), 0);
+                        //playSound(SOUND_TORPEDO);
+                        setTorpedoPt(getTorpedoPt() - 1);
+                    } break;
+                    
                 case KEY_PRESS_LEFT:   if(isInBound(x-6, y)) moveTo(x-6, y); break;
                 case KEY_PRESS_RIGHT:  if(isInBound(x+6, y)) moveTo(x+6, y); break;
                 case KEY_PRESS_DOWN:   if(isInBound(x, y-6)) moveTo(x, y-6); break;
                 case KEY_PRESS_UP:     if(isInBound(x, y+6)) moveTo(x, y+6); break;
-                    // case KEY_PRESS_SPACE: add a cabbage in front of the NachenBlaster...; break;
-                    // the NachenBlaster that fires the cabbage must pass in this x,y location when constructing a cabbage object.
-                // case KEY_PRESS_ESCAPE: ; break;
-                // case KEY_PRESS_TAB: ; break;
+                    // TODO: Of course, any movement may cause a collision with an alien ship or projectile, so you must check for this.
+                    
+                    // TODO: case KEY_PRESS_ESCAPE: ; break;
+                    
                 default:
                     break;
             }
         }
     }
-} // It must have a limited version of a doSomething() method that lets the user pick a direction by hitting a directional key. If the NachenBlaster hits a directional key during the current tick and this will not cause the NachenBlaster to move off of the space field, it updates the NachenBlaster’s location appropriately. All this doSomething() method has to do is properly adjust the NachenBlaster’s x,y coordinates, and our graphics system will automatically animate its movement it around the space field!
+    if (getCabbagePt() < 30)
+        setCabbagePt(getCabbagePt() + 1);
+}
 
 void NachenBlaster::attacked()
 {
+    /* TODO:
+    if (a projectile like a turnip collides with the NachenBlaster, or vice versa)
+    {
+        setHitpt(getHitPt() - 2);
+        playSound(SOUND_BLAST);
+    }
+    if (a Flatulence Torpedo collides with the NachenBlaster, or vice versa)
+    {
+        setHitpt(getHitPt() - 8);
+        playSound(SOUND_BLAST);
+    }
     
+    if (an alien ship collides with the NachenBlaster or vice versa)
+        the NachenBlaster incurs damage and the alien ship will be destroyed
+        playSound(SOUND_DEATH);
+     */
+    
+    if(getHitPt() <= 0)
+        setAlive("dead");
 }
 
-void NachenBlaster::incHitPt(int howMuch){m_hitPt += howMuch;}
-void NachenBlaster::decHitPt(int howMuch){m_hitPt -= howMuch;}
+void NachenBlaster::setHitPt(int newHitPt){m_hitPt = newHitPt;}
 int NachenBlaster::getHitPt() const {return m_hitPt;}
 
-void NachenBlaster::incCabbagePt(int howMuch){m_cabbagePt += howMuch;}
-void NachenBlaster::dcCabbagePt(int howMuch){m_cabbagePt -= howMuch;}
+void NachenBlaster::setCabbagePt(int newCabbagePt){m_cabbagePt = newCabbagePt;}
 int NachenBlaster::getCabbagePt() const {return m_cabbagePt;}
 
-Explosion::Explosion(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
- :Actor(World, IID_EXPLOSION, startX, startY, 0, size, 0), m_size(size)
+void NachenBlaster::setTorpedoPt(int newTorpedoPt){m_torpedoPt = newTorpedoPt;}
+int NachenBlaster::getTorpedoPt() const {return m_torpedoPt;}
+
+Explosion::Explosion(StudentWorld* World, double startX, double startY, double size)
+ :Actor(World, IID_EXPLOSION, startX, startY, 0, size, 0)
 {}
 
 Explosion::~Explosion()
 {}
-
-void Explosion::setSize(int sizeStatus)
-{
-    m_size = sizeStatus;
-}
-
-double Explosion::getSize()
-{
-    return m_size;
-}
 
 void Explosion::doSomething()
 {
@@ -139,25 +175,15 @@ void Explosion::doSomething()
 // Projectile //
 ////////////////
 
-Projectile::Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
-:Actor(World, imageID, startX, startY, 0, 0.5, 1)
+Projectile::Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir)
+:Actor(World, imageID, startX, startY, dir, 0.5, 1)
 {}
 
 Projectile::~Projectile()
 {}
 
-void Projectile::setDir(int dirStatus)
-{
-    m_dir = dirStatus;
-}
-
-double Projectile::getDir()
-{
-    return m_dir;
-}
-
-Cabbage::Cabbage(StudentWorld* World, int imageID, double startX, double startY)
-:Projectile(World, IID_CABBAGE, startX, startY, 0, 0.5, 1)
+Cabbage::Cabbage(StudentWorld* World, double startX, double startY)
+:Projectile(World, IID_CABBAGE, startX, startY, 0)
 {}
 
 Cabbage::~Cabbage(){}
@@ -179,12 +205,12 @@ void Cabbage::doSomething()
      }
      */
     moveTo(getX()+8, getY());
-    setDir(getDir() + 20); // TODO: Check if this is counter-clockwise
+    setDirection(getDirection()+20); // TODO: Check if this is counter-clockwise
     // Finally, after the cabbage has moved itself, the cabbage must AGAIN check to see if has collided with an alien ship, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.), but does not move any further during this tick.
 }
 
-Turnip::Turnip(StudentWorld* World, int imageID, double startX, double startY)
-:Projectile(World, IID_TURNIP, startX, startY, 0, 0.5, 1)
+Turnip::Turnip(StudentWorld* World, double startX, double startY)
+:Projectile(World, IID_TURNIP, startX, startY, 0)
 {}
 
 Turnip::~Turnip()
@@ -208,12 +234,12 @@ void Turnip::doSomething()
      }
      */
     moveTo(getX()-6, getY());
-    setDir(getDir() + 20); // TODO: Check if this is counter-clockwise
+    setDirection(getDirection()+20); // TODO: Check if this is counter-clockwise
     // Finally, after the turnip has moved itself, the turnip must AGAIN check to see if has collided with the NachenBlaster, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.), but does not move any further during this tick.
 }
 
-Torpedo::Torpedo(StudentWorld* World, int imageID, double startX, double startY, int dir)
-:Projectile(World, IID_TORPEDO, startX, startY, dir, 0.5, 1)
+Torpedo::Torpedo(StudentWorld* World, double startX, double startY, int dir)
+:Projectile(World, IID_TORPEDO, startX, startY, dir)
 {} // TODO: A Flatulence Torpedo has a direction of either 0 degrees (if it was fired by the NachenBlaster) or 180 degrees (if it was fired by a Snagglegon).
 
 Torpedo::~Torpedo()

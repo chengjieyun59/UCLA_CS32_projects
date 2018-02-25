@@ -18,6 +18,7 @@ public:
     bool isInBound(int x, int y);
     bool isAlive();
     virtual void setAlive(std::string aliveStatus);
+    double euclidian_dist(double x1, double y1, double x2, double y2);
     StudentWorld* getWorld();
     //GameController* getControl();
     
@@ -31,7 +32,7 @@ private:
 class Star: public Actor
 {
 public:
-    Star(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth);
+    Star(StudentWorld* World, double startX);
     virtual ~Star();
     virtual void doSomething();
 }; // page 26
@@ -46,31 +47,31 @@ public:
     void attacked();
     
 protected:
-    void incHitPt(int howMuch);
-    void decHitPt(int howMuch);
+    void setHitPt(int newHitPt);
     int getHitPt() const;
     
-    void incCabbagePt(int howMuch);
-    void dcCabbagePt(int howMuch);
+    void setCabbagePt(int newCabbagePt);
     int getCabbagePt() const;
+    
+    void setTorpedoPt(int newTorpedoPt);
+    int getTorpedoPt() const;
     
 private:
     int m_hitPt;
     int m_cabbagePt;
+    int m_torpedoPt;
 }; // the algorithm that controls the ship object is the user’s own brain and hand, and the keyboard
 // page 23-25
 
 class Explosion: public Actor
 {
 public:
-    Explosion(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth);
+    Explosion(StudentWorld* World, double startX, double startY, double size);
     virtual ~Explosion();
     virtual void doSomething();
-    double getSize();
-    void setSize(int sizeStatus);
 
 private:
-    int m_size;
+
 };
 
 ////////////////
@@ -80,21 +81,18 @@ private:
 class Projectile: public Actor
 {
 public:
-    Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth);
+    Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir);
     virtual ~Projectile();
     virtual void doSomething()=0;
-    double getDir();
-    void setDir(int dirStatus);
     
 private:
-    int m_dir;
-    
+
 };
 
 class Cabbage: public Projectile
 {
 public:
-    Cabbage(StudentWorld* World, int imageID, double startX, double startY);
+    Cabbage(StudentWorld* World, double startX, double startY);
     virtual ~Cabbage();
     virtual void doSomething();
     
@@ -105,7 +103,7 @@ private:
 class Turnip: public Projectile
 {
 public:
-    Turnip(StudentWorld* World, int imageID, double startX, double startY);
+    Turnip(StudentWorld* World, double startX, double startY);
     virtual ~Turnip();
     virtual void doSomething();
     
@@ -116,7 +114,7 @@ private:
 class Torpedo: public Projectile
 {
 public:
-    Torpedo(StudentWorld* World, int imageID, double startX, double startY, int dir);
+    Torpedo(StudentWorld* World, double startX, double startY, int dir);
     virtual ~Torpedo();
     virtual void doSomething();
     

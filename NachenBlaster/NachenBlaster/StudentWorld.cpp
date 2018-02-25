@@ -37,7 +37,7 @@ int StudentWorld::init()
     // create 30 stars
     for (int i = 0; i < 30; i++)
     {
-        Star* s = new Star(this, IID_STAR, randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3);
+        Star* s = new Star(this, randInt(0, VIEW_WIDTH-1));
         m_vActor.push_back(s);
     }
     
@@ -81,7 +81,7 @@ int StudentWorld::move()
     
     // Possibly create a new star on the far right side on a 1/15 chance
     if (randInt(0, 14) == 0)
-        m_vActor.push_back(new Star(this, IID_STAR, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3));
+        m_vActor.push_back(new Star(this, VIEW_WIDTH-1));
     
     /*
     // Update the Game Status Line
