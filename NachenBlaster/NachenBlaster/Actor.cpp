@@ -65,6 +65,9 @@ void Star::doSomething()
     moveTo(getX()-1, getY());
 }
 
+void Star::attacked()
+{}
+
 NachenBlaster::NachenBlaster(StudentWorld* World)
  :Actor(World, IID_NACHENBLASTER, 0, 128, 0, 1.0, 0), m_hitPt(50), m_cabbagePt(30), m_torpedoPt(0)
 {}
@@ -171,6 +174,9 @@ void Explosion::doSomething()
         setAlive("Dead");
 }
 
+void Explosion::attacked()
+{}
+
 ////////////////
 // Projectile //
 ////////////////
@@ -180,6 +186,9 @@ Projectile::Projectile(StudentWorld* World, int imageID, double startX, double s
 {}
 
 Projectile::~Projectile()
+{}
+
+void Projectile::attacked()
 {}
 
 Cabbage::Cabbage(StudentWorld* World, double startX, double startY)
@@ -194,19 +203,30 @@ void Cabbage::doSomething()
         return;
     
     /*
-     if()
-     {
-     step 3: Otherwise, the cabbage must check to see if it has collided with an alien (see the Euclidian distance check on page 10 of this document). If the cabbage overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship:
-
-     • Damage the victim ship appropriately (by causing the object to lose 2 hit points); the damaged object can then deal with this damage in its own unique way (this may result in the damaged object dying/disappearing, a sound effect being played, the user possibly getting points, etc.) Hint: The cabbage can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
+    if (the cabbage overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
+    {
+        Alien::attacked();
+        // TODO Hint: The cabbage can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
      
         setAlive("dead");
         return;
      }
-     */
+    */
+    
     moveTo(getX()+8, getY());
-    setDirection(getDirection()+20); // TODO: Check if this is counter-clockwise
-    // Finally, after the cabbage has moved itself, the cabbage must AGAIN check to see if has collided with an alien ship, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.), but does not move any further during this tick.
+    setDirection(getDirection()+20);
+    // TODO: Check if this is counter-clockwise
+    
+    /*
+    if (the cabbage overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
+    {
+        Alien::attacked();
+        // TODO Hint: The cabbage can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
+        
+        setAlive("dead");
+        return;
+    }
+     */
 }
 
 Turnip::Turnip(StudentWorld* World, double startX, double startY)
@@ -222,25 +242,34 @@ void Turnip::doSomething()
         return;
     
     /*
-     if()
+     if (the turnip overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
      {
-     step 3: Otherwise, the turnip must check to see if it has collided with the NachenBlaster (see the Euclidian distance check on page 10 of this document). If the turnip overlaps with the NachenBlaster ship:
-     
-     • Damage the NachenBlaster appropriately (by causing the object to lose 2 hit
-     points); the damaged object can then deal with this damage in its own unique way (this may result in the damaged object dying/disappearing, a sound effect being played, the user possibly getting points, etc.) Hint: The turnip can tell the NachenBlaster that it has been damaged by calling a method the NachenBlaster has (presumably named sufferDamage or something similar).
+     Alien::attacked();
+     // TODO Hint: The turnip can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
      
      setAlive("dead");
      return;
      }
      */
+    
     moveTo(getX()-6, getY());
     setDirection(getDirection()+20); // TODO: Check if this is counter-clockwise
-    // Finally, after the turnip has moved itself, the turnip must AGAIN check to see if has collided with the NachenBlaster, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.), but does not move any further during this tick.
+    
+    /*
+     if (the turnip overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
+     {
+     Alien::attacked();
+     // TODO Hint: The turnip can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
+     
+     setAlive("dead");
+     return;
+     }
+     */
 }
 
 Torpedo::Torpedo(StudentWorld* World, double startX, double startY, int dir)
 :Projectile(World, IID_TORPEDO, startX, startY, dir)
-{} // TODO: A Flatulence Torpedo has a direction of either 0 degrees (if it was fired by the NachenBlaster) or 180 degrees (if it was fired by a Snagglegon).
+{} // TODO: A Flatulence Torpedo has a direction of 180 degrees if it was fired by a Snagglegon.
 
 Torpedo::~Torpedo()
 {}
@@ -250,19 +279,32 @@ void Torpedo::doSomething()
     if(isAlive() == false)
         return;
     
-    /*
-     if()
-     {
-     step 3: Otherwise, the Flatulence Torpedo must check to see if it has collided with an enemy. If the Flatulence Torpedo was fired by a Snagglegon ship, then its only enemy is the NachenBlaster. Otherwise, if the Flatulence Torpedo was fired by the NachenBlaster then its enemy is any alien ship. See the Euclidian distance check on page 10 of this document to determine how to check for collisions. If the Flatulence Torpedo collides with an enemy ship:
-     
-     • Damage the enemy appropriately (by causing the object to lose 8 hit points); the damaged object can then deal with this damage in its own unique way (this may result in the damaged object dying/disappearing, a sound effect being played, the user possibly getting points, etc.) Hint: The Flatulence Torpedo can tell the enemy object that it has been damaged by calling a method the enemy object has (presumably named sufferDamage or something similar).
-     
-     setAlive("dead");
-     return;
-     }
-     */
-    moveTo(getX()-6, getY()); // TODO: The Flatulence Torpedo must move itself 8 pixels to the left (if it was fired by a Snagglegon) or 8 pixels to the right (if it was fired by the NachenBlaster).
-    // Finally, after the Flatulence Torpedo has moved itself, the Flatulence Torpedo must AGAIN check to see if has collided with an enemy, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.), but does not move any further during this tick.
+    /* TODO:
+    if (Flatulence Torpedo must check to see if it has collided with an enemy)
+    {
+        if (the Flatulence Torpedo was fired by a Snagglegon ship)
+            NachenBlaster::attacked();
+        else
+            Alien::attacked();
+        setAlive("dead");
+        return;
+    }
+    
+    if (the Flatulence Torpedo was fired by a Snagglegon ship)
+        moveTo(getX()-8, getY());
+    else
+        moveTo(getX()+8, getY());
+    
+    if (Flatulence Torpedo must check to see if it has collided with an enemy)
+    {
+        if (the Flatulence Torpedo was fired by a Snagglegon ship)
+            NachenBlaster::attacked();
+        else
+            Alien::attacked();
+        setAlive("dead");
+        return;
+    }
+    */
 }
 
 ////////////
@@ -277,6 +319,34 @@ Goodie::~Goodie()
 {}
 
 void Goodie::doSomething()
+{
+    if(isAlive() == false)
+        return;
+    
+    /* TODO:
+    if(if the NachenBlaster collides with a Goodie)
+    {
+        inform the StudentWorld object that the user is to receive 100 more points;
+        setAlive("dead");
+        playSound(SOUND_GOODIE);
+        doDiffGoodieThing();
+        return;
+    }
+    
+    moveTo(getX()-0.75, getY()-0.75);
+    
+    if(if the NachenBlaster collides with a Goodie)
+    {
+        inform the StudentWorld object that the user is to receive 100 more points;
+        setAlive("dead");
+        playSound(SOUND_GOODIE);
+        doDiffGoodieThing();
+        return;
+    }
+     */
+}
+
+void Goodie::attacked()
 {}
 
 ELGoodie::ELGoodie(StudentWorld* World, int imageID, double startX, double startY)
@@ -286,29 +356,9 @@ ELGoodie::ELGoodie(StudentWorld* World, int imageID, double startX, double start
 ELGoodie::~ELGoodie()
 {}
 
-void ELGoodie::doSomething()
+void ELGoodie::doDiffGoodieThing()
 {
-    if(isAlive() == false)
-        return;
-    
-    /*
-     3.
-     if(if the NachenBlaster collides with a Extra Life Goodie)
-     {
-        a. Inform the StudentWorld object that the user is to receive 100 more points.
-     
-        setAlive("dead");
-        playSound(SOUND_GOODIE);
-     
-        d. Inform the StudentWorld object that the NachenBlaster is to gain one extra
-     life.
-     
-        return;
-     }
-     */
-    moveTo(getX()-0.75, getY()-0.75);
-    
-    // TODO: The Extra Life Goodie must then again check to see if it collided with the NachenBlaster, and if so, perform the steps outlined in item #3 above.
+    // TODO: Inform the StudentWorld object that the NachenBlaster is to gain one extra life.
 }
 
 RGoodie::RGoodie(StudentWorld* World, int imageID, double startX, double startY)
@@ -318,30 +368,9 @@ RGoodie::RGoodie(StudentWorld* World, int imageID, double startX, double startY)
 RGoodie::~RGoodie()
 {}
 
-void RGoodie::doSomething()
+void RGoodie::doDiffGoodieThing()
 {
-    if(isAlive() == false)
-        return;
-    
-    /*
-     3.
-     if(if the NachenBlaster collides with a Repair Goodie)
-     {
-     a. Inform the StudentWorld object that the user is to receive 100 more points.
-     
-     setAlive("dead");
-     playSound(SOUND_GOODIE);
-     
-     d. Inform the NachenBlaster object that it just got 10 additional hit points (any
-     additional hit points must NOT cause the NachenBlaster to exceed 50 hit
-     points).
-     
-     return;
-     }
-     */
-    moveTo(getX()-0.75, getY()-0.75);
-    
-    // TODO: The Repair Goodie must then again check to see if it collided with the NachenBlaster, and if so, perform the steps outlined in item #3 above.
+    // TODO: inform the NachenBlaster object that it just got 10 additional hit points (any additional hit points must NOT cause the NachenBlaster to exceed 50 hit points).
 }
 
 FTGoodie::FTGoodie(StudentWorld* World, int imageID, double startX, double startY)
@@ -351,29 +380,9 @@ FTGoodie::FTGoodie(StudentWorld* World, int imageID, double startX, double start
 FTGoodie::~FTGoodie()
 {}
 
-void FTGoodie::doSomething()
+void FTGoodie::doDiffGoodieThing()
 {
-    if(isAlive() == false)
-        return;
-    
-    /*
-     3.
-     if(if the NachenBlaster collides with a Flatulence Torpedo Goodie)
-     {
-     a. Inform the StudentWorld object that the user is to receive 100 more points.
-     
-     setAlive("dead");
-     playSound(SOUND_GOODIE);
-     
-     d. Inform the NachenBlaster object that it just received 5 Flatulence Torpedoes.
-     There is no maximum number of torpedoes that the NachenBlaster may have.
-     
-     return;
-     }
-     */
-    moveTo(getX()-0.75, getY()-0.75);
-    
-    // TODO: The Flatulence Torpedo Goodie must then again check to see if it collided with the NachenBlaster, and if so, perform the steps outlined in item #3 above.
+    // TODO: inform the NachenBlaster object that it just received 5 Flatulence Torpedoes. There is no maximum number of torpedoes that the NachenBlaster may have.
 }
 
 ///////////

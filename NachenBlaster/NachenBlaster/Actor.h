@@ -15,6 +15,7 @@ public:
     Actor(StudentWorld* World, int imageID, double startX, double startY, int dir = 0, double size = 1.0, int depth = 0);
     virtual ~Actor();
     virtual void doSomething() = 0; // move around, cause damage, grant bonuses, etc.
+    virtual void attacked() = 0;
     bool isInBound(int x, int y);
     bool isAlive();
     virtual void setAlive(std::string aliveStatus);
@@ -35,6 +36,7 @@ public:
     Star(StudentWorld* World, double startX);
     virtual ~Star();
     virtual void doSomething();
+    virtual void attacked();
 }; // page 26
 
 class NachenBlaster: public Actor
@@ -69,6 +71,7 @@ public:
     Explosion(StudentWorld* World, double startX, double startY, double size);
     virtual ~Explosion();
     virtual void doSomething();
+    virtual void attacked();
 
 private:
 
@@ -84,7 +87,8 @@ public:
     Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir);
     virtual ~Projectile();
     virtual void doSomething()=0;
-    
+    virtual void attacked();
+
 private:
 
 };
@@ -95,7 +99,7 @@ public:
     Cabbage(StudentWorld* World, double startX, double startY);
     virtual ~Cabbage();
     virtual void doSomething();
-    
+
 private:
     
 };
@@ -106,7 +110,7 @@ public:
     Turnip(StudentWorld* World, double startX, double startY);
     virtual ~Turnip();
     virtual void doSomething();
-    
+
 private:
     
 };
@@ -117,7 +121,7 @@ public:
     Torpedo(StudentWorld* World, double startX, double startY, int dir);
     virtual ~Torpedo();
     virtual void doSomething();
-    
+
 private:
     
 };
@@ -131,10 +135,11 @@ class Goodie: public Actor
 public:
     Goodie(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth);
     virtual ~Goodie();
-    virtual void doSomething()=0;
-    
+    virtual void doSomething();
+    virtual void attacked();
+
 private:
-    
+    virtual void doDiffGoodieThing() = 0;
 };
 
 
@@ -143,10 +148,9 @@ class ELGoodie: public Goodie // extra life goodies
 public:
     ELGoodie(StudentWorld* World, int imageID, double startX, double startY);
     virtual ~ELGoodie();
-    virtual void doSomething();
-    
+
 private:
-    
+    virtual void doDiffGoodieThing();
 };
 
 class RGoodie: public Goodie // repair goodies
@@ -154,10 +158,9 @@ class RGoodie: public Goodie // repair goodies
 public:
     RGoodie(StudentWorld* World, int imageID, double startX, double startY);
     virtual ~RGoodie();
-    virtual void doSomething();
-    
+
 private:
-    
+    virtual void doDiffGoodieThing();
 };
 
 class FTGoodie: public Goodie // flatulence torpedo goodies
@@ -165,10 +168,9 @@ class FTGoodie: public Goodie // flatulence torpedo goodies
 public:
     FTGoodie(StudentWorld* World, int imageID, double startX, double startY);
     virtual ~FTGoodie();
-    virtual void doSomething();
-    
+
 private:
-    
+    virtual void doDiffGoodieThing();
 };
 
 ///////////
