@@ -188,6 +188,36 @@ Projectile::Projectile(StudentWorld* World, int imageID, double startX, double s
 Projectile::~Projectile()
 {}
 
+void Projectile::doSomething()
+{
+    if(isAlive() == false)
+        return;
+    
+    /*
+     if (the cabbage/ turnip overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
+     {
+     Alien::attacked();
+     // TODO Hint: The cabbage/ turnip can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
+     
+     setAlive("dead");
+     return;
+     }
+     */
+    
+    doDiffProjectileThing();
+    
+    /*
+     if (the cabbage/ turnip overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
+     {
+     Alien::attacked();
+     // TODO Hint: The cabbage/ turnip can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
+     
+     setAlive("dead");
+     return;
+     }
+     */
+}
+
 void Projectile::attacked()
 {}
 
@@ -197,36 +227,11 @@ Cabbage::Cabbage(StudentWorld* World, double startX, double startY)
 
 Cabbage::~Cabbage(){}
 
-void Cabbage::doSomething()
+void Cabbage::doDiffProjectileThing()
 {
-    if(isAlive() == false)
-        return;
-    
-    /*
-    if (the cabbage overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
-    {
-        Alien::attacked();
-        // TODO Hint: The cabbage can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
-     
-        setAlive("dead");
-        return;
-     }
-    */
-    
     moveTo(getX()+8, getY());
     setDirection(getDirection()+20);
     // TODO: Check if this is counter-clockwise
-    
-    /*
-    if (the cabbage overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
-    {
-        Alien::attacked();
-        // TODO Hint: The cabbage can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
-        
-        setAlive("dead");
-        return;
-    }
-     */
 }
 
 Turnip::Turnip(StudentWorld* World, double startX, double startY)
@@ -236,35 +241,10 @@ Turnip::Turnip(StudentWorld* World, double startX, double startY)
 Turnip::~Turnip()
 {}
 
-void Turnip::doSomething()
+void Turnip::doDiffProjectileThing()
 {
-    if(isAlive() == false)
-        return;
-    
-    /*
-     if (the turnip overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
-     {
-     Alien::attacked();
-     // TODO Hint: The turnip can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
-     
-     setAlive("dead");
-     return;
-     }
-     */
-    
     moveTo(getX()-6, getY());
     setDirection(getDirection()+20); // TODO: Check if this is counter-clockwise
-    
-    /*
-     if (the turnip overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
-     {
-     Alien::attacked();
-     // TODO Hint: The turnip can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
-     
-     setAlive("dead");
-     return;
-     }
-     */
 }
 
 Torpedo::Torpedo(StudentWorld* World, double startX, double startY, int dir)

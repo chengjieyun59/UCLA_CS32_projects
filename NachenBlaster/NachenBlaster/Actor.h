@@ -86,11 +86,11 @@ class Projectile: public Actor
 public:
     Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir);
     virtual ~Projectile();
-    virtual void doSomething()=0;
+    virtual void doSomething();
     virtual void attacked();
 
 private:
-
+    virtual void doDiffProjectileThing() = 0;
 };
 
 class Cabbage: public Projectile
@@ -98,10 +98,9 @@ class Cabbage: public Projectile
 public:
     Cabbage(StudentWorld* World, double startX, double startY);
     virtual ~Cabbage();
-    virtual void doSomething();
 
 private:
-    
+    virtual void doDiffProjectileThing();
 };
 
 class Turnip: public Projectile
@@ -109,10 +108,9 @@ class Turnip: public Projectile
 public:
     Turnip(StudentWorld* World, double startX, double startY);
     virtual ~Turnip();
-    virtual void doSomething();
 
 private:
-    
+    virtual void doDiffProjectileThing();
 };
 
 class Torpedo: public Projectile
@@ -123,7 +121,7 @@ public:
     virtual void doSomething();
 
 private:
-    
+
 };
 
 ////////////
