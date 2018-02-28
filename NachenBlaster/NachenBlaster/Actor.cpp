@@ -14,7 +14,7 @@ Actor::~Actor()
     // delete getWorld(); // wrong!!!! Delete all the memories that only this class made. Or C++ will try to delete it twice. Bad pointer execution
 }
 
-bool Actor::isInBound(int x, int y)
+bool Actor::isInBound(int x, int y) const
 {
     if (x < VIEW_WIDTH && x >= 0 && y < VIEW_HEIGHT && y >= 0)
         return true;
@@ -36,12 +36,19 @@ bool Actor::isAlive()
     return m_isAlive;
 }
 
+bool Actor::isAlien() const
+{
+    return false;
+}
+
+/*
 double Actor::euclidian_dist(double x1, double y1, double x2, double y2)
 {
     return sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
 }
+*/
 
-StudentWorld* Actor::getWorld()
+StudentWorld* Actor::getWorld() const
 {
     return m_world;
 } // a method in one of its base classes that returns a pointer to a StudentWorld), and then uses this pointer to call the getKey() method.
@@ -65,11 +72,32 @@ void Star::doSomething()
     moveTo(getX()-1, getY());
 }
 
-void Star::attacked()
+DamageableObject::DamageableObject(StudentWorld* world, int imageID, double startX, double startY, int dir, double size, int depth, double hitPoints)
+:Actor(world, imageID, startX, startY, dir, size, depth), m_hitPt(hitPoints)
 {}
 
+// How many hit points does this actor have left?
+double DamageableObject::getHitPt() const
+{
+    return m_hitPt;
+}
+
+// Increase this actor's hit points by amt.
+void DamageableObject::incHitPt(double amt)
+{
+    m_hitPt = m_hitPt + amt;
+}
+
+// This actor suffers an amount of damage caused by being hit by either
+// a ship or a projectile (see constants above).
+void DamageableObject::sufferDamage(double amt, int cause)
+{
+    m_hitPt = m_hitPt - amt;
+    // TODO: const int HIT_BY_SHIP = 0; & const int HIT_BY_PROJECTILE = 1;
+}
+
 NachenBlaster::NachenBlaster(StudentWorld* World)
- :Actor(World, IID_NACHENBLASTER, 0, 128, 0, 1.0, 0), m_hitPt(50), m_cabbagePt(30), m_torpedoPt(0)
+ :DamageableObject(World, IID_NACHENBLASTER, 0, 128, 0, 1.0, 0, 50), m_cabbagePt(30), m_torpedoPt(0)
 {}
 
 NachenBlaster::~NachenBlaster()
@@ -124,7 +152,12 @@ void NachenBlaster::doSomething()
         setCabbagePt(getCabbagePt() + 1);
 }
 
-void NachenBlaster::attacked()
+void NachenBlaster::incHitPt(double amt)
+{
+    // TODO
+}
+
+void NachenBlaster::sufferDamage(double amt, int cause)
 {
     /* TODO:
     if (a projectile like a turnip collides with the NachenBlaster, or vice versa)
@@ -147,8 +180,8 @@ void NachenBlaster::attacked()
         setAlive("dead");
 }
 
-void NachenBlaster::setHitPt(int newHitPt){m_hitPt = newHitPt;}
-int NachenBlaster::getHitPt() const {return m_hitPt;}
+void NachenBlaster::setHealthPt(int newHealthPt){m_healthPt = newHealthPt;}
+int NachenBlaster::getHealthPt() const {return m_healthPt;}
 
 void NachenBlaster::setCabbagePt(int newCabbagePt){m_cabbagePt = newCabbagePt;}
 int NachenBlaster::getCabbagePt() const {return m_cabbagePt;}
@@ -174,15 +207,12 @@ void Explosion::doSomething()
         setAlive("Dead");
 }
 
-void Explosion::attacked()
-{}
-
 ////////////////
 // Projectile //
 ////////////////
 
-Projectile::Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir)
-:Actor(World, imageID, startX, startY, dir, 0.5, 1)
+Projectile::Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir, double damageAmt, double deltaX, bool rotates)
+:Actor(World, imageID, startX, startY, dir, 0.5, 1), m_damageAmt(damageAmt), m_deltaX(deltaX), m_rotates(rotates)
 {}
 
 Projectile::~Projectile()
@@ -222,7 +252,8 @@ void Projectile::attacked()
 {}
 
 Cabbage::Cabbage(StudentWorld* World, double startX, double startY)
-:Projectile(World, IID_CABBAGE, startX, startY, 0)
+:Projectile(World, IID_CABBAGE, startX, startY, 0, 2.0, 0.0, false)
+// TODO:Projectile(World, IID_CABBAGE, startX, startY, 0, damageAmt, deltaX, rotates)
 {}
 
 Cabbage::~Cabbage(){}
@@ -235,7 +266,8 @@ void Cabbage::doDiffProjectileThing()
 }
 
 Turnip::Turnip(StudentWorld* World, double startX, double startY)
-:Projectile(World, IID_TURNIP, startX, startY, 0)
+:Projectile(World, IID_TURNIP, startX, startY, 0, 2.0, 0.0, false)
+// TODO:Projectile(World, IID_TURNIP, startX, startY, 0, damageAmt, deltaX, rotates)
 {}
 
 Turnip::~Turnip()
@@ -247,9 +279,10 @@ void Turnip::doDiffProjectileThing()
     setDirection(getDirection()+20); // TODO: Check if this is counter-clockwise
 }
 
-Torpedo::Torpedo(StudentWorld* World, double startX, double startY, int dir)
-:Projectile(World, IID_TORPEDO, startX, startY, dir)
-{} // TODO: A Flatulence Torpedo has a direction of 180 degrees if it was fired by a Snagglegon.
+Torpedo::Torpedo(StudentWorld* World, double startX, double startY, int dir, double deltaX)
+:Projectile(World, IID_TORPEDO, startX, startY, 0, 8.0, 0.0, true)
+// TODO:Projectile(World, IID_TORPEDO, startX, startY, 0, damageAmt, deltaX, rotates)
+{}
 
 Torpedo::~Torpedo()
 {}
@@ -287,11 +320,29 @@ void Torpedo::doSomething()
     */
 }
 
+PlayerLaunchedTorpedo::PlayerLaunchedTorpedo(StudentWorld* World, double startX, double startY)
+:Torpedo(World, startX, startY, 0, 0)
+{}
+
+void PlayerLaunchedTorpedo::doSomething()
+{
+    // TODO
+}
+
+AlienLaunchedTorpedo::AlienLaunchedTorpedo(StudentWorld* World, double startX, double startY)
+:Torpedo(World, startX, startY, 180, 0)
+{}
+
+void AlienLaunchedTorpedo::doSomething()
+{
+    // TODO
+}
+
 ////////////
 // Goodie //
 ////////////
 
-Goodie::Goodie(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
+Goodie::Goodie(StudentWorld* World, int imageID, double startX, double startY)
 :Actor(World, imageID, startX, startY, 0, 0.5, 1)
 {}
 
@@ -330,7 +381,7 @@ void Goodie::attacked()
 {}
 
 ELGoodie::ELGoodie(StudentWorld* World, int imageID, double startX, double startY)
-:Goodie(World, IID_LIFE_GOODIE, startX, startY, 0, 0.5, 1)
+:Goodie(World, IID_LIFE_GOODIE, startX, startY)
 {}
 
 ELGoodie::~ELGoodie()
@@ -342,7 +393,7 @@ void ELGoodie::doDiffGoodieThing()
 }
 
 RGoodie::RGoodie(StudentWorld* World, int imageID, double startX, double startY)
-:Goodie(World, IID_REPAIR_GOODIE, startX, startY, 0, 0.5, 1)
+:Goodie(World, IID_REPAIR_GOODIE, startX, startY)
 {}
 
 RGoodie::~RGoodie()
@@ -354,7 +405,7 @@ void RGoodie::doDiffGoodieThing()
 }
 
 FTGoodie::FTGoodie(StudentWorld* World, int imageID, double startX, double startY)
-:Goodie(World, IID_TORPEDO_GOODIE, startX, startY, 0, 0.5, 1)
+:Goodie(World, IID_TORPEDO_GOODIE, startX, startY)
 {}
 
 FTGoodie::~FTGoodie()
@@ -369,19 +420,63 @@ void FTGoodie::doDiffGoodieThing()
 // Alien //
 ///////////
 
-Alien::Alien(StudentWorld* World, int level, int imageID, double startX, double startY, int dir, double size, int depth, int hitPoint, int flightLength, double speed)
-:Actor(World, imageID, startX, startY, 0, 0.5, 1), m_hitpoints(hitPoint), m_flightlength(flightLength), m_speed(speed), m_level(level)
+Alien::Alien(StudentWorld* World, int imageID, double startX, double startY, double hitPoint, double damageAmt, double deltaX, double deltaY, double speed, unsigned int scoreValue)
+:DamageableObject(World, imageID, startX, startY, 0, 0.5, 1, hitPoint), m_damageAmt(damageAmt), m_deltaX(deltaX), m_deltaY(deltaY), m_speed(speed), m_scoreValue(scoreValue)
 {}
 
 Alien::~Alien()
 {}
 
+bool Alien::isAlien() const
+{
+    return true;
+}
+
+void Alien::sufferDamage(double amt, int cause)
+{
+    // TODO
+}
+
+// Move the player by the current speed in the direction indicated
+// by the x and y deltas.
+void Alien::move()
+{
+    // TODO
+}
+
+// Set the player's y direction.
+void Alien::setDeltaY(double dy)
+{
+    // TODO
+}
+
+// Set the player's speed.
+void Alien::setSpeed(double speed)
+{
+    // TODO
+}
+
+// If this alien collided with the player, damage the player and return
+// true; otherwise, return false.
+bool Alien::damageCollidingPlayer(double amt)
+{
+    // TODO
+    return false;
+}
+
+// If this alien drops goodies, drop one with the appropriate probability.
+void Alien::possiblyDropGoodie()
+{
+    // TODO
+}
+
 //////////////
 // Smallgon //
 //////////////
 
-Smallgon::Smallgon(StudentWorld* World, int level, int imageID, double startX, double startY, int hitPoint, int flightLength, double speed)
-:Alien(World, level, IID_SMALLGON, startX, startY, 0, 1.5, 1, (5*(1+(level-1)*0.1)), 0, 2.0)
+Smallgon::Smallgon(StudentWorld* World, double startX, double startY)
+:Alien(World, IID_SMALLGON, startX, startY, 5.0, 0.0, 0.0, 0.0, 2.0, 0)
+//TODO :Alien(World, IID_SMALLGON, startX, startY, (5*(1+(level-1)*0.1)), damageAmt, deltaX, deltaY, 2.0, scoreValue)
 {}
 
 Smallgon::~Smallgon()
@@ -432,7 +527,7 @@ void Smallgon::doSomething()
     */
 }
 
-void Smallgon::attacked()
+void Smallgon::sufferDamage(double amt, int cause)
 {
     /*
     if (a Smallgon collides with a NachenBlaster-fired projectile or vice versa)
@@ -465,8 +560,9 @@ void Smallgon::attacked()
 // Smoregon //
 //////////////
 
-Smoregon::Smoregon(StudentWorld* World, int level, int imageID, double startX, double startY, int hitPoint, int flightLength, double speed)
-:Alien(World, level, IID_SMOREGON, startX, startY, 0, 1.5, 1, (5*(1+(level-1)*0.1)), 0, 2.0)
+Smoregon::Smoregon(StudentWorld* World, double startX, double startY)
+:Alien(World, IID_SMOREGON, startX, startY, 5.0, 0.0, 0.0, 0.0, 2.0, 0)
+//TODO:Alien(World, IID_SMOREGON, startX, startY, (5*(1+(level-1)*0.1)), damageAmt, deltaX, deltaY, 2.0, scoreValue)
 {}
 
 Smoregon::~Smoregon()
@@ -525,7 +621,7 @@ void Smoregon::doSomething()
         */
 }
 
-void Smoregon::attacked()
+void Smoregon::sufferDamage(double amt, int cause)
 {
     /*
     // for this whole attacked function, only 1.e. is an addition from Smallgon's
@@ -564,8 +660,9 @@ void Smoregon::attacked()
 // Snagglegon //
 ////////////////
 
-Snagglegon::Snagglegon(StudentWorld* World, int level, int imageID, double startX, double startY, int hitPoint, int flightLength, double speed)
-:Alien(World, level, IID_SNAGGLEGON, startX, startY, 0, 1.5, 1, (10*(1+(level-1)*0.1)), 0, 1.75)
+Snagglegon::Snagglegon(StudentWorld* World, double startX, double startY)
+:Alien(World, IID_SNAGGLEGON, startX, startY, 10.0, 0.0, 0.0, 0.0, 1.75, 0)
+//TODO:Alien(World, IID_SNAGGLEGON, startX, startY, (10*(1+(level-1)*0.1)), damageAmt, deltaX, deltaY, 1.75, scoreValue)
 {}
 
 Snagglegon::~Snagglegon()
@@ -620,7 +717,7 @@ void Snagglegon::doSomething()
         */
 }
 
-void Snagglegon::attacked()
+void Snagglegon::sufferDamage(double amt, int cause)
 {
     /*
     // for this whole attacked function, only 1.e. is an addition from Smallgon's
