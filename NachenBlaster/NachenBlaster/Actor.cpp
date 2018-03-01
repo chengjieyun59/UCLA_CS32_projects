@@ -351,20 +351,26 @@ bool Alien::damageCollidingPlayer(double amt)
 // If this alien drops goodies, drop one with the appropriate probability.
 void Alien::possiblyDropGoodie()
 {
-    /* TODO:
+
     if(isSmoregon() && randInt(1, 3) == 1)
     {
         if(randInt(1, 2) == 1)
-            RGoodie* r = new RGoodie(this, IID_REPAIR_GOODIE, Smoregon::getX(), Smoregon::getY());
+        {
+            RGoodie* a = new RGoodie(getWorld(), IID_REPAIR_GOODIE, getX(), getY());
+            getWorld()->addActor(a);
+        }
         else
-            FTGoodie* r = new FTGoodie(this, IID_TORPEDO_GOODIE, Smoregon::getX(), Smoregon::getY());
+        {
+            FTGoodie* a = new FTGoodie(getWorld(), IID_TORPEDO_GOODIE, getX(), getY());
+            getWorld()->addActor(a);
+        }
     } // If a Snoregon decides to drop a goodie, there is a 50% chance that it will be a Repair Goodie, and a 50% chance that it will be a Flatulence Torpedo Goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
     
     if(isSnagglegon() && randInt(1, 6) == 1)
     {
-        ELGoodie* r = new ELGoodie(this, IID_LIFE_GOODIE, Snagglegon::getX(), Snagglegon::getY());
+        ELGoodie* a = new ELGoodie(getWorld(), IID_LIFE_GOODIE, getX(), getY());
+        getWorld()->addActor(a);
     }// There is a 1/6 chance that the destroyed Snagglegon ship will drop an Extra Life goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-     */
 }
 
 //////////////
@@ -422,7 +428,8 @@ void Snagglegon::doDiffAlienThing()
 {
     if(randInt(1, (15/getWorld()->getLevel())+10) == 1)
     {
-        // Torpedo* c = new Torpedo(this, getX()-14, getY(), 0); // TODO: Fire a Torpedo toward the NachenBlaster. Hint: When you create a new turnip object in the proper location, give it to your StudentWorld to manage (e.g., animate) along with the other game objects. //
+        AlienLaunchedTorpedo* a = new AlienLaunchedTorpedo(getWorld(), getX()-14, getY()); // Fire a Torpedo toward the NachenBlaster.
+        getWorld()->addActor(a);
         getWorld()->playSound(SOUND_TORPEDO); //
         return;
     }
@@ -442,46 +449,51 @@ Projectile::~Projectile()
 bool Projectile::isFiredByNachenBlaster() const {return false;}
 bool Projectile::isProjectile() const {return true;}
 
+void Projectile::doCommonThingOnce()
+{
+    // vector<Actor*>* m_vActor = getWorld()->getActorVector(); // TODO: Do I need this?
+    
+    if(isFiredByNachenBlaster())
+    {
+        Alien* a = getWorld()->getOneCollidingAlien(this);
+        
+        if(a != nullptr) // means the projectile collides with an alien
+        {
+            if(isTorpedo())
+                a->sufferDamage(8.0, 1);
+            else
+                a->sufferDamage(2.0, 1);
+            getWorld()->playSound(SOUND_BLAST);
+            setAlive("dead");
+            return;
+        }
+    }
+    
+    else //is fired by an alien
+    {
+        NachenBlaster* n = getWorld()->getCollidingPlayer(this);
+        
+        if(n != nullptr) // means the projectile collides with the nachenblaster
+        {
+            if(isTorpedo())
+                n->sufferDamage(8.0, 1);
+            else
+                n->sufferDamage(2.0, 1);
+            getWorld()->playSound(SOUND_BLAST);
+            setAlive("dead");
+            return;
+        }
+    }
+}
+
 void Projectile::doSomething()
 {
     if(isAlive() == false)
         return;
     
-    vector<Actor*>* m_vActor = getWorld()->getActorVector();
-    
-    if(isFiredByNachenBlaster())
-    {
-        Alien* p = getWorld()->getOneCollidingAlien(this);
-        
-        if(p != nullptr) // means a projectile collides with an alien collided
-        {
-            if(isTorpedo())
-                p->sufferDamage(8, 1);
-            else
-                p->sufferDamage(2, 1);
-            getWorld()->playSound(SOUND_BLAST);
-            setAlive("dead");
-            return;
-        }
-    }
-    
+    doCommonThingOnce();
     doDiffProjectileThing();
-    
-    if(isFiredByNachenBlaster())
-    {
-        Alien* p = getWorld()->getOneCollidingAlien(this);
-        
-        if(p != nullptr) // means a projectile collides with an alien collided
-        {
-            if(isTorpedo())
-                p->sufferDamage(8, 1);
-            else
-                p->sufferDamage(2, 1);
-            getWorld()->playSound(SOUND_BLAST);
-            setAlive("dead");
-            return;
-        }
-    }
+    doCommonThingOnce();
 }
 
 void Projectile::attacked()
@@ -534,42 +546,18 @@ PlayerLaunchedTorpedo::PlayerLaunchedTorpedo(StudentWorld* World, double startX,
 
 bool PlayerLaunchedTorpedo::isFiredByNachenBlaster() const {return false;}
 
-void PlayerLaunchedTorpedo::doSomething()
+void PlayerLaunchedTorpedo::doDiffProjectileThing()
 {
-    if(isAlive() == false)
-        return;
-    
-    // TODO
-    //Alien::sufferDamage(8.0, 0);
-    setAlive("dead");
-    return;
-    
     moveTo(getX()+8, getY());
-
-    //Alien::sufferDamage(8.0, 0);
-    setAlive("dead");
-    return;
 }
 
 AlienLaunchedTorpedo::AlienLaunchedTorpedo(StudentWorld* World, double startX, double startY)
 :Torpedo(World, startX, startY, 180, 0)
 {}
 
-void AlienLaunchedTorpedo::doSomething()
+void AlienLaunchedTorpedo::doDiffProjectileThing()
 {
-    if(isAlive() == false)
-        return;
-    
-    // TODO
-    //NachenBlaster::sufferDamage(8.0, 0);
-    setAlive("dead");
-    return;
-    
     moveTo(getX()-8, getY());
-
-    //NachenBlaster::sufferDamage(8.0, 0);
-    setAlive("dead");
-    return;
 }
 
 ////////////

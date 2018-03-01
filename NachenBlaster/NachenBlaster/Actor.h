@@ -186,6 +186,7 @@ public:
     bool isProjectile() const;
     virtual bool isFiredByNachenBlaster() const;
     virtual void doSomething();
+    void doCommonThingOnce();
     virtual void attacked();
     
 private:
@@ -232,15 +233,18 @@ class PlayerLaunchedTorpedo : public Torpedo
 public:
     PlayerLaunchedTorpedo(StudentWorld* World, double startX, double startY);
     virtual bool isFiredByNachenBlaster() const;
-    virtual void doSomething();
+
+private:
+    virtual void doDiffProjectileThing();
 };
 
 class AlienLaunchedTorpedo : public Torpedo
 {
 public:
     AlienLaunchedTorpedo(StudentWorld* World, double startX, double startY);
-    virtual void doSomething();
 
+private:
+    virtual void doDiffProjectileThing();
 };
 
 
