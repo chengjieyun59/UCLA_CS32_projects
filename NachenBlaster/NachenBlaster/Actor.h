@@ -116,31 +116,25 @@ public:
     Alien(StudentWorld* World, int imageID, double startX, double startY, double hitPoint, double damageAmt, double deltaX, double deltaY, double speed, unsigned int scoreValue);
     virtual ~Alien();
     virtual bool isAlien() const;
-    virtual void doSomething();
-    // Hint: getWorld->zapAllZappableActors(getX(), getY());
-    virtual void sufferDamage(double amt, int cause);
-    
-    // Move the player by the current speed in the direction indicated
-    // by the x and y deltas.
-    void move();
     void setDeltaY(double dy); // Set the player's y direction.
     double getDeltaY() const;
     void setSpeed(double speed);
     double getSpeed() const;
+    void setFlightPlanLength(double fpLength);
 
-    // If this alien collided with the player, damage the player and return
-    // true; otherwise, return false.
-    virtual bool damageCollidingPlayer(double amt);
+    virtual void doSomething(); // Hint: getWorld->zapAllZappableActors(getX(), getY());
+    virtual void sufferDamage(double amt, int cause);
     
-    // If this alien drops goodies, drop one with the appropriate probability.
+    void move();
+    virtual bool damageCollidingPlayer(double amt);
     virtual void possiblyDropGoodie();
     
 private:
     virtual void doDiffAlienThing() = 0;
-    double m_damageAmt;
     double m_flightPlanLength;
     double m_deltaY;
     double m_speed;
+    double m_damageAmt;
     unsigned int m_scoreValue;
 };
 

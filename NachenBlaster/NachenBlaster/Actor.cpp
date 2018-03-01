@@ -234,11 +234,18 @@ void Explosion::doSomething()
 ///////////
 
 Alien::Alien(StudentWorld* World, int imageID, double startX, double startY, double hitPoint, double damageAmt, double deltaX, double deltaY, double speed, unsigned int scoreValue)
-:DamageableObject(World, imageID, startX, startY, 0, 0.5, 1, hitPoint), m_damageAmt(damageAmt), m_deltaY(deltaY), m_speed(speed), m_scoreValue(scoreValue), m_flightPlanLength(0)
+:DamageableObject(World, imageID, startX, startY, 0, 0.5, 1, hitPoint), m_damageAmt(damageAmt), m_deltaY(deltaY), m_speed(speed), m_flightPlanLength(0), m_scoreValue(scoreValue)
 {}
 
 Alien::~Alien()
 {}
+
+bool Alien::isAlien() const {return true;}
+void Alien::setDeltaY(double dy) {m_deltaY = dy;} // Set the player's y direction.
+double Alien::getDeltaY() const {return m_deltaY;}
+void Alien::setSpeed(double speed) {m_speed = speed;} // Set the player's speed.
+double Alien::getSpeed() const {return m_speed;}
+void Alien::setFlightPlanLength(double fpLength) {m_flightPlanLength = fpLength;}
 
 void Alien::doSomething()
 {
@@ -247,9 +254,9 @@ void Alien::doSomething()
     
     // 3.
     /*
-     if(the Smallgon has collided with a NachenBlaster-fired projectile or the NachenBlaster ship itself)
+     if(the alien has collided with a NachenBlaster-fired projectile or the NachenBlaster ship itself)
      {
-         damageCollidingPlayer(amt); // TODO: change damagedAmt
+         damageCollidingPlayer(m_damageAmt); // TODO: change damagedAmt
      }
      */
     
@@ -280,45 +287,53 @@ void Alien::doSomething()
     /*
     if (NachenBlaster::getX() < getX() && NachenBlaster::getY()-4 <= getY() && NachenBlaster::getY()+4 >= getY())
     {
-        if(!isSnagglegon() && randInt(1, (20/getWorld()->getLevel())+5) == 0)
+        if(!isSnagglegon() && randInt(1, (20/getWorld()->getLevel())+5) == 1)
         {
             // Turnip* c = new Turnip(this, getX()-14, getY(), 0); // TODO: Fire a turnip toward the NachenBlaster. Hint: When you create a new turnip object in the proper location, give it to your StudentWorld to manage (e.g., animate) along with the other game objects.
             getWorld()->playSound(SOUND_ALIEN_SHOOT);
             return;
         }
-        
-        if(isSmoregon() && randInt(1, (20/getWorld()->getLevel())+5) == 0)
-        {
-            setDeltaY(0.0);
-            m_flightPlanLength = VIEW_WIDTH;
-            setSpeed(5.0);
-        }
-        
-        if(isSnagglegon() && randInt(1, (15/getWorld()->getLevel())+10) == 0)
-        {
-            // Torpedo* c = new Torpedo(this, getX()-14, getY(), 0); // TODO: Fire a Torpedo toward the NachenBlaster. Hint: When you create a new turnip object in the proper location, give it to your StudentWorld to manage (e.g., animate) along with the other game objects. // !!!!!!!!! Torpedo, not Turnip
-            getWorld()->playSound(SOUND_TORPEDO); // !!!!!!!! Torpedo, not Turnip
-            return;
-        }
+     
+        doDiffAlienThing();
     }
     */
     
     move();
     m_flightPlanLength--;
     
-    // TODO: Finally, after the Smallgon ship has moved itself, it must AGAIN check to see if has collided with the NachenBlaster or a NachenBlaster-fired projectile, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.).
+    // TODO: Finally, after the alien ship has moved itself, it must AGAIN check to see if has collided with the NachenBlaster or a NachenBlaster-fired projectile, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.).
 }
-
-bool Alien::isAlien() const
-{
-    return true;
-}
-
-
 
 void Alien::sufferDamage(double amt, int cause)
 {
     // TODO
+    /*
+    if (an alien collides with a NachenBlaster-fired projectile or vice versa)
+    {
+        // TODO: 1. The alien ship must be damaged by the projectile as indicated by the projectile (e.g., 2 points of damage from a cabbage, etc.).
+        
+        if (getHitPt() <= 0)
+        {
+            getWorld()->increaseScore(m_scoreValue); // Increase the player’s score by 250 points
+            setAlive("dead");
+            getWorld()->playSound(SOUND_DEATH);
+            Explosion* c = new Explosion(this, getX() getY(), 0, 1.0, 0); // TODO: Introduce a new explosion object into the space field
+        }
+        
+        else // if the projectile injured the Smallgon ship but didn’t destroy the ship
+            getWorld()->playSound(SOUND_BLAST);
+    }
+    
+    if (an alien collides with the NachenBlaster ship or vice versa)
+    {
+        NachenBlaster::sufferDamage(m_damageAmt, 0); // TODO: Damage the NachenBlaster appropriately (by causing it to lose 5 hit points) – the NachenBlaster object can then deal with this damage in its own unique way. Hint: The Smallgon object can tell the NachenBlaster that it has been damaged by calling a method the NachenBlaster has (presumably named sufferDamage or something similar).
+        setAlive("dead");
+        getWorld()->increaseScore(m_scoreValue);
+        getWorld()->playSound(SOUND_DEATH);
+        Explosion* c = new Explosion(this, getX() getY(), 0, 1.0, 0); // TODO: Introduce a new explosion object into the space field
+    }
+    */
+    possiblyDropGoodie();
 }
 
 // Move the player by the current speed in the direction indicated
@@ -327,11 +342,6 @@ void Alien::move()
 {
     moveTo(getX() - 1.0 * m_speed, getY() + m_deltaY * m_speed);
 }
-
-void Alien::setDeltaY(double dy) {m_deltaY = dy;} // Set the player's y direction.
-double Alien::getDeltaY() const {return m_deltaY;}
-void Alien::setSpeed(double speed) {m_speed = speed;} // Set the player's speed.
-double Alien::getSpeed() const {return m_speed;}
 
 // If this alien collided with the player, damage the player and return
 // true; otherwise, return false.
@@ -350,7 +360,20 @@ bool Alien::damageCollidingPlayer(double amt)
 // If this alien drops goodies, drop one with the appropriate probability.
 void Alien::possiblyDropGoodie()
 {
-    // TODO
+    /* TODO:
+    if(isSmoregon() && randInt(1, 3) == 1)
+    {
+        if(randInt(1, 2) == 1)
+            RGoodie* r = new RGoodie(this, IID_REPAIR_GOODIE, Smoregon::getX(), Smoregon::getY());
+        else
+            FTGoodie* r = new FTGoodie(this, IID_TORPEDO_GOODIE, Smoregon::getX(), Smoregon::getY());
+    } // If a Snoregon decides to drop a goodie, there is a 50% chance that it will be a Repair Goodie, and a 50% chance that it will be a Flatulence Torpedo Goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
+    
+    if(isSnagglegon() && randInt(1, 6) == 1)
+    {
+        ELGoodie* r = new ELGoodie(this, IID_LIFE_GOODIE, Snagglegon::getX(), Snagglegon::getY());
+    }// There is a 1/6 chance that the destroyed Snagglegon ship will drop an Extra Life goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
+     */
 }
 
 //////////////
@@ -358,7 +381,7 @@ void Alien::possiblyDropGoodie()
 //////////////
 
 Smallgon::Smallgon(StudentWorld* World, double startX, double startY)
-:Alien(World, IID_SMALLGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 5.0, -1.0, 0.0, 2.0, 0)
+:Alien(World, IID_SMALLGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 5.0, -1.0, 0.0, 2.0, 250)
 //TODO :Alien(World, IID_SMALLGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), damageAmt, deltaX, deltaY, 2.0, scoreValue)
 {}
 
@@ -366,46 +389,14 @@ Smallgon::~Smallgon()
 {}
 
 void Smallgon::doDiffAlienThing()
-{
-    
-}
-
-void Smallgon::sufferDamage(double amt, int cause)
-{
-    /*
-    if (a Smallgon collides with a NachenBlaster-fired projectile or vice versa)
-    {
-        // TODO: 1. The Smallgon ship must be damaged by the projectile as indicated by the projectile (e.g., 2 points of damage from a cabbage, etc.).
-        
-        if (getHitPt() <= 0)
-        {
-            getWorld()->increaseScore(250); // Increase the player’s score by 250 points
-            setAlive("dead");
-            getWorld()->playSound(SOUND_DEATH);
-            Explosion* c = new Explosion(this, getX() getY(), 0, 1.0, 0); // TODO: Introduce a new explosion object into the space field
-        }
-        
-        else // if the projectile injured the Smallgon ship but didn’t destroy the ship
-            getWorld()->playSound(SOUND_BLAST);
-    }
-    
-    if (a Smallgon collides with the NachenBlaster ship or vice versa)
-    {
-        NachenBlaster::sufferDamage(5, 0); // TODO: Damage the NachenBlaster appropriately (by causing it to lose 5 hit points) – the NachenBlaster object can then deal with this damage in its own unique way. Hint: The Smallgon object can tell the NachenBlaster that it has been damaged by calling a method the NachenBlaster has (presumably named sufferDamage or something similar).
-        setAlive("dead");
-        getWorld()->increaseScore(250);
-        getWorld()->playSound(SOUND_DEATH);
-        Explosion* c = new Explosion(this, getX() getY(), 0, 1.0, 0); // TODO: Introduce a new explosion object into the space field
-    }
-     */
-}
+{}
 
 //////////////
 // Smoregon //
 //////////////
 
 Smoregon::Smoregon(StudentWorld* World, double startX, double startY)
-:Alien(World, IID_SMOREGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 5.0, -1.0, 0.0, 2.0, 5)
+:Alien(World, IID_SMOREGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 5.0, -1.0, 0.0, 2.0, 250)
 //TODO:Alien(World, IID_SMOREGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), damageAmt, deltaX, deltaY, 2.0, scoreValue)
 {}
 
@@ -414,39 +405,14 @@ Smoregon::~Smoregon()
 
 bool Smoregon::isSmoregon() const {return false;}
 
-void Smoregon::sufferDamage(double amt, int cause)
+void Smoregon::doDiffAlienThing()
 {
-    /*
-    // for this whole attacked function, only 1.e. is an addition from Smallgon's
-    if (a Smallgon collides with a NachenBlaster-fired projectile or vice versa)
+    if(randInt(1, (20/getWorld()->getLevel())+5) == 1)
     {
-        1. The Smallgon ship must be damaged by the projectile as indicated by the projectile (e.g., 2 points of damage from a cabbage, etc.).
-        if (the collision results in the Smallgon’s hit points reaching zero or below)
-        {
-            Increase the player’s score by 250 points;
-            setAlive("dead");
-            getWorld()->playSound(SOUND_DEATH);
-            d. Introduce a new explosion object into the space field at the same x,y location as the Smallgon.
-        }
-        
-        else if (the projectile injured the Smallgon ship but didn’t destroy the ship)
-            getWorld()->playSound(SOUND_BLAST);
+        setDeltaY(0.0);
+        setFlightPlanLength(VIEW_WIDTH);
+        setSpeed(5.0);
     }
-    
-    if (a Smallgon collides with the NachenBlaster ship or vice versa)
-    {
-        1. Damage the NachenBlaster appropriately (by causing it to lose 5 hit points) – the NachenBlaster object can then deal with this damage in its own unique way. Hint: The Smallgon object can tell the NachenBlaster that it has been damaged by calling a method the NachenBlaster has (presumably named sufferDamage or something similar).
-        setAlive("dead");
-        3. Increase the player’s score by 250 points.
-        getWorld()->playSound(SOUND_DEATH);
-        5. Introduce a new explosion object into the space field at the same x,y coordinates as the Smallgon (see the Explosion section for more details)
-    }
-    
-    // addition starts
-    1.e. There is a 1/3 chance that the destroyed Smoregon ship will drop a goodie.
-    If it decides to drop a goodie, there is a 50% chance that it will be a Repair Goodie, and a 50% chance that it will be a Flatulence Torpedo Goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-    // addition ends
-     */
 }
 
 ////////////////
@@ -454,7 +420,7 @@ void Smoregon::sufferDamage(double amt, int cause)
 ////////////////
 
 Snagglegon::Snagglegon(StudentWorld* World, double startX, double startY)
-:Alien(World, IID_SNAGGLEGON, startX, startY, (10.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 15.0, -1.0, 0.0, 1.75, 15)
+:Alien(World, IID_SNAGGLEGON, startX, startY, (10.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 15.0, -1.0, 0.0, 1.75, 1000)
 //TODO:Alien(World, IID_SNAGGLEGON, startX, startY, (10.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), damageAmt, deltaX, deltaY, 1.75, scoreValue)
 {}
 
@@ -463,38 +429,14 @@ Snagglegon::~Snagglegon()
 
 bool Snagglegon::isSnagglegon() const {return false;}
 
-void Snagglegon::sufferDamage(double amt, int cause)
+void Snagglegon::doDiffAlienThing()
 {
-    /*
-    // for this whole attacked function, only 1.e. is an addition from Smallgon's
-    if (a Smallgon collides with a NachenBlaster-fired projectile or vice versa)
+    if(randInt(1, (15/getWorld()->getLevel())+10) == 1)
     {
-        1. The Smallgon ship must be damaged by the projectile as indicated by the projectile (e.g., 2 points of damage from a cabbage, etc.).
-        if (the collision results in the Smallgon’s hit points reaching zero or below)
-        {
-            Increase the player’s score by 1000 points; // was 250
-            setAlive("dead");
-            getWorld()->playSound(SOUND_DEATH);
-            d. Introduce a new explosion object into the space field at the same x,y location as the Smallgon.
-        }
-        
-        else if (the projectile injured the Smallgon ship but didn’t destroy the ship)
-            getWorld()->playSound(SOUND_BLAST);
+        // Torpedo* c = new Torpedo(this, getX()-14, getY(), 0); // TODO: Fire a Torpedo toward the NachenBlaster. Hint: When you create a new turnip object in the proper location, give it to your StudentWorld to manage (e.g., animate) along with the other game objects. //
+        getWorld()->playSound(SOUND_TORPEDO); //
+        return;
     }
-    
-    if (a Smallgon collides with the NachenBlaster ship or vice versa)
-    {
-        1. Damage the NachenBlaster appropriately (by causing it to lose 15 hit points) – the NachenBlaster object can then deal with this damage in its own unique way. Hint: The Smallgon object can tell the NachenBlaster that it has been damaged by calling a method the NachenBlaster has (presumably named sufferDamage or something similar). // was 5 hit points, instead of 15
-        setAlive("dead");
-        3. Increase the player’s score by 1000 points. // was 250 instead of 1000
-        getWorld()->playSound(SOUND_DEATH);
-        5. Introduce a new explosion object into the space field at the same x,y coordinates as the Smallgon (see the Explosion section for more details)
-    }
-    
-    // addition starts
-    There is a 1/6 chance that the destroyed Snagglegon ship will drop an Extra Life goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-    // addition ends
-     */
 }
 
 ////////////////
