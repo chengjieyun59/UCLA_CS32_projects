@@ -6,7 +6,7 @@ using namespace std;
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
 
 Actor::Actor(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
-:GraphObject(imageID, startX, startY, dir, size, depth), m_isAlive(true), m_world(World)//, m_control(Control)
+:GraphObject(imageID, startX, startY, dir, size, depth), m_isAlive(true), m_world(World), m_createWhat("nothing")//, m_control(Control)
 {} // page 22
 
 Actor::~Actor()
@@ -36,10 +36,11 @@ bool Actor::isAlive()
     return m_isAlive;
 }
 
-bool Actor::isAlien() const
-{
-    return false;
-}
+bool Actor::isAlien() const {return false;}
+bool Actor::isTorpedo() const {return false;}
+bool Actor::isSnagglegon() const {return false;}
+void Actor::setCreate(string createWhat) {m_createWhat = createWhat;}
+string Actor::getCreate() const {return m_createWhat;}
 
 StudentWorld* Actor::getWorld() const
 {
@@ -112,27 +113,56 @@ void NachenBlaster::doSomething()
                 case KEY_PRESS_SPACE:
                     if(getCabbagePt() >= 5)
                     {
-                        // TODO:
-                        //Cabbage* c = new Cabbage(this, getX()+12, getY());
-                        //playSound(SOUND_PLAYER_SHOOT);
+                        // method 1?? a lot of code though, in void StudentWorld::addActor(Actor* a)
+                        setCreate("cabbage");
+                        
+                        // method 2? How to make this work
+                        Cabbage *c;
+                        getWorld()->addActor(c);
+                        // TODO Hint: When you create a new cabbage object in the proper location, give it to the StudentWorld to manage (e.g., animate) along with the other game objects.
+                        
+                        getWorld()->playSound(SOUND_PLAYER_SHOOT);
                         setCabbagePt(getCabbagePt() - 5);
                     } break;
-                    // TODO Hint: When you create a new cabbage object in the proper location, give it to the StudentWorld to manage (e.g., animate) along with the other game objects.
                     
                 case KEY_PRESS_TAB:
                     if(getTorpedoPt() > 0)
                     {
                         // TODO:
                         //Torpedo* c = new Torpedo(this, getX()+12, getY(), 0);
-                        //playSound(SOUND_TORPEDO);
+                        getWorld()->playSound(SOUND_TORPEDO);
                         setTorpedoPt(getTorpedoPt() - 1);
-                    } break;
+                    }
+                    break;
                     
-                case KEY_PRESS_LEFT:   if(isInBound(x-6, y)) moveTo(x-6, y); break;
-                case KEY_PRESS_RIGHT:  if(isInBound(x+6, y)) moveTo(x+6, y); break;
-                case KEY_PRESS_DOWN:   if(isInBound(x, y-6)) moveTo(x, y-6); break;
-                case KEY_PRESS_UP:     if(isInBound(x, y+6)) moveTo(x, y+6); break;
-                    // TODO: Of course, any movement may cause a collision with an alien ship or projectile, so you must check for this.
+                case KEY_PRESS_LEFT:   if(isInBound(x-6, y)) moveTo(x-6, y);
+                    if (getWorld()->getCollidingPlayer(this) != nullptr) {
+                        if(getWorld()->getCollidingPlayer(this)->isAlien())
+                        {
+                            if(getWorld()->getCollidingPlayer(this)->isSnagglegon())
+                                sufferDamage(5, 0); // collide with a smallgon or snoregon
+                            else
+                                sufferDamage(15, 0); // collide with a snagglegon
+                        }
+
+                        else
+                        {
+                            if(getWorld()->getCollidingPlayer(this)->isTorpedo())
+                                sufferDamage(8, 1); // collide with a torpedo
+                            else
+                                sufferDamage(2, 1); // collide with a turnip or cabbage
+                        }
+                    } // Of course, any movement may cause a collision with an alien ship or projectile, so you must check for this. TODO: is this correct? If so, add to the other 3 directions
+                    break;
+                case KEY_PRESS_RIGHT:  if(isInBound(x+6, y)) moveTo(x+6, y);
+                    
+                    break;
+                case KEY_PRESS_DOWN:   if(isInBound(x, y-6)) moveTo(x, y-6);
+                    
+                    break;
+                case KEY_PRESS_UP:     if(isInBound(x, y+6)) moveTo(x, y+6);
+                    
+                    break;
                     
                     // TODO: case KEY_PRESS_ESCAPE: ; break;
                     
@@ -153,24 +183,22 @@ void NachenBlaster::incHitPt(double amt)
 void NachenBlaster::sufferDamage(double amt, int cause)
 {
     /* TODO:
-    if (a projectile like a turnip collides with the NachenBlaster, or vice versa)
+    if (a projectile collides with the NachenBlaster, or vice versa)
     {
-        setHitpt(getHitPt() - 2);
-        playSound(SOUND_BLAST);
+        setHitpt(getHitPt() - amt);
+        getWorld()->playSound(SOUND_BLAST);
     }
-    if (a Flatulence Torpedo collides with the NachenBlaster, or vice versa)
-    {
-        setHitpt(getHitPt() - 8);
-        playSound(SOUND_BLAST);
-    }
-    
+
     if (an alien ship collides with the NachenBlaster or vice versa)
         the NachenBlaster incurs damage and the alien ship will be destroyed
-        playSound(SOUND_DEATH);
+     {
+        setHitpt(getHitPt() - amt);
+        getWorld()->playSound(SOUND_DEATH);
+     }
      */
     
     if(getHitPt() <= 0)
-        setAlive("dead");
+        getWorld()->decLives();
 }
 
 void NachenBlaster::setHealthPt(int newHealthPt){m_healthPt = newHealthPt;}
@@ -205,7 +233,7 @@ void Explosion::doSomething()
 ///////////
 
 Alien::Alien(StudentWorld* World, int imageID, double startX, double startY, double hitPoint, double damageAmt, double deltaX, double deltaY, double speed, unsigned int scoreValue)
-:DamageableObject(World, imageID, startX, startY, 0, 0.5, 1, hitPoint), m_damageAmt(damageAmt), m_deltaX(deltaX), m_deltaY(deltaY), m_speed(speed), m_scoreValue(scoreValue)
+:DamageableObject(World, imageID, startX, startY, 0, 0.5, 1, hitPoint), m_damageAmt(damageAmt), m_deltaY(deltaY), m_speed(speed), m_scoreValue(scoreValue)
 {}
 
 Alien::~Alien()
@@ -225,26 +253,25 @@ void Alien::sufferDamage(double amt, int cause)
 // by the x and y deltas.
 void Alien::move()
 {
-    // TODO
+    moveTo(getX() - 1.0 * m_speed, getY() + m_deltaY * m_speed);
 }
 
-// Set the player's y direction.
-void Alien::setDeltaY(double dy)
-{
-    // TODO
-}
-
-// Set the player's speed.
-void Alien::setSpeed(double speed)
-{
-    // TODO
-}
+void Alien::setDeltaY(double dy) {m_deltaY = dy;} // Set the player's y direction.
+double Alien::getDeltaY() const {return m_deltaY;}
+void Alien::setSpeed(double speed) {m_speed = speed;} // Set the player's speed.
+double Alien::getSpeed() const {return m_speed;}
 
 // If this alien collided with the player, damage the player and return
 // true; otherwise, return false.
 bool Alien::damageCollidingPlayer(double amt)
 {
-    // TODO
+    /* TODO:
+    if(this alien collided with the player)
+    {
+        NachenBlaster::sufferDamage(m_damageAmt, 0);
+        return true;
+    }
+     */
     return false;
 }
 
@@ -259,8 +286,8 @@ void Alien::possiblyDropGoodie()
 //////////////
 
 Smallgon::Smallgon(StudentWorld* World, double startX, double startY)
-:Alien(World, IID_SMALLGON, startX, startY, 5.0, 0.0, 0.0, 0.0, 2.0, 0)
-//TODO :Alien(World, IID_SMALLGON, startX, startY, (5*(1+(level-1)*0.1)), damageAmt, deltaX, deltaY, 2.0, scoreValue)
+:Alien(World, IID_SMALLGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 5.0, -1.0, 0.0, 2.0, 0), m_flightPlanLength(0)
+//TODO :Alien(World, IID_SMALLGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), damageAmt, deltaX, deltaY, 2.0, scoreValue)
 {}
 
 Smallgon::~Smallgon()
@@ -271,44 +298,52 @@ void Smallgon::doSomething()
     if(isAlive() == false)
         return;
     
+    // 3.
     /*
-    3.
-    if(if the Smallgon has collided with a NachenBlaster-fired projectile or the NachenBlaster ship itself)
+    if(the Smallgon has collided with a NachenBlaster-fired projectile or the NachenBlaster ship itself)
     {
-        attacked();
+        sufferDamage(m_damagedAmt, 0); // TODO: change damagedAmt
     }
+    */
     
-    4.
-    if (The Smallgon will check to see if it needs a new flight plan because the current flight plan length has reached zero OR the Smallgon has reached the top or bottom of the screen due to its current flight plan. If either condition is true, the Smallgon will use the following approach to select a new flight plan)
+    // 4.
+    if(getY() == VIEW_WIDTH-1 || getY() == 0 || m_flightPlanLength <= 0)
     {
-        a. If the Smallgon’s y coordinate is greater than or equal to VIEW_HEIGHT-1, then the Smallgon will set its travel direction to down and left.
-        b. Otherwise, if the Smallgon’s y coordinate is less than or equal to 0, then the Smallgon will set its travel direction to up and left.
-        c. Otherwise if the Smallgon’s flight plan length is 0, the Smallgon will set its travel direction by randomly selecting a new one from these three choices: due left, up and left, or down and left.
-        d. The Smallgon will pick a random new flight plan length in the range [1, 32].
-     
+        if(getY() == VIEW_WIDTH-1)
+            setDeltaY(-1.0);
+        
+        else if (getY() == 0)
+            setDeltaY(1.0);
+
+        else if (m_flightPlanLength <= 0)
+        {
+            int random = randInt(1, 3);
+            if (random == 1)
+                setDeltaY(0.0);
+            else if (random == 2)
+                setDeltaY(-1.0);
+            else
+                setDeltaY(1.0);
+        } // Otherwise if the Smallgon’s flight plan length is 0, the Smallgon will set its travel direction by randomly selecting a new one from these three choices: due left, up and left, or down and left.
+        m_flightPlanLength = randInt(1, 32);
     }
      
-    5.
-    if (the NachenBlaster is to the left of the Smallgon AND the Smallgon has a y coordinate that is within [-4,4] pixels of the NachenBlaster’s y coordinate)
+    // 5. TODO:
+    /*
+    if (NachenBlaster::getX() < getX() && NachenBlaster::getY()-4 <= getY() && NachenBlaster::getY()+4 >= getY())
     {
-        if (There is a 1 in ((20/CurrentLevelNumber)+5) chance)
+        if(randInt(1, (20/getWorld()->getLevel())+5) == 0)
         {
-            i. Fire a turnip toward the NachenBlaster, adding the new turnip 14 pixels to the left of the center of the Smallgon ship and at the Smallgon’s y coordinate. Hint: When you create a new turnip object in the proper location, give it to your StudentWorld to manage (e.g., animate) along with the other game objects.
-            playSound(SOUND_ALIEN_SHOOT);
+            // Turnip* c = new Turnip(this, getX()-14, getY(), 0); // TODO: Fire a turnip toward the NachenBlaster. Hint: When you create a new turnip object in the proper location, give it to your StudentWorld to manage (e.g., animate) along with the other game objects.
+            getWorld()->playSound(SOUND_ALIEN_SHOOT);
             return;
         }
     }
-     
-    The Smallgon will try to move in its current travel direction (as determined by the last flight plan);
-    reduce its flight plan length by 1;
-    If its travel direction is:
-    a. Up and left: It must move N pixels up and N pixels left using the moveTo() method, where N is the current travel speed.
-    b. Down and left: It must move N pixels down and N pixels left using the moveTo() method, where N is the current travel speed.
-    c. Due left: It must move N pixels left using the moveTo() method, where N is the current travel speed.
-    
-
-    Finally, after the Smallgon ship has moved itself, it must AGAIN check to see if has collided with the NachenBlaster or a NachenBlaster-fired projectile, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.).
     */
+    m_flightPlanLength--;
+    move();
+
+    // TODO: Finally, after the Smallgon ship has moved itself, it must AGAIN check to see if has collided with the NachenBlaster or a NachenBlaster-fired projectile, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.).
 }
 
 void Smallgon::sufferDamage(double amt, int cause)
@@ -321,20 +356,21 @@ void Smallgon::sufferDamage(double amt, int cause)
         {
             Increase the player’s score by 250 points;
             setAlive("dead");
-            getControl()->playSound(SOUND_DEATH);
+            getWorld()->playSound(SOUND_DEATH);
             d. Introduce a new explosion object into the space field at the same x,y location as the Smallgon.
         }
         
         else if (the projectile injured the Smallgon ship but didn’t destroy the ship)
-            playSound(SOUND_BLAST);
+            getWorld()->playSound(SOUND_BLAST);
     }
     
     if (a Smallgon collides with the NachenBlaster ship or vice versa)
     {
+        NachenBlaster::sufferDamage(5, 0);
         1. Damage the NachenBlaster appropriately (by causing it to lose 5 hit points) – the NachenBlaster object can then deal with this damage in its own unique way. Hint: The Smallgon object can tell the NachenBlaster that it has been damaged by calling a method the NachenBlaster has (presumably named sufferDamage or something similar).
         setAlive("dead");
         3. Increase the player’s score by 250 points.
-        playSound(SOUND_DEATH);
+        getWorld()->playSound(SOUND_DEATH);
         5. Introduce a new explosion object into the space field at the same x,y coordinates as the Smallgon (see the Explosion section for more details)
     }
      */
@@ -345,8 +381,8 @@ void Smallgon::sufferDamage(double amt, int cause)
 //////////////
 
 Smoregon::Smoregon(StudentWorld* World, double startX, double startY)
-:Alien(World, IID_SMOREGON, startX, startY, 5.0, 0.0, 0.0, 0.0, 2.0, 0)
-//TODO:Alien(World, IID_SMOREGON, startX, startY, (5*(1+(level-1)*0.1)), damageAmt, deltaX, deltaY, 2.0, scoreValue)
+:Alien(World, IID_SMOREGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 5.0, 0.0, 0.0, 2.0, 5)
+//TODO:Alien(World, IID_SMOREGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), damageAmt, deltaX, deltaY, 2.0, scoreValue)
 {}
 
 Smoregon::~Smoregon()
@@ -381,7 +417,7 @@ void Smoregon::doSomething()
         if (There is a 1 in ((20/CurrentLevelNumber)+5) chance)
         {
             i. Fire a turnip toward the NachenBlaster, adding the new turnip 14 pixels to the left of the center of the Smallgon ship and at the Smallgon’s y coordinate. Hint: When you create a new turnip object in the proper location, give it to your StudentWorld to manage (e.g., animate) along with the other game objects.
-            playSound(SOUND_ALIEN_SHOOT);
+            getWorld()->playSound(SOUND_ALIEN_SHOOT);
             return;
         }
         b.
@@ -416,12 +452,12 @@ void Smoregon::sufferDamage(double amt, int cause)
         {
             Increase the player’s score by 250 points;
             setAlive("dead");
-            getControl()->playSound(SOUND_DEATH);
+            getWorld()->playSound(SOUND_DEATH);
             d. Introduce a new explosion object into the space field at the same x,y location as the Smallgon.
         }
         
         else if (the projectile injured the Smallgon ship but didn’t destroy the ship)
-            playSound(SOUND_BLAST);
+            getWorld()->playSound(SOUND_BLAST);
     }
     
     if (a Smallgon collides with the NachenBlaster ship or vice versa)
@@ -429,7 +465,7 @@ void Smoregon::sufferDamage(double amt, int cause)
         1. Damage the NachenBlaster appropriately (by causing it to lose 5 hit points) – the NachenBlaster object can then deal with this damage in its own unique way. Hint: The Smallgon object can tell the NachenBlaster that it has been damaged by calling a method the NachenBlaster has (presumably named sufferDamage or something similar).
         setAlive("dead");
         3. Increase the player’s score by 250 points.
-        playSound(SOUND_DEATH);
+        getWorld()->playSound(SOUND_DEATH);
         5. Introduce a new explosion object into the space field at the same x,y coordinates as the Smallgon (see the Explosion section for more details)
     }
     
@@ -445,12 +481,17 @@ void Smoregon::sufferDamage(double amt, int cause)
 ////////////////
 
 Snagglegon::Snagglegon(StudentWorld* World, double startX, double startY)
-:Alien(World, IID_SNAGGLEGON, startX, startY, 10.0, 0.0, 0.0, 0.0, 1.75, 0)
-//TODO:Alien(World, IID_SNAGGLEGON, startX, startY, (10*(1+(level-1)*0.1)), damageAmt, deltaX, deltaY, 1.75, scoreValue)
+:Alien(World, IID_SNAGGLEGON, startX, startY, (10.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 15.0, 0.0, 0.0, 1.75, 15)
+//TODO:Alien(World, IID_SNAGGLEGON, startX, startY, (10.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), damageAmt, deltaX, deltaY, 1.75, scoreValue)
 {}
 
 Snagglegon::~Snagglegon()
 {}
+
+bool Snagglegon::isSnagglegon() const
+{
+    return false;
+}
 
 void Snagglegon::doSomething()
 {
@@ -483,7 +524,7 @@ void Snagglegon::doSomething()
         if (There is a 1 in ((15/CurrentLevelNumber)+10) chance)
         {
             i. Fire a torpedo toward the NachenBlaster, adding the new torpedo 14 pixels to the left of the center of the Smallgon ship and at the Smallgon’s y coordinate. Hint: When you create a new torpedo object in the proper location, give it to your StudentWorld to manage (e.g., animate) along with the other game objects.
-            playSound(SOUND_TORPEDO);
+            getWorld()->playSound(SOUND_TORPEDO);
             return;
         }
     }
@@ -512,12 +553,12 @@ void Snagglegon::sufferDamage(double amt, int cause)
         {
             Increase the player’s score by 1000 points; // was 250
             setAlive("dead");
-            getControl()->playSound(SOUND_DEATH);
+            getWorld()->playSound(SOUND_DEATH);
             d. Introduce a new explosion object into the space field at the same x,y location as the Smallgon.
         }
         
         else if (the projectile injured the Smallgon ship but didn’t destroy the ship)
-            playSound(SOUND_BLAST);
+            getWorld()->playSound(SOUND_BLAST);
     }
     
     if (a Smallgon collides with the NachenBlaster ship or vice versa)
@@ -525,7 +566,7 @@ void Snagglegon::sufferDamage(double amt, int cause)
         1. Damage the NachenBlaster appropriately (by causing it to lose 15 hit points) – the NachenBlaster object can then deal with this damage in its own unique way. Hint: The Smallgon object can tell the NachenBlaster that it has been damaged by calling a method the NachenBlaster has (presumably named sufferDamage or something similar). // was 5 hit points, instead of 15
         setAlive("dead");
         3. Increase the player’s score by 1000 points. // was 250 instead of 1000
-        playSound(SOUND_DEATH);
+        getWorld()->playSound(SOUND_DEATH);
         5. Introduce a new explosion object into the space field at the same x,y coordinates as the Smallgon (see the Explosion section for more details)
     }
     
@@ -615,6 +656,11 @@ Torpedo::Torpedo(StudentWorld* World, double startX, double startY, int dir, dou
 Torpedo::~Torpedo()
 {}
 
+bool Torpedo::isTorpedo() const
+{
+    return true;
+}
+
 void Torpedo::doSomething()
 {
     if(isAlive() == false)
@@ -687,7 +733,7 @@ void Goodie::doSomething()
      {
      inform the StudentWorld object that the user is to receive 100 more points;
      setAlive("dead");
-     playSound(SOUND_GOODIE);
+     getWorld()->playSound(SOUND_GOODIE);
      doDiffGoodieThing();
      return;
      }
@@ -698,7 +744,7 @@ void Goodie::doSomething()
      {
      inform the StudentWorld object that the user is to receive 100 more points;
      setAlive("dead");
-     playSound(SOUND_GOODIE);
+     getWorld()->playSound(SOUND_GOODIE);
      doDiffGoodieThing();
      return;
      }

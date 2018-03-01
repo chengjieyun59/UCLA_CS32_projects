@@ -3,7 +3,7 @@
 
 #include "GraphObject.h"
 #include <string>
-
+using namespace std;
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 
 const int HIT_BY_SHIP = 0;
@@ -22,8 +22,13 @@ public:
     bool isInBound(int x, int y) const;
     bool isAlive();
     virtual bool isAlien() const;
+    virtual bool isTorpedo() const;
+    virtual bool isSnagglegon() const;
     virtual void setAlive(std::string aliveStatus);
+    void setCreate(string createWhat);
+    string getCreate() const;
     StudentWorld* getWorld() const;
+    
     // GameController* getControl();
     
     // Move this actor to x,y if onscreen; otherwise, don't move and mark
@@ -33,6 +38,7 @@ public:
 private:
     bool m_isAlive;
     StudentWorld* m_world;
+    string m_createWhat;
     //GameController* m_control;
     
 }; // Each actor has its own x,y location in space, its own internal state (e.g., a Snagglegon knows its location, what direction it’s moving, etc.) and its own special algorithms that control its actions in the game based on its own state and the state of the other objects in the world.
@@ -109,19 +115,17 @@ public:
     Alien(StudentWorld* World, int imageID, double startX, double startY, double hitPoint, double damageAmt, double deltaX, double deltaY, double speed, unsigned int scoreValue);
     virtual ~Alien();
     virtual bool isAlien() const;
-    // virtual void doSomething()=0; // Hint: studentWorldPtr->zapAllZappableActors(getX(), getY());
+    // virtual void doSomething()=0; // Hint: getWorld->zapAllZappableActors(getX(), getY());
     virtual void sufferDamage(double amt, int cause);
     
     // Move the player by the current speed in the direction indicated
     // by the x and y deltas.
     void move();
-    
-    // Set the player's y direction.
-    void setDeltaY(double dy);
-    
-    // Set the player's speed.
+    void setDeltaY(double dy); // Set the player's y direction.
+    double getDeltaY() const;
     void setSpeed(double speed);
-    
+    double getSpeed() const;
+
     // If this alien collided with the player, damage the player and return
     // true; otherwise, return false.
     virtual bool damageCollidingPlayer(double amt);
@@ -131,7 +135,6 @@ public:
     
 private:
     double m_damageAmt;
-    double m_deltaX;
     double m_deltaY;
     double m_speed;
     unsigned int m_scoreValue;
@@ -146,7 +149,7 @@ public:
     virtual void sufferDamage(double amt, int cause);
     
 private:
-
+    double m_flightPlanLength;
     
 };
 
@@ -167,6 +170,7 @@ class Snagglegon: public Alien
 public:
     Snagglegon(StudentWorld* World, double startX, double startY);
     virtual ~Snagglegon();
+    virtual bool isSnagglegon() const;
     virtual void doSomething();
     virtual void sufferDamage(double amt, int cause);
     
@@ -218,6 +222,7 @@ class Torpedo: public Projectile
 public:
     Torpedo(StudentWorld* World, double startX, double startY, int dir, double deltaX);
     virtual ~Torpedo();
+    virtual bool isTorpedo() const;
     virtual void doSomething();
     
 private:

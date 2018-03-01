@@ -58,12 +58,16 @@ int StudentWorld::move()
             (*a)->doSomething();
             
             // If an actor does something that causes the NachenBlaster to die (e.g., a projectile or alien ship collides with the NachenBlaster), then the move() method should immediately return GWSTATUS_PLAYER_DIED. TODO: is this correct?
-            if (m_NachenBlaster == nullptr) // NachenBlaster died during this tick
-                return GWSTATUS_PLAYER_DIED;
+            
+            //if (m_NachenBlaster == nullptr) // NachenBlaster died during this tick
+                //return GWSTATUS_PLAYER_DIED;
 
-            if(getLevel() == 2) // TODO: change this. if the required number of alien ships have been destroyed in the current level to advance to the next level
-                //                 increaseScoreAppropriately();
+            if(m_AlienDestroyed >= 6+4*getLevel())
+            {
+                // TODO: increaseScoreAppropriately();
+                advanceToNextLevel();
                 return GWSTATUS_FINISHED_LEVEL;
+            }
         }
     }
     // It is possible that one actor (e.g., a cabbage projectile) may destroy another actor (e.g., a Smallgon) during the current tick. If an actor has died earlier in the current tick, then the dead actor must not have a chance to do something during the current tick (since it’s dead).
@@ -159,8 +163,14 @@ bool StudentWorld::playerInLineOfFire(const Actor* a) const
 void StudentWorld::addActor(Actor* a)
 {
     // TODO:
-    Star* s = new Star(this, randInt(0, VIEW_WIDTH-1));
-    m_vActor.push_back(s);
+
+    if(a->getCreate() == "cabbage")
+    {
+        Cabbage* c = new Cabbage(this, m_NachenBlaster->getX()+12, m_NachenBlaster->getY());
+        m_vActor.push_back(c);
+    }
+    
+
 }
 
 // Record that one more alien on the current level has been destroyed.
