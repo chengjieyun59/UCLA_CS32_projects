@@ -211,7 +211,7 @@ void NachenBlaster::setTorpedoPt(int newTorpedoPt){m_torpedoPt = newTorpedoPt;}
 int NachenBlaster::getTorpedoPt() const {return m_torpedoPt;}
 
 Explosion::Explosion(StudentWorld* World, double startX, double startY, double size)
- :Actor(World, IID_EXPLOSION, startX, startY, 0, size, 0)
+ :Actor(World, IID_EXPLOSION, startX, startY, 0, 1.0, 0)
 {}
 
 Explosion::~Explosion()
@@ -302,14 +302,14 @@ void Smallgon::doSomething()
     /*
     if(the Smallgon has collided with a NachenBlaster-fired projectile or the NachenBlaster ship itself)
     {
-        sufferDamage(m_damagedAmt, 0); // TODO: change damagedAmt
+        damageCollidingPlayer(amt); // TODO: change damagedAmt
     }
     */
     
     // 4.
     if(getY() == VIEW_WIDTH-1 || getY() == 0 || m_flightPlanLength <= 0)
     {
-        if(getY() == VIEW_WIDTH-1)
+        if(getY() == VIEW_HEIGHT-1)
             setDeltaY(-1.0);
         
         else if (getY() == 0)
@@ -340,8 +340,9 @@ void Smallgon::doSomething()
         }
     }
     */
-    m_flightPlanLength--;
+
     move();
+    m_flightPlanLength--;
 
     // TODO: Finally, after the Smallgon ship has moved itself, it must AGAIN check to see if has collided with the NachenBlaster or a NachenBlaster-fired projectile, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.).
 }
@@ -351,27 +352,27 @@ void Smallgon::sufferDamage(double amt, int cause)
     /*
     if (a Smallgon collides with a NachenBlaster-fired projectile or vice versa)
     {
-        1. The Smallgon ship must be damaged by the projectile as indicated by the projectile (e.g., 2 points of damage from a cabbage, etc.).
-        if (the collision results in the Smallgon’s hit points reaching zero or below)
+        // TODO: 1. The Smallgon ship must be damaged by the projectile as indicated by the projectile (e.g., 2 points of damage from a cabbage, etc.).
+        
+        if (getHitPt() <= 0)
         {
-            Increase the player’s score by 250 points;
+            getWorld()->increaseScore(250); // Increase the player’s score by 250 points
             setAlive("dead");
             getWorld()->playSound(SOUND_DEATH);
-            d. Introduce a new explosion object into the space field at the same x,y location as the Smallgon.
+            Explosion* c = new Explosion(this, getX() getY(), 0, 1.0, 0); // TODO: Introduce a new explosion object into the space field
         }
         
-        else if (the projectile injured the Smallgon ship but didn’t destroy the ship)
+        else // if the projectile injured the Smallgon ship but didn’t destroy the ship
             getWorld()->playSound(SOUND_BLAST);
     }
     
     if (a Smallgon collides with the NachenBlaster ship or vice versa)
     {
-        NachenBlaster::sufferDamage(5, 0);
-        1. Damage the NachenBlaster appropriately (by causing it to lose 5 hit points) – the NachenBlaster object can then deal with this damage in its own unique way. Hint: The Smallgon object can tell the NachenBlaster that it has been damaged by calling a method the NachenBlaster has (presumably named sufferDamage or something similar).
+        NachenBlaster::sufferDamage(5, 0); // TODO: Damage the NachenBlaster appropriately (by causing it to lose 5 hit points) – the NachenBlaster object can then deal with this damage in its own unique way. Hint: The Smallgon object can tell the NachenBlaster that it has been damaged by calling a method the NachenBlaster has (presumably named sufferDamage or something similar).
         setAlive("dead");
-        3. Increase the player’s score by 250 points.
+        getWorld()->increaseScore(250);
         getWorld()->playSound(SOUND_DEATH);
-        5. Introduce a new explosion object into the space field at the same x,y coordinates as the Smallgon (see the Explosion section for more details)
+        Explosion* c = new Explosion(this, getX() getY(), 0, 1.0, 0); // TODO: Introduce a new explosion object into the space field
     }
      */
 }
@@ -381,7 +382,7 @@ void Smallgon::sufferDamage(double amt, int cause)
 //////////////
 
 Smoregon::Smoregon(StudentWorld* World, double startX, double startY)
-:Alien(World, IID_SMOREGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 5.0, 0.0, 0.0, 2.0, 5)
+:Alien(World, IID_SMOREGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 5.0, -1.0, 0.0, 2.0, 5)
 //TODO:Alien(World, IID_SMOREGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), damageAmt, deltaX, deltaY, 2.0, scoreValue)
 {}
 
@@ -393,52 +394,60 @@ void Smoregon::doSomething()
     if(isAlive() == false)
         return;
     
+    // 3.
     /*
-    3.
-    if(if the Smallgon has collided with a NachenBlaster-fired projectile or the NachenBlaster ship itself)
-    {
-        attacked();
-    }
+     if(the Smallgon has collided with a NachenBlaster-fired projectile or the NachenBlaster ship itself)
+     {
+     damageCollidingPlayer(amt); // TODO: change damagedAmt
+     }
+     */
     
-    4. // whole 4. section same as Smallgon's
-    if (The Smallgon will check to see if it needs a new flight plan because the current flight plan length has reached zero OR the Smallgon has reached the top or bottom of the screen due to its current flight plan. If either condition is true, the Smallgon will use the following approach to select a new flight plan)
+    // 4.
+    if(getY() == VIEW_WIDTH-1 || getY() == 0 || m_flightPlanLength <= 0)
     {
-        a. If the Smallgon’s y coordinate is greater than or equal to VIEW_HEIGHT-1, then the Smallgon will set its travel direction to down and left.
-        b. Otherwise, if the Smallgon’s y coordinate is less than or equal to 0, then the Smallgon will set its travel direction to up and left.
-        c. Otherwise if the Smallgon’s flight plan length is 0, the Smallgon will set its travel direction by randomly selecting a new one from these three choices: due left, up and left, or down and left.
-        d. The Smallgon will pick a random new flight plan length in the range [1, 32].
-                
-    }
-    
-    5.
-    if (the NachenBlaster is to the left of the Smallgon AND the Smallgon has a y coordinate that is within [-4,4] pixels of the NachenBlaster’s y coordinate)
-    {
-        a. // 5.a. is the same as Smallgon's
-        if (There is a 1 in ((20/CurrentLevelNumber)+5) chance)
+        if(getY() == VIEW_HEIGHT-1)
+            setDeltaY(-1.0);
+        
+        else if (getY() == 0)
+            setDeltaY(1.0);
+        
+        else if (m_flightPlanLength <= 0)
         {
-            i. Fire a turnip toward the NachenBlaster, adding the new turnip 14 pixels to the left of the center of the Smallgon ship and at the Smallgon’s y coordinate. Hint: When you create a new turnip object in the proper location, give it to your StudentWorld to manage (e.g., animate) along with the other game objects.
+            int random = randInt(1, 3);
+            if (random == 1)
+                setDeltaY(0.0);
+            else if (random == 2)
+                setDeltaY(-1.0);
+            else
+                setDeltaY(1.0);
+        } // Otherwise if the Smallgon’s flight plan length is 0, the Smallgon will set its travel direction by randomly selecting a new one from these three choices: due left, up and left, or down and left.
+        m_flightPlanLength = randInt(1, 32);
+    }
+    
+    // 5. TODO:
+
+    if (NachenBlaster::getX() < getX() && NachenBlaster::getY()-4 <= getY() && NachenBlaster::getY()+4 >= getY())
+    {
+        if(randInt(1, (20/getWorld()->getLevel())+5) == 0)
+        {
+            // Turnip* c = new Turnip(this, getX()-14, getY(), 0); // TODO: Fire a turnip toward the NachenBlaster. Hint: When you create a new turnip object in the proper location, give it to your StudentWorld to manage (e.g., animate) along with the other game objects.
             getWorld()->playSound(SOUND_ALIEN_SHOOT);
             return;
         }
-        b.
-        There is a 1 in ((20/CurrentLevelNumber)+5) chance during this tick that the Smoregon will change its flight plan:
-        i. It will set its travel direction to due left.
-        ii. It will set the length of its flight plan to VIEW_WIDTH steps.
-        iii. It will set its travel speed to 5 pixels per tick: Ramming speed!.
-        iv. Continue on with the next step.
+        
+        // !!!!!!!!!!! 5.b differs from Smallgon's. Smoregon may change its flight plan
+        if(randInt(1, (20/getWorld()->getLevel())+5) == 0)
+        {
+            setDeltaY(0.0);
+            m_flightPlanLength = VIEW_WIDTH;
+            setSpeed(5.0);
+        }
     }
+
+    move();
+    m_flightPlanLength--;
     
-    6. // same as Smallgon's
-    The Smallgon will try to move in its current travel direction (as determined by the last flight plan);
-    reduce its flight plan length by 1;
-    If its travel direction is:
-    a. Up and left: It must move N pixels up and N pixels left using the moveTo() method, where N is the current travel speed.
-    b. Down and left: It must move N pixels down and N pixels left using the moveTo() method, where N is the current travel speed.
-    c. Due left: It must move N pixels left using the moveTo() method, where N is the current travel speed.
-    
-    
-    Finally, after the Smallgon ship has moved itself, it must AGAIN check to see if has collided with the NachenBlaster or a NachenBlaster-fired projectile, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.).
-        */
+    // TODO: Finally, after the Smallgon ship has moved itself, it must AGAIN check to see if has collided with the NachenBlaster or a NachenBlaster-fired projectile, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.).
 }
 
 void Smoregon::sufferDamage(double amt, int cause)
@@ -481,7 +490,7 @@ void Smoregon::sufferDamage(double amt, int cause)
 ////////////////
 
 Snagglegon::Snagglegon(StudentWorld* World, double startX, double startY)
-:Alien(World, IID_SNAGGLEGON, startX, startY, (10.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 15.0, 0.0, 0.0, 1.75, 15)
+:Alien(World, IID_SNAGGLEGON, startX, startY, (10.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 15.0, -1.0, 0.0, 1.75, 15)
 //TODO:Alien(World, IID_SNAGGLEGON, startX, startY, (10.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), damageAmt, deltaX, deltaY, 1.75, scoreValue)
 {}
 
@@ -497,49 +506,41 @@ void Snagglegon::doSomething()
 {
     if(isAlive() == false)
         return;
-    
+    // 3.
     /*
-    3.
-    if(if the Smallgon has collided with a NachenBlaster-fired projectile or the NachenBlaster ship itself)
+     if(the Smallgon has collided with a NachenBlaster-fired projectile or the NachenBlaster ship itself)
+     {
+     damageCollidingPlayer(amt); // TODO: change damagedAmt
+     }
+     */
+    
+    // !!!!!!!! note: this is different:
+    
+    // 4.
+    if(getY() == VIEW_WIDTH-1 || getY() == 0)
     {
-        attacked();
+        if(getY() == VIEW_HEIGHT-1)
+            setDeltaY(-1.0);
+        
+        if (getY() == 0)
+            setDeltaY(1.0);
     }
     
-    4. // whole 4. section same as Smallgon's
-    if (The Smallgon will check to see if it needs a new flight plan because the current flight plan length has reached zero OR the Smallgon has reached the top or bottom of the screen due to its current flight plan. If either condition is true, the Smallgon will use the following approach to select a new flight plan)
-    {
-        a. If the Smallgon’s y coordinate is greater than or equal to VIEW_HEIGHT-1, then the Smallgon will set its travel direction to down and left.
-        b. Otherwise, if the Smallgon’s y coordinate is less than or equal to 0, then the Smallgon will set its travel direction to up and left.
-            
-        // Snagglegon doesn't have 4.c or 4.d.
-        c. Otherwise if the Smallgon’s flight plan length is 0, the Smallgon will set its travel direction by randomly selecting a new one from these three choices: due left, up and left, or down and left.
-        d. The Smallgon will pick a random new flight plan length in the range [1, 32].
-        // Snagglegon doesn't have 4.c or 4.d.
-    }
+    // 5. TODO:
     
-    5.
-    if (the NachenBlaster is to the left of the Smallgon AND the Smallgon has a y coordinate that is within [-4,4] pixels of the NachenBlaster’s y coordinate)
+    if (NachenBlaster::getX() < getX() && NachenBlaster::getY()-4 <= getY() && NachenBlaster::getY()+4 >= getY())
     {
-        a. // 5.a. is the similar to Smallgon's/ Smoregon's, besides the probability, torpedo instead of turnip, and playsound of torpedo
-        if (There is a 1 in ((15/CurrentLevelNumber)+10) chance)
+        if(randInt(1, (15/getWorld()->getLevel())+10) == 0) // !!!!!!!! probability is different
         {
-            i. Fire a torpedo toward the NachenBlaster, adding the new torpedo 14 pixels to the left of the center of the Smallgon ship and at the Smallgon’s y coordinate. Hint: When you create a new torpedo object in the proper location, give it to your StudentWorld to manage (e.g., animate) along with the other game objects.
-            getWorld()->playSound(SOUND_TORPEDO);
+            // Torpedo* c = new Torpedo(this, getX()-14, getY(), 0); // TODO: Fire a Torpedo toward the NachenBlaster. Hint: When you create a new turnip object in the proper location, give it to your StudentWorld to manage (e.g., animate) along with the other game objects. // !!!!!!!!! Torpedo, not Turnip
+            getWorld()->playSound(SOUND_TORPEDO); // !!!!!!!! Torpedo, not Turnip
             return;
         }
     }
     
-    6. // same as Smallgon's
-    The Smallgon will try to move in its current travel direction.
-    If its travel direction is:
-    a. Up and left: It must move N pixels up and N pixels left using the moveTo() method, where N is the current travel speed.
-    b. Down and left: It must move N pixels down and N pixels left using the moveTo() method, where N is the current travel speed.
-    // Snagglegon doesn't have 6.c.
-    c. Due left: It must move N pixels left using the moveTo() method, where N is the current travel speed.
-    // Snagglegon doesn't have 6.c.
+    move();
     
-    Finally, after the Smallgon ship has moved itself, it must AGAIN check to see if has collided with the NachenBlaster or a NachenBlaster-fired projectile, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.).
-        */
+    // TODO: Finally, after the Smallgon ship has moved itself, it must AGAIN check to see if has collided with the NachenBlaster or a NachenBlaster-fired projectile, using the same algorithm described in step #3 above. If so, it must perform the same behavior as described in step #3 (e.g., damage the object, etc.).
 }
 
 void Snagglegon::sufferDamage(double amt, int cause)
