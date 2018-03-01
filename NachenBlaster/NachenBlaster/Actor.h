@@ -23,6 +23,7 @@ public:
     bool isAlive();
     virtual bool isAlien() const;
     virtual bool isTorpedo() const;
+    virtual bool isSmoregon() const;
     virtual bool isSnagglegon() const;
     virtual void setAlive(std::string aliveStatus);
     void setCreate(string createWhat);
@@ -115,7 +116,8 @@ public:
     Alien(StudentWorld* World, int imageID, double startX, double startY, double hitPoint, double damageAmt, double deltaX, double deltaY, double speed, unsigned int scoreValue);
     virtual ~Alien();
     virtual bool isAlien() const;
-    // virtual void doSomething()=0; // Hint: getWorld->zapAllZappableActors(getX(), getY());
+    virtual void doSomething();
+    // Hint: getWorld->zapAllZappableActors(getX(), getY());
     virtual void sufferDamage(double amt, int cause);
     
     // Move the player by the current speed in the direction indicated
@@ -134,7 +136,9 @@ public:
     virtual void possiblyDropGoodie();
     
 private:
+    virtual void doDiffAlienThing() = 0;
     double m_damageAmt;
+    double m_flightPlanLength;
     double m_deltaY;
     double m_speed;
     unsigned int m_scoreValue;
@@ -145,11 +149,10 @@ class Smallgon: public Alien
 public:
     Smallgon(StudentWorld* World, double startX, double startY);
     virtual ~Smallgon();
-    virtual void doSomething();
     virtual void sufferDamage(double amt, int cause);
     
 private:
-    double m_flightPlanLength;
+    virtual void doDiffAlienThing();
     
 };
 
@@ -158,11 +161,12 @@ class Smoregon: public Alien
 public:
     Smoregon(StudentWorld* World, double startX, double startY);
     virtual ~Smoregon();
-    virtual void doSomething();
+    virtual bool isSmoregon() const;
     virtual void sufferDamage(double amt, int cause);
     
 private:
-    
+    virtual void doDiffAlienThing();
+
 };
 
 class Snagglegon: public Alien
@@ -171,11 +175,11 @@ public:
     Snagglegon(StudentWorld* World, double startX, double startY);
     virtual ~Snagglegon();
     virtual bool isSnagglegon() const;
-    virtual void doSomething();
     virtual void sufferDamage(double amt, int cause);
     
 private:
-    
+    virtual void doDiffAlienThing();
+
 };
 
 ////////////////
