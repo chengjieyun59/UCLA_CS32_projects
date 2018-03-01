@@ -9,6 +9,7 @@ using namespace std;
 
 class Actor;
 class Player;
+//class GameWorld;
 
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
@@ -29,13 +30,15 @@ public:
      }
      */
     
+    // double euclidian_dist(double x1, double y1, double x2, double y2);
+    
     // If there's at least one alien that's collided with a, return
     // a pointer to one of them; otherwise, return a null pointer.
     Actor* getOneCollidingAlien(const Actor* a) const;
     
     // If the player has collided with a, return a pointer to the player;
     // otherwise, return a null pointer.
-    Player* getCollidingPlayer(const Actor* a) const;
+    NachenBlaster* getCollidingPlayer(const Actor* a) const;
     
     // Is the player in the line of fire of a, which might cause a to attack?
     bool playerInLineOfFire(const Actor* a) const;
@@ -47,8 +50,10 @@ public:
     void recordAlienDestroyed();
 
 private:
+    //GameWorld m_gw;
     vector<Actor*> m_vActor;
     NachenBlaster* m_NachenBlaster;
+    int m_AlienDestroyed;
 };
 
 #endif // STUDENTWORLD_H_

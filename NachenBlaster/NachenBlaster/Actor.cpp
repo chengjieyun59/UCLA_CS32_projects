@@ -41,13 +41,6 @@ bool Actor::isAlien() const
     return false;
 }
 
-/*
-double Actor::euclidian_dist(double x1, double y1, double x2, double y2)
-{
-    return sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
-}
-*/
-
 StudentWorld* Actor::getWorld() const
 {
     return m_world;
@@ -205,215 +198,6 @@ void Explosion::doSomething()
     
     if (getSize() == 5.0625)
         setAlive("Dead");
-}
-
-////////////////
-// Projectile //
-////////////////
-
-Projectile::Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir, double damageAmt, double deltaX, bool rotates)
-:Actor(World, imageID, startX, startY, dir, 0.5, 1), m_damageAmt(damageAmt), m_deltaX(deltaX), m_rotates(rotates)
-{}
-
-Projectile::~Projectile()
-{}
-
-void Projectile::doSomething()
-{
-    if(isAlive() == false)
-        return;
-    
-    /*
-     if (the cabbage/ turnip overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
-     {
-     Alien::attacked();
-     // TODO Hint: The cabbage/ turnip can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
-     
-     setAlive("dead");
-     return;
-     }
-     */
-    
-    doDiffProjectileThing();
-    
-    /*
-     if (the cabbage/ turnip overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
-     {
-     Alien::attacked();
-     // TODO Hint: The cabbage/ turnip can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
-     
-     setAlive("dead");
-     return;
-     }
-     */
-}
-
-void Projectile::attacked()
-{}
-
-Cabbage::Cabbage(StudentWorld* World, double startX, double startY)
-:Projectile(World, IID_CABBAGE, startX, startY, 0, 2.0, 0.0, false)
-// TODO:Projectile(World, IID_CABBAGE, startX, startY, 0, damageAmt, deltaX, rotates)
-{}
-
-Cabbage::~Cabbage(){}
-
-void Cabbage::doDiffProjectileThing()
-{
-    moveTo(getX()+8, getY());
-    setDirection(getDirection()+20);
-    // TODO: Check if this is counter-clockwise
-}
-
-Turnip::Turnip(StudentWorld* World, double startX, double startY)
-:Projectile(World, IID_TURNIP, startX, startY, 0, 2.0, 0.0, false)
-// TODO:Projectile(World, IID_TURNIP, startX, startY, 0, damageAmt, deltaX, rotates)
-{}
-
-Turnip::~Turnip()
-{}
-
-void Turnip::doDiffProjectileThing()
-{
-    moveTo(getX()-6, getY());
-    setDirection(getDirection()+20); // TODO: Check if this is counter-clockwise
-}
-
-Torpedo::Torpedo(StudentWorld* World, double startX, double startY, int dir, double deltaX)
-:Projectile(World, IID_TORPEDO, startX, startY, 0, 8.0, 0.0, true)
-// TODO:Projectile(World, IID_TORPEDO, startX, startY, 0, damageAmt, deltaX, rotates)
-{}
-
-Torpedo::~Torpedo()
-{}
-
-void Torpedo::doSomething()
-{
-    if(isAlive() == false)
-        return;
-    
-    /* TODO:
-    if (Flatulence Torpedo must check to see if it has collided with an enemy)
-    {
-        if (the Flatulence Torpedo was fired by a Snagglegon ship)
-            NachenBlaster::attacked();
-        else
-            Alien::attacked();
-        setAlive("dead");
-        return;
-    }
-    
-    if (the Flatulence Torpedo was fired by a Snagglegon ship)
-        moveTo(getX()-8, getY());
-    else
-        moveTo(getX()+8, getY());
-    
-    if (Flatulence Torpedo must check to see if it has collided with an enemy)
-    {
-        if (the Flatulence Torpedo was fired by a Snagglegon ship)
-            NachenBlaster::attacked();
-        else
-            Alien::attacked();
-        setAlive("dead");
-        return;
-    }
-    */
-}
-
-PlayerLaunchedTorpedo::PlayerLaunchedTorpedo(StudentWorld* World, double startX, double startY)
-:Torpedo(World, startX, startY, 0, 0)
-{}
-
-void PlayerLaunchedTorpedo::doSomething()
-{
-    // TODO
-}
-
-AlienLaunchedTorpedo::AlienLaunchedTorpedo(StudentWorld* World, double startX, double startY)
-:Torpedo(World, startX, startY, 180, 0)
-{}
-
-void AlienLaunchedTorpedo::doSomething()
-{
-    // TODO
-}
-
-////////////
-// Goodie //
-////////////
-
-Goodie::Goodie(StudentWorld* World, int imageID, double startX, double startY)
-:Actor(World, imageID, startX, startY, 0, 0.5, 1)
-{}
-
-Goodie::~Goodie()
-{}
-
-void Goodie::doSomething()
-{
-    if(isAlive() == false)
-        return;
-    
-    /* TODO:
-    if(if the NachenBlaster collides with a Goodie)
-    {
-        inform the StudentWorld object that the user is to receive 100 more points;
-        setAlive("dead");
-        playSound(SOUND_GOODIE);
-        doDiffGoodieThing();
-        return;
-    }
-    
-    moveTo(getX()-0.75, getY()-0.75);
-    
-    if(if the NachenBlaster collides with a Goodie)
-    {
-        inform the StudentWorld object that the user is to receive 100 more points;
-        setAlive("dead");
-        playSound(SOUND_GOODIE);
-        doDiffGoodieThing();
-        return;
-    }
-     */
-}
-
-void Goodie::attacked()
-{}
-
-ELGoodie::ELGoodie(StudentWorld* World, int imageID, double startX, double startY)
-:Goodie(World, IID_LIFE_GOODIE, startX, startY)
-{}
-
-ELGoodie::~ELGoodie()
-{}
-
-void ELGoodie::doDiffGoodieThing()
-{
-    // TODO: Inform the StudentWorld object that the NachenBlaster is to gain one extra life.
-}
-
-RGoodie::RGoodie(StudentWorld* World, int imageID, double startX, double startY)
-:Goodie(World, IID_REPAIR_GOODIE, startX, startY)
-{}
-
-RGoodie::~RGoodie()
-{}
-
-void RGoodie::doDiffGoodieThing()
-{
-    // TODO: inform the NachenBlaster object that it just got 10 additional hit points (any additional hit points must NOT cause the NachenBlaster to exceed 50 hit points).
-}
-
-FTGoodie::FTGoodie(StudentWorld* World, int imageID, double startX, double startY)
-:Goodie(World, IID_TORPEDO_GOODIE, startX, startY)
-{}
-
-FTGoodie::~FTGoodie()
-{}
-
-void FTGoodie::doDiffGoodieThing()
-{
-    // TODO: inform the NachenBlaster object that it just received 5 Flatulence Torpedoes. There is no maximum number of torpedoes that the NachenBlaster may have.
 }
 
 ///////////
@@ -749,4 +533,224 @@ void Snagglegon::sufferDamage(double amt, int cause)
     There is a 1/6 chance that the destroyed Snagglegon ship will drop an Extra Life goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
     // addition ends
      */
+}
+
+////////////////
+// Projectile //
+////////////////
+
+Projectile::Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir, double damageAmt, double deltaX, bool rotates)
+:Actor(World, imageID, startX, startY, dir, 0.5, 1), m_damageAmt(damageAmt), m_deltaX(deltaX), m_rotates(rotates)
+{}
+
+Projectile::~Projectile()
+{}
+
+void Projectile::doSomething()
+{
+    if(isAlive() == false)
+        return;
+    
+    /*
+     if (the cabbage/ turnip overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
+     {
+     Alien::attacked();
+     // TODO Hint: The cabbage/ turnip can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
+     
+     setAlive("dead");
+     return;
+     }
+     */
+    
+    doDiffProjectileThing();
+    
+    /*
+     if (the cabbage/ turnip overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
+     {
+     Alien::attacked();
+     // TODO Hint: The cabbage/ turnip can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
+     
+     setAlive("dead");
+     return;
+     }
+     */
+}
+
+void Projectile::attacked()
+{}
+
+Cabbage::Cabbage(StudentWorld* World, double startX, double startY)
+:Projectile(World, IID_CABBAGE, startX, startY, 0, 2.0, 0.0, false)
+// TODO:Projectile(World, IID_CABBAGE, startX, startY, 0, damageAmt, deltaX, rotates)
+{}
+
+Cabbage::~Cabbage(){}
+
+void Cabbage::doDiffProjectileThing()
+{
+    moveTo(getX()+8, getY());
+    setDirection(getDirection()+20);
+    // TODO: Check if this is counter-clockwise
+}
+
+Turnip::Turnip(StudentWorld* World, double startX, double startY)
+:Projectile(World, IID_TURNIP, startX, startY, 0, 2.0, 0.0, false)
+// TODO:Projectile(World, IID_TURNIP, startX, startY, 0, damageAmt, deltaX, rotates)
+{}
+
+Turnip::~Turnip()
+{}
+
+void Turnip::doDiffProjectileThing()
+{
+    moveTo(getX()-6, getY());
+    setDirection(getDirection()+20); // TODO: Check if this is counter-clockwise
+}
+
+Torpedo::Torpedo(StudentWorld* World, double startX, double startY, int dir, double deltaX)
+:Projectile(World, IID_TORPEDO, startX, startY, 0, 8.0, 0.0, true)
+// TODO:Projectile(World, IID_TORPEDO, startX, startY, 0, damageAmt, deltaX, rotates)
+{}
+
+Torpedo::~Torpedo()
+{}
+
+void Torpedo::doSomething()
+{
+    if(isAlive() == false)
+        return;
+    
+    /* TODO:
+     if (Flatulence Torpedo must check to see if it has collided with an enemy)
+     {
+     if (the Flatulence Torpedo was fired by a Snagglegon ship)
+     NachenBlaster::attacked();
+     else
+     Alien::attacked();
+     setAlive("dead");
+     return;
+     }
+     
+     if (the Flatulence Torpedo was fired by a Snagglegon ship)
+     moveTo(getX()-8, getY());
+     else
+     moveTo(getX()+8, getY());
+     
+     if (Flatulence Torpedo must check to see if it has collided with an enemy)
+     {
+     if (the Flatulence Torpedo was fired by a Snagglegon ship)
+     NachenBlaster::attacked();
+     else
+     Alien::attacked();
+     setAlive("dead");
+     return;
+     }
+     */
+}
+
+PlayerLaunchedTorpedo::PlayerLaunchedTorpedo(StudentWorld* World, double startX, double startY)
+:Torpedo(World, startX, startY, 0, 0)
+{}
+
+void PlayerLaunchedTorpedo::doSomething()
+{
+    // TODO
+}
+
+AlienLaunchedTorpedo::AlienLaunchedTorpedo(StudentWorld* World, double startX, double startY)
+:Torpedo(World, startX, startY, 180, 0)
+{}
+
+void AlienLaunchedTorpedo::doSomething()
+{
+    // TODO
+}
+
+////////////
+// Goodie //
+////////////
+
+Goodie::Goodie(StudentWorld* World, int imageID, double startX, double startY)
+:Actor(World, imageID, startX, startY, 0, 0.5, 1)
+{}
+
+Goodie::~Goodie()
+{}
+
+void Goodie::doSomething()
+{
+    if(isAlive() == false)
+        return;
+    
+    /* TODO:
+     if(if the NachenBlaster collides with a Goodie)
+     {
+     inform the StudentWorld object that the user is to receive 100 more points;
+     setAlive("dead");
+     playSound(SOUND_GOODIE);
+     doDiffGoodieThing();
+     return;
+     }
+     
+     moveTo(getX()-0.75, getY()-0.75);
+     
+     if(if the NachenBlaster collides with a Goodie)
+     {
+     inform the StudentWorld object that the user is to receive 100 more points;
+     setAlive("dead");
+     playSound(SOUND_GOODIE);
+     doDiffGoodieThing();
+     return;
+     }
+     */
+}
+
+void Goodie::attacked()
+{}
+
+ELGoodie::ELGoodie(StudentWorld* World, int imageID, double startX, double startY)
+:Goodie(World, IID_LIFE_GOODIE, startX, startY)
+{}
+
+ELGoodie::~ELGoodie()
+{}
+
+void ELGoodie::doDiffGoodieThing()
+{
+    // TODO: Inform the StudentWorld object that the NachenBlaster is to gain one extra life.
+}
+
+RGoodie::RGoodie(StudentWorld* World, int imageID, double startX, double startY)
+:Goodie(World, IID_REPAIR_GOODIE, startX, startY)
+{}
+
+RGoodie::~RGoodie()
+{}
+
+void RGoodie::doDiffGoodieThing()
+{
+    /*
+    StudentWorld World;
+    NachenBlaster n(World);
+    n.getHitPt();
+    
+    NachenBlaster* nb = new NachenBlaster(this);
+    if(n.getHitPt() <= 40)
+        n.incHitPt(10);
+    else
+        NachenBlaster::incHitPt(NachenBlaster::getHitPt()-NachenBlaster::getHitPt()+50);
+    */
+     // TODO: inform the NachenBlaster object that it just got 10 additional hit points (any additional hit points must NOT cause the NachenBlaster to exceed 50 hit points).
+}
+
+FTGoodie::FTGoodie(StudentWorld* World, int imageID, double startX, double startY)
+:Goodie(World, IID_TORPEDO_GOODIE, startX, startY)
+{}
+
+FTGoodie::~FTGoodie()
+{}
+
+void FTGoodie::doDiffGoodieThing()
+{
+    // TODO: inform the NachenBlaster object that it just received 5 Flatulence Torpedoes. There is no maximum number of torpedoes that the NachenBlaster may have.
 }

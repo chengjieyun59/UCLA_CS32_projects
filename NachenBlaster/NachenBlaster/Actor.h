@@ -19,12 +19,10 @@ public:
     Actor(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth);
     virtual ~Actor();
     virtual void doSomething() = 0; // move around, cause damage, grant bonuses, etc.
-    // virtual void attacked() = 0;
     bool isInBound(int x, int y) const;
     bool isAlive();
     virtual bool isAlien() const;
     virtual void setAlive(std::string aliveStatus);
-    // double euclidian_dist(double x1, double y1, double x2, double y2);
     StudentWorld* getWorld() const;
     // GameController* getControl();
     
@@ -45,7 +43,6 @@ public:
     Star(StudentWorld* World, double startX);
     virtual ~Star();
     virtual void doSomething();
-    // virtual void attacked();
 }; // page 26
 
 class Explosion: public Actor
@@ -54,7 +51,6 @@ public:
     Explosion(StudentWorld* World, double startX, double startY, double size);
     virtual ~Explosion();
     virtual void doSomething();
-    // virtual void attacked();
     
 private:
     
@@ -102,118 +98,6 @@ private:
     int m_torpedoPt;
 }; // the algorithm that controls the ship object is the user’s own brain and hand, and the keyboard
 // page 23-25
-
-////////////////
-// Projectile //
-////////////////
-
-class Projectile: public Actor
-{
-public:
-    Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir, double damageAmt, double deltaX, bool rotates);
-    virtual ~Projectile();
-    virtual void doSomething();
-    virtual void attacked();
-
-private:
-    virtual void doDiffProjectileThing() = 0;
-    double m_damageAmt;
-    double m_deltaX;
-    bool m_rotates;
-};
-
-class Cabbage: public Projectile
-{
-public:
-    Cabbage(StudentWorld* World, double startX, double startY);
-    virtual ~Cabbage();
-
-private:
-    virtual void doDiffProjectileThing();
-};
-
-class Turnip: public Projectile
-{
-public:
-    Turnip(StudentWorld* World, double startX, double startY);
-    virtual ~Turnip();
-
-private:
-    virtual void doDiffProjectileThing();
-};
-
-class Torpedo: public Projectile
-{
-public:
-    Torpedo(StudentWorld* World, double startX, double startY, int dir, double deltaX);
-    virtual ~Torpedo();
-    virtual void doSomething();
-
-private:
-
-};
-
-class PlayerLaunchedTorpedo : public Torpedo
-{
-public:
-    PlayerLaunchedTorpedo(StudentWorld* World, double startX, double startY);
-    virtual void doSomething();
-};
-
-class AlienLaunchedTorpedo : public Torpedo
-{
-public:
-    AlienLaunchedTorpedo(StudentWorld* World, double startX, double startY);
-    virtual void doSomething();
-};
-
-
-////////////
-// Goodie //
-////////////
-
-class Goodie: public Actor
-{
-public:
-    Goodie(StudentWorld* World, int imageID, double startX, double startY);
-    virtual ~Goodie();
-    virtual void doSomething();
-    virtual void attacked();
-
-private:
-    virtual void doDiffGoodieThing() = 0;
-};
-
-
-class ELGoodie: public Goodie // extra life goodies
-{
-public:
-    ELGoodie(StudentWorld* World, int imageID, double startX, double startY);
-    virtual ~ELGoodie();
-
-private:
-    virtual void doDiffGoodieThing();
-};
-
-class RGoodie: public Goodie // repair goodies
-{
-public:
-    RGoodie(StudentWorld* World, int imageID, double startX, double startY);
-    virtual ~RGoodie();
-
-private:
-    virtual void doDiffGoodieThing();
-};
-
-class FTGoodie: public Goodie // flatulence torpedo goodies
-{
-public:
-    FTGoodie(StudentWorld* World, int imageID, double startX, double startY);
-    virtual ~FTGoodie();
-
-private:
-    virtual void doDiffGoodieThing();
-};
 
 ///////////
 // Alien //
@@ -288,6 +172,119 @@ public:
     
 private:
     
+};
+
+////////////////
+// Projectile //
+////////////////
+
+class Projectile: public Actor
+{
+public:
+    Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir, double damageAmt, double deltaX, bool rotates);
+    virtual ~Projectile();
+    virtual void doSomething();
+    virtual void attacked();
+    
+private:
+    virtual void doDiffProjectileThing() = 0;
+    double m_damageAmt;
+    double m_deltaX;
+    bool m_rotates;
+};
+
+class Cabbage: public Projectile
+{
+public:
+    Cabbage(StudentWorld* World, double startX, double startY);
+    virtual ~Cabbage();
+    
+private:
+    virtual void doDiffProjectileThing();
+};
+
+class Turnip: public Projectile
+{
+public:
+    Turnip(StudentWorld* World, double startX, double startY);
+    virtual ~Turnip();
+    
+private:
+    virtual void doDiffProjectileThing();
+};
+
+class Torpedo: public Projectile
+{
+public:
+    Torpedo(StudentWorld* World, double startX, double startY, int dir, double deltaX);
+    virtual ~Torpedo();
+    virtual void doSomething();
+    
+private:
+    
+};
+
+class PlayerLaunchedTorpedo : public Torpedo
+{
+public:
+    PlayerLaunchedTorpedo(StudentWorld* World, double startX, double startY);
+    virtual void doSomething();
+};
+
+class AlienLaunchedTorpedo : public Torpedo
+{
+public:
+    AlienLaunchedTorpedo(StudentWorld* World, double startX, double startY);
+    virtual void doSomething();
+};
+
+
+////////////
+// Goodie //
+////////////
+
+class Goodie: public Actor
+{
+public:
+    Goodie(StudentWorld* World, int imageID, double startX, double startY);
+    virtual ~Goodie();
+    virtual void doSomething();
+    virtual void attacked();
+    
+private:
+    virtual void doDiffGoodieThing() = 0;
+    NachenBlaster* m_NachenBlaster;
+};
+
+
+class ELGoodie: public Goodie // extra life goodies
+{
+public:
+    ELGoodie(StudentWorld* World, int imageID, double startX, double startY);
+    virtual ~ELGoodie();
+    
+private:
+    virtual void doDiffGoodieThing();
+};
+
+class RGoodie: public Goodie // repair goodies
+{
+public:
+    RGoodie(StudentWorld* World, int imageID, double startX, double startY);
+    virtual ~RGoodie();
+    
+private:
+    virtual void doDiffGoodieThing();
+};
+
+class FTGoodie: public Goodie // flatulence torpedo goodies
+{
+public:
+    FTGoodie(StudentWorld* World, int imageID, double startX, double startY);
+    virtual ~FTGoodie();
+    
+private:
+    virtual void doDiffGoodieThing();
 };
 
 #endif // ACTOR_H_
