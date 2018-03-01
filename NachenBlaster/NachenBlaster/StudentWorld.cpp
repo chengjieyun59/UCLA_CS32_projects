@@ -2,6 +2,7 @@
 #include "GameConstants.h"
 #include <string>
 #include <vector>
+#include <iostream>
 using namespace std;
 
 GameWorld* createStudentWorld(string assetDir)
@@ -87,11 +88,39 @@ int StudentWorld::move()
     if (randInt(1, 15) == 1)
         m_vActor.push_back(new Star(this, VIEW_WIDTH-1));
     
-    /*
-    // Update the Game Status Line
-    updateDisplayText(); // update the score/lives/level text at screen top
-    */
+    // introduce new alien ship
+    int R = 6 + 4 * getLevel() - m_AlienDestroyed; // Remaining alien ships that must be destroyed before the level is completed
+    int M = 4 + (0.5 * getLevel()); // maximum number of alien ships that should be on the screen at a time
     
+    
+    int C = 0; // TODO: current number of alien ships on the screen
+    
+    for(a = m_vActor.begin(); a != m_vActor.end();a++)
+    {
+        if((*a)->isAlien())
+            C++;
+    }
+    
+    if(C < min(M,R))
+    {
+        int S1 = 60;
+        int S2 = 20 + getLevel() * 5;
+        int S3 = 5 + getLevel() * 10;
+        
+        if(randInt(1, 2) == 1) // TODO: placeholder for probability S1/S
+            m_vActor.push_back(new Smallgon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
+        if(randInt(1, 3) == 1) // TODO: placeholder for probability S2/S
+            m_vActor.push_back(new Smoregon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
+        if(randInt(1, 4) == 1) // TODO: placeholder for probability S3/S
+            m_vActor.push_back(new Snagglegon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
+    }
+    
+    // cout << "Lives: " << m_NachenBlaster->getHealthPt() << "  Health: " << m_NachenBlaster->getHitPt() << "%  Score: " << getScore() << " Level: " << getLevel() << "  Cabbages: " << m_NachenBlaster->getCabbagePt() << "% Torpedoes: " << m_NachenBlaster->getTorpedoPt();
+    // TODO: check HitPt percentage & cabbage point percentage
+
+    // Update the Game Status Line
+    // updateDisplayText(); // update the score/lives/level text at screen top
+ 
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -138,13 +167,14 @@ Alien* StudentWorld::getOneCollidingAlien(const Actor* a) const
 // otherwise, return a null pointer.
 NachenBlaster* StudentWorld::getCollidingPlayer(const Actor* a) const
 {
+    /*
     double xsquare = (a->getX() - m_NachenBlaster->getX()) * (a->getX() - m_NachenBlaster->getX());
     double ysquare = (a->getY() - m_NachenBlaster->getY()) * (a->getY() - m_NachenBlaster->getY());
     double euclidian_dist = sqrt(xsquare + ysquare);
     
     if(euclidian_dist < 0.75 * (a->getRadius() + m_NachenBlaster->getRadius()))
         return m_NachenBlaster;
-   
+   */
     return nullptr;
 }
 
@@ -159,7 +189,6 @@ bool StudentWorld::playerInLineOfFire(const Actor* a) const
 // Add an actor to the world.
 void StudentWorld::addActor(Actor* a)
 {
-    // TODO:
     m_vActor.push_back(a);
 }
 
