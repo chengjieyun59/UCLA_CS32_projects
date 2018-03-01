@@ -576,27 +576,25 @@ void Goodie::doSomething()
     if(isAlive() == false)
         return;
     
-    /* TODO:
-     if(if the NachenBlaster collides with a Goodie)
-     {
-     inform the StudentWorld object that the user is to receive 100 more points;
-     setAlive("dead");
-     getWorld()->playSound(SOUND_GOODIE);
-     doDiffGoodieThing();
-     return;
-     }
-     
-     moveTo(getX()-0.75, getY()-0.75);
-     
-     if(if the NachenBlaster collides with a Goodie)
-     {
-     inform the StudentWorld object that the user is to receive 100 more points;
-     setAlive("dead");
-     getWorld()->playSound(SOUND_GOODIE);
-     doDiffGoodieThing();
-     return;
-     }
-     */
+    if(getWorld()->getCollidingPlayer(this) != nullptr)
+    {
+        getWorld()->increaseScore(100);
+        setAlive("dead");
+        getWorld()->playSound(SOUND_GOODIE);
+        doDiffGoodieThing();
+        return;
+    }
+    
+    moveTo(getX()-0.75, getY()-0.75);
+    
+    if(getWorld()->getCollidingPlayer(this) != nullptr)
+    {
+        getWorld()->increaseScore(100);
+        setAlive("dead");
+        getWorld()->playSound(SOUND_GOODIE);
+        doDiffGoodieThing();
+        return;
+    }
 }
 
 void Goodie::attacked()
@@ -611,7 +609,7 @@ ELGoodie::~ELGoodie()
 
 void ELGoodie::doDiffGoodieThing()
 {
-    // TODO: Inform the StudentWorld object that the NachenBlaster is to gain one extra life.
+    getWorld()->incLives(); // NachenBlaster gains one extra life.
 }
 
 RGoodie::RGoodie(StudentWorld* World, int imageID, double startX, double startY)
@@ -623,19 +621,12 @@ RGoodie::~RGoodie()
 
 void RGoodie::doDiffGoodieThing()
 {
-    /*
-    StudentWorld World;
-    NachenBlaster n(World);
-    n.getHitPt();
-    
-    NachenBlaster* nb = new NachenBlaster(this);
-    if(n.getHitPt() <= 40)
-        n.incHitPt(10);
+    NachenBlaster* nb = new NachenBlaster(getWorld());
+    if(nb->getHitPt() <= 40)
+        nb->incHitPt(10);
     else
-        NachenBlaster::incHitPt(NachenBlaster::getHitPt()-NachenBlaster::getHitPt()+50);
-    */
-     // TODO: inform the NachenBlaster object that it just got 10 additional hit points (any additional hit points must NOT cause the NachenBlaster to exceed 50 hit points).
-}
+        nb->incHitPt(nb->getHitPt() - nb->getHitPt() + 50);
+} // Inform the NachenBlaster object that it just got 10 additional hit points (any additional hit points must NOT cause the NachenBlaster to exceed 50 hit points).
 
 FTGoodie::FTGoodie(StudentWorld* World, int imageID, double startX, double startY)
 :Goodie(World, IID_TORPEDO_GOODIE, startX, startY)
@@ -646,5 +637,6 @@ FTGoodie::~FTGoodie()
 
 void FTGoodie::doDiffGoodieThing()
 {
-    // TODO: inform the NachenBlaster object that it just received 5 Flatulence Torpedoes. There is no maximum number of torpedoes that the NachenBlaster may have.
-}
+    NachenBlaster* nb = new NachenBlaster(getWorld());
+    nb->setTorpedoPt(nb->getTorpedoPt() + 5);
+}     // Inform the NachenBlaster object that it just received 5 Flatulence Torpedoes
