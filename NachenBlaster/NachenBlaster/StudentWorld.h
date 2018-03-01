@@ -9,7 +9,6 @@ using namespace std;
 
 class Actor;
 class Player;
-//class GameWorld;
 
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
@@ -22,6 +21,8 @@ public:
     virtual int move();
     virtual void cleanUp();
     
+    vector<Actor*>* getActorVector();
+
     /* Hint:
      void zapAllZappableActors(int x, int y) {
         for (p = actors.begin(); p != actors.end(); p++)
@@ -30,11 +31,9 @@ public:
      }
      */
     
-    // double euclidian_dist(double x1, double y1, double x2, double y2);
-    
     // If there's at least one alien that's collided with a, return
     // a pointer to one of them; otherwise, return a null pointer.
-    Actor* getOneCollidingAlien(const Actor* a) const;
+    Alien* getOneCollidingAlien(const Actor* a) const;
     
     // If the player has collided with a, return a pointer to the player;
     // otherwise, return a null pointer.
@@ -50,7 +49,6 @@ public:
     void recordAlienDestroyed();
 
 private:
-    //GameWorld m_gw;
     vector<Actor*> m_vActor;
     NachenBlaster* m_NachenBlaster;
     int m_AlienDestroyed;

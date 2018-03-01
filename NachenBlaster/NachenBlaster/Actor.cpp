@@ -6,13 +6,11 @@ using namespace std;
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
 
 Actor::Actor(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
-:GraphObject(imageID, startX, startY, dir, size, depth), m_isAlive(true), m_world(World), m_createWhat("nothing")//, m_control(Control)
-{} // page 22
+:GraphObject(imageID, startX, startY, dir, size, depth), m_isAlive(true), m_world(World), m_createWhat("nothing")
+{}
 
 Actor::~Actor()
-{
-    // delete getWorld(); // wrong!!!! Delete all the memories that only this class made. Or C++ will try to delete it twice. Bad pointer execution
-}
+{} // delete getWorld(); // wrong!!!! Delete all the memories that only this class made. Or C++ will try to delete it twice. Bad pointer execution
 
 bool Actor::isInBound(int x, int y) const
 {
@@ -37,6 +35,7 @@ bool Actor::isAlive()
 }
 
 bool Actor::isAlien() const {return false;}
+bool Actor::isProjectile() const {return false;}
 bool Actor::isTorpedo() const {return false;}
 bool Actor::isSmoregon() const {return false;}
 bool Actor::isSnagglegon() const {return false;}
@@ -48,19 +47,12 @@ StudentWorld* Actor::getWorld() const
     return m_world;
 } // a method in one of its base classes that returns a pointer to a StudentWorld), and then uses this pointer to call the getKey() method.
 
-/*
-GameController* Actor::getControl()
-{
-    return m_control;
-}
-*/
-
 Star::Star(StudentWorld* World, double startX)
 :Actor(World, IID_STAR, startX, randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3)
 {}
 
 Star::~Star()
-{} // empty destructor
+{}
 
 void Star::doSomething()
 {
@@ -71,17 +63,8 @@ DamageableObject::DamageableObject(StudentWorld* world, int imageID, double star
 :Actor(world, imageID, startX, startY, dir, size, depth), m_hitPt(hitPoints)
 {}
 
-// How many hit points does this actor have left?
-double DamageableObject::getHitPt() const
-{
-    return m_hitPt;
-}
-
-// Increase this actor's hit points by amt.
-void DamageableObject::incHitPt(double amt)
-{
-    m_hitPt = m_hitPt + amt;
-}
+double DamageableObject::getHitPt() const {return m_hitPt;}
+void DamageableObject::incHitPt(double amt) {m_hitPt = m_hitPt + amt;} // Increase this actor's hit points by amt.
 
 // This actor suffers an amount of damage caused by being hit by either
 // a ship or a projectile (see constants above).
@@ -114,14 +97,12 @@ void NachenBlaster::doSomething()
                 case KEY_PRESS_SPACE:
                     if(getCabbagePt() >= 5)
                     {
-                        // method 1?? a lot of code though, in void StudentWorld::addActor(Actor* a)
-                        setCreate("cabbage");
+                        // used method 1 before, but there was a lot of code in void StudentWorld::addActor(Actor* a)
+                        // setCreate("cabbage");
                         
-                        // method 2? How to make this work
-                        Cabbage *c;
-                        getWorld()->addActor(c);
-                        // TODO Hint: When you create a new cabbage object in the proper location, give it to the StudentWorld to manage (e.g., animate) along with the other game objects.
-                        
+                        // method 2:
+                        Cabbage *a = new Cabbage(getWorld(), getX()+12, getY());
+                        getWorld()->addActor(a);
                         getWorld()->playSound(SOUND_PLAYER_SHOOT);
                         setCabbagePt(getCabbagePt() - 5);
                     } break;
@@ -129,8 +110,8 @@ void NachenBlaster::doSomething()
                 case KEY_PRESS_TAB:
                     if(getTorpedoPt() > 0)
                     {
-                        // TODO:
-                        //Torpedo* c = new Torpedo(this, getX()+12, getY(), 0);
+                        PlayerLaunchedTorpedo* a = new PlayerLaunchedTorpedo(getWorld(), getX()+12, getY());
+                        getWorld()->addActor(a);
                         getWorld()->playSound(SOUND_TORPEDO);
                         setTorpedoPt(getTorpedoPt() - 1);
                     }
@@ -179,25 +160,33 @@ void NachenBlaster::doSomething()
 void NachenBlaster::incHitPt(double amt)
 {
     // TODO
+    DamageableObject::incHitPt(amt);
+    
 }
 
 void NachenBlaster::sufferDamage(double amt, int cause)
 {
-    /* TODO:
-    if (a projectile collides with the NachenBlaster, or vice versa)
+    vector<Actor*>* m_vActor = getWorld()->getActorVector();
+
+    for(auto a = *m_vActor->begin(); a != *m_vActor->end(); a++) // put a star to de-reference the m_vActor pointer
     {
-        setHitpt(getHitPt() - amt);
-        getWorld()->playSound(SOUND_BLAST);
+        NachenBlaster* n = getWorld()->getCollidingPlayer(a);
+
+        if(a->isProjectile() && n != nullptr) // means they collided
+        {
+            incHitPt(amt);
+            getWorld()->playSound(SOUND_BLAST);
+            a->setAlive("dead");
+        }
+        
+        if (a->isAlien() && n != nullptr)
+        {
+            incHitPt(amt);
+            getWorld()->playSound(SOUND_DEATH);
+            a->setAlive("dead");
+        }
     }
 
-    if (an alien ship collides with the NachenBlaster or vice versa)
-        the NachenBlaster incurs damage and the alien ship will be destroyed
-     {
-        setHitpt(getHitPt() - amt);
-        getWorld()->playSound(SOUND_DEATH);
-     }
-     */
-    
     if(getHitPt() <= 0)
         getWorld()->decLives();
 }
@@ -251,6 +240,8 @@ void Alien::doSomething()
 {
     if(isAlive() == false)
         return;
+    
+
     
     // 3.
     /*
@@ -382,7 +373,7 @@ void Alien::possiblyDropGoodie()
 
 Smallgon::Smallgon(StudentWorld* World, double startX, double startY)
 :Alien(World, IID_SMALLGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 5.0, -1.0, 0.0, 2.0, 250)
-//TODO :Alien(World, IID_SMALLGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), damageAmt, deltaX, deltaY, 2.0, scoreValue)
+//Alien(World, IID_SMALLGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), damageAmt, deltaX, deltaY, 2.0, scoreValue)
 {}
 
 Smallgon::~Smallgon()
@@ -397,7 +388,6 @@ void Smallgon::doDiffAlienThing()
 
 Smoregon::Smoregon(StudentWorld* World, double startX, double startY)
 :Alien(World, IID_SMOREGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 5.0, -1.0, 0.0, 2.0, 250)
-//TODO:Alien(World, IID_SMOREGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), damageAmt, deltaX, deltaY, 2.0, scoreValue)
 {}
 
 Smoregon::~Smoregon()
@@ -421,7 +411,6 @@ void Smoregon::doDiffAlienThing()
 
 Snagglegon::Snagglegon(StudentWorld* World, double startX, double startY)
 :Alien(World, IID_SNAGGLEGON, startX, startY, (10.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), 15.0, -1.0, 0.0, 1.75, 1000)
-//TODO:Alien(World, IID_SNAGGLEGON, startX, startY, (10.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), damageAmt, deltaX, deltaY, 1.75, scoreValue)
 {}
 
 Snagglegon::~Snagglegon()
@@ -450,34 +439,49 @@ Projectile::Projectile(StudentWorld* World, int imageID, double startX, double s
 Projectile::~Projectile()
 {}
 
+bool Projectile::isFiredByNachenBlaster() const {return false;}
+bool Projectile::isProjectile() const {return true;}
+
 void Projectile::doSomething()
 {
     if(isAlive() == false)
         return;
     
-    /*
-     if (the cabbage/ turnip overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
-     {
-     Alien::attacked();
-     // TODO Hint: The cabbage/ turnip can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
-     
-     setAlive("dead");
-     return;
-     }
-     */
+    vector<Actor*>* m_vActor = getWorld()->getActorVector();
+    
+    if(isFiredByNachenBlaster())
+    {
+        Alien* p = getWorld()->getOneCollidingAlien(this);
+        
+        if(p != nullptr) // means a projectile collides with an alien collided
+        {
+            if(isTorpedo())
+                p->sufferDamage(8, 1);
+            else
+                p->sufferDamage(2, 1);
+            getWorld()->playSound(SOUND_BLAST);
+            setAlive("dead");
+            return;
+        }
+    }
     
     doDiffProjectileThing();
     
-    /*
-     if (the cabbage/ turnip overlaps with an alien (Smoregon, Smallgon or Snagglegon) ship)
-     {
-     Alien::attacked();
-     // TODO Hint: The cabbage/ turnip can tell the alien object that it has been damaged by calling a method the alien object has (presumably named sufferDamage or something similar).
-     
-     setAlive("dead");
-     return;
-     }
-     */
+    if(isFiredByNachenBlaster())
+    {
+        Alien* p = getWorld()->getOneCollidingAlien(this);
+        
+        if(p != nullptr) // means a projectile collides with an alien collided
+        {
+            if(isTorpedo())
+                p->sufferDamage(8, 1);
+            else
+                p->sufferDamage(2, 1);
+            getWorld()->playSound(SOUND_BLAST);
+            setAlive("dead");
+            return;
+        }
+    }
 }
 
 void Projectile::attacked()
@@ -485,10 +489,12 @@ void Projectile::attacked()
 
 Cabbage::Cabbage(StudentWorld* World, double startX, double startY)
 :Projectile(World, IID_CABBAGE, startX, startY, 0, 2.0, 0.0, false)
-// TODO:Projectile(World, IID_CABBAGE, startX, startY, 0, damageAmt, deltaX, rotates)
+// Projectile(World, IID_CABBAGE, startX, startY, 0, damageAmt, deltaX, rotates)
 {}
 
 Cabbage::~Cabbage(){}
+
+bool Cabbage::isFiredByNachenBlaster() const {return true;}
 
 void Cabbage::doDiffProjectileThing()
 {
@@ -499,7 +505,6 @@ void Cabbage::doDiffProjectileThing()
 
 Turnip::Turnip(StudentWorld* World, double startX, double startY)
 :Projectile(World, IID_TURNIP, startX, startY, 0, 2.0, 0.0, false)
-// TODO:Projectile(World, IID_TURNIP, startX, startY, 0, damageAmt, deltaX, rotates)
 {}
 
 Turnip::~Turnip()
@@ -513,57 +518,37 @@ void Turnip::doDiffProjectileThing()
 
 Torpedo::Torpedo(StudentWorld* World, double startX, double startY, int dir, double deltaX)
 :Projectile(World, IID_TORPEDO, startX, startY, 0, 8.0, 0.0, true)
-// TODO:Projectile(World, IID_TORPEDO, startX, startY, 0, damageAmt, deltaX, rotates)
 {}
 
 Torpedo::~Torpedo()
 {}
 
-bool Torpedo::isTorpedo() const
-{
-    return true;
-}
+void Torpedo::doDiffProjectileThing()
+{}
 
-void Torpedo::doSomething()
-{
-    if(isAlive() == false)
-        return;
-    
-    /* TODO:
-     if (Flatulence Torpedo must check to see if it has collided with an enemy)
-     {
-     if (the Flatulence Torpedo was fired by a Snagglegon ship)
-     NachenBlaster::attacked();
-     else
-     Alien::attacked();
-     setAlive("dead");
-     return;
-     }
-     
-     if (the Flatulence Torpedo was fired by a Snagglegon ship)
-     moveTo(getX()-8, getY());
-     else
-     moveTo(getX()+8, getY());
-     
-     if (Flatulence Torpedo must check to see if it has collided with an enemy)
-     {
-     if (the Flatulence Torpedo was fired by a Snagglegon ship)
-     NachenBlaster::attacked();
-     else
-     Alien::attacked();
-     setAlive("dead");
-     return;
-     }
-     */
-}
+bool Torpedo::isTorpedo() const {return true;}
 
 PlayerLaunchedTorpedo::PlayerLaunchedTorpedo(StudentWorld* World, double startX, double startY)
 :Torpedo(World, startX, startY, 0, 0)
 {}
 
+bool PlayerLaunchedTorpedo::isFiredByNachenBlaster() const {return false;}
+
 void PlayerLaunchedTorpedo::doSomething()
 {
+    if(isAlive() == false)
+        return;
+    
     // TODO
+    //Alien::sufferDamage(8.0, 0);
+    setAlive("dead");
+    return;
+    
+    moveTo(getX()+8, getY());
+
+    //Alien::sufferDamage(8.0, 0);
+    setAlive("dead");
+    return;
 }
 
 AlienLaunchedTorpedo::AlienLaunchedTorpedo(StudentWorld* World, double startX, double startY)
@@ -572,7 +557,19 @@ AlienLaunchedTorpedo::AlienLaunchedTorpedo(StudentWorld* World, double startX, d
 
 void AlienLaunchedTorpedo::doSomething()
 {
+    if(isAlive() == false)
+        return;
+    
     // TODO
+    //NachenBlaster::sufferDamage(8.0, 0);
+    setAlive("dead");
+    return;
+    
+    moveTo(getX()-8, getY());
+
+    //NachenBlaster::sufferDamage(8.0, 0);
+    setAlive("dead");
+    return;
 }
 
 ////////////

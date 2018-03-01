@@ -1,16 +1,7 @@
 #include "StudentWorld.h"
 #include "GameConstants.h"
 #include <string>
-// include STL data sturctures
 #include <vector>
-/*
-#include <list>
-#include <stack>
-#include <queue>
-#include <set>
-#include <map>
-*/
-
 using namespace std;
 
 GameWorld* createStudentWorld(string assetDir)
@@ -22,13 +13,17 @@ GameWorld* createStudentWorld(string assetDir)
 
 StudentWorld::StudentWorld(string assetDir)
 : GameWorld(assetDir), m_NachenBlaster(nullptr), m_AlienDestroyed(0)// , m_vActor(0) // vectors have default constructors
-{
-    //m_gw = new GameWorld;
-}
+{}
 
 StudentWorld::~StudentWorld()
 {
     cleanUp();
+}
+
+// get a pointer to the vector of actors
+vector<Actor*>* StudentWorld::getActorVector()
+{
+    return &m_vActor;
 }
 
 int StudentWorld::init()
@@ -44,7 +39,7 @@ int StudentWorld::init()
     }
     
     return GWSTATUS_CONTINUE_GAME;
-} // spec page 16
+}
 
 int StudentWorld::move()
 {
@@ -57,14 +52,17 @@ int StudentWorld::move()
         {
             (*a)->doSomething();
             
-            // If an actor does something that causes the NachenBlaster to die (e.g., a projectile or alien ship collides with the NachenBlaster), then the move() method should immediately return GWSTATUS_PLAYER_DIED. TODO: is this correct?
+            // TODO: If an actor does something that causes the NachenBlaster to die (e.g., a projectile or alien ship collides with the NachenBlaster), then the move() method should immediately return GWSTATUS_PLAYER_DIED. TODO: is this correct?
             
             //if (m_NachenBlaster == nullptr) // NachenBlaster died during this tick
                 //return GWSTATUS_PLAYER_DIED;
 
             if(m_AlienDestroyed >= 6+4*getLevel())
             {
-                // TODO: increaseScoreAppropriately();
+                if((*a)->isSnagglegon())
+                    increaseScore(1000);
+                else
+                    increaseScore(250);
                 advanceToNextLevel();
                 return GWSTATUS_FINISHED_LEVEL;
             }
@@ -86,7 +84,7 @@ int StudentWorld::move()
     }
     
     // Possibly create a new star on the far right side on a 1/15 chance
-    if (randInt(0, 14) == 0)
+    if (randInt(1, 15) == 1)
         m_vActor.push_back(new Star(this, VIEW_WIDTH-1));
     
     /*
@@ -95,8 +93,9 @@ int StudentWorld::move()
     */
     
     return GWSTATUS_CONTINUE_GAME;
-} // spec page 17
+}
 
+// Every actor in the entire game (the NachenBlaster and every alien, goodie, projectile, star, explosion object, etc.) must be deleted and removed from the StudentWorld’s container of active objects, resulting in an empty level. NachenBlaster lost a life (e.g., its hit points reached zero due to being shot) or has completed the current level
 void StudentWorld::cleanUp()
 {
     // delete NachenBlaster player
@@ -114,26 +113,24 @@ void StudentWorld::cleanUp()
         a = m_vActor.erase(a);
     }
     
-} // Every actor in the entire game (the NachenBlaster and every alien, goodie, projectile, star, explosion object, etc.) must be deleted and removed from the StudentWorld’s container of active objects, resulting in an empty level. NachenBlaster lost a life (e.g., its hit points reached zero due to being shot) or has completed the current level
+}
 
 // If there's at least one alien that's collided with a, return
 // a pointer to one of them; otherwise, return a null pointer.
-Actor* StudentWorld::getOneCollidingAlien(const Actor* a) const
+Alien* StudentWorld::getOneCollidingAlien(const Actor* a) const
 {
-    /* TODO:
-    vector<Actor*>::iterator b;
-    for(b = m_vActor.begin(); b != m_vActor.end();b++)
+    for(auto b = m_vActor.begin(); b != m_vActor.end();b++)
     {
         if((*b)->isAlien())
         {
-            double xsquare = (a->getX() - b->getX()) * (a->getX() - b->getX());
-            double ysquare = (a->getY() - b->getY()) * (a->getY() - b->getY());
+            double xsquare = (a->getX() - (*b)->getX()) * (a->getX() - (*b)->getX());
+            double ysquare = (a->getY() - (*b)->getY()) * (a->getY() - (*b)->getY());
             double euclidian_dist = sqrt(xsquare + ysquare);
-            if(euclidian_dist < 0.75 * (a->getRadius() + b->getRadius()))
-                return b;
+            if(euclidian_dist < 0.75 * (a->getRadius() + (*b)->getRadius()))
+                return (Alien *)*b; // cast an actor pointer into an alien pointer
+            // b is an iterator. Need to return a pointer. Get the object, an actor pointer.
         }
     }
-     */
     return nullptr;
 }
 
@@ -163,14 +160,7 @@ bool StudentWorld::playerInLineOfFire(const Actor* a) const
 void StudentWorld::addActor(Actor* a)
 {
     // TODO:
-
-    if(a->getCreate() == "cabbage")
-    {
-        Cabbage* c = new Cabbage(this, m_NachenBlaster->getX()+12, m_NachenBlaster->getY());
-        m_vActor.push_back(c);
-    }
-    
-
+    m_vActor.push_back(a);
 }
 
 // Record that one more alien on the current level has been destroyed.

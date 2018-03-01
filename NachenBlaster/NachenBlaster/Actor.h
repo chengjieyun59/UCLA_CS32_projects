@@ -22,6 +22,7 @@ public:
     bool isInBound(int x, int y) const;
     bool isAlive();
     virtual bool isAlien() const;
+    virtual bool isProjectile() const;
     virtual bool isTorpedo() const;
     virtual bool isSmoregon() const;
     virtual bool isSnagglegon() const;
@@ -143,7 +144,6 @@ class Smallgon: public Alien
 public:
     Smallgon(StudentWorld* World, double startX, double startY);
     virtual ~Smallgon();
-    virtual void sufferDamage(double amt, int cause);
     
 private:
     virtual void doDiffAlienThing();
@@ -156,7 +156,6 @@ public:
     Smoregon(StudentWorld* World, double startX, double startY);
     virtual ~Smoregon();
     virtual bool isSmoregon() const;
-    virtual void sufferDamage(double amt, int cause);
     
 private:
     virtual void doDiffAlienThing();
@@ -169,7 +168,6 @@ public:
     Snagglegon(StudentWorld* World, double startX, double startY);
     virtual ~Snagglegon();
     virtual bool isSnagglegon() const;
-    virtual void sufferDamage(double amt, int cause);
     
 private:
     virtual void doDiffAlienThing();
@@ -185,6 +183,8 @@ class Projectile: public Actor
 public:
     Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir, double damageAmt, double deltaX, bool rotates);
     virtual ~Projectile();
+    bool isProjectile() const;
+    virtual bool isFiredByNachenBlaster() const;
     virtual void doSomething();
     virtual void attacked();
     
@@ -200,6 +200,7 @@ class Cabbage: public Projectile
 public:
     Cabbage(StudentWorld* World, double startX, double startY);
     virtual ~Cabbage();
+    virtual bool isFiredByNachenBlaster() const;
     
 private:
     virtual void doDiffProjectileThing();
@@ -221,16 +222,16 @@ public:
     Torpedo(StudentWorld* World, double startX, double startY, int dir, double deltaX);
     virtual ~Torpedo();
     virtual bool isTorpedo() const;
-    virtual void doSomething();
     
 private:
-    
+    virtual void doDiffProjectileThing();
 };
 
 class PlayerLaunchedTorpedo : public Torpedo
 {
 public:
     PlayerLaunchedTorpedo(StudentWorld* World, double startX, double startY);
+    virtual bool isFiredByNachenBlaster() const;
     virtual void doSomething();
 };
 
@@ -239,6 +240,7 @@ class AlienLaunchedTorpedo : public Torpedo
 public:
     AlienLaunchedTorpedo(StudentWorld* World, double startX, double startY);
     virtual void doSomething();
+
 };
 
 
