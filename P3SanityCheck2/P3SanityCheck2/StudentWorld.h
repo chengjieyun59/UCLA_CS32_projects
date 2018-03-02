@@ -1,6 +1,8 @@
 #ifndef STUDENTWORLD_H_
 #define STUDENTWORLD_H_
 
+// Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
+
 #include "GameWorld.h"
 #include "Actor.h"
 #include <vector>
@@ -9,8 +11,6 @@ using namespace std;
 
 class Actor;
 class Player;
-
-// Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
 class StudentWorld : public GameWorld
 {
@@ -21,7 +21,7 @@ public:
     virtual int move();
     virtual void cleanUp();
     
-    //vector<Actor*>* getActorVector();
+    //vector<Actor*>* getActorVector(); // no longer needed
     NachenBlaster* getNachenBlaster();
     
     // If there's at least one alien that's collided with a, return

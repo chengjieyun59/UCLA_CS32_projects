@@ -1,3 +1,5 @@
+// Students:  Add code to this file, StudentWorld.h, Actor.h and Actor.cpp
+
 #include "StudentWorld.h"
 #include "GameConstants.h"
 #include <string>
@@ -11,8 +13,6 @@ GameWorld* createStudentWorld(string assetDir)
     return new StudentWorld(assetDir);
 }
 
-// Students:  Add code to this file, StudentWorld.h, Actor.h and Actor.cpp
-
 StudentWorld::StudentWorld(string assetDir)
 : GameWorld(assetDir), m_NachenBlaster(nullptr), m_AlienDestroyed(0), m_C(0)// , m_vActor(0) // vectors have default constructors
 {}
@@ -22,13 +22,8 @@ StudentWorld::~StudentWorld()
     cleanUp();
 }
 
-// get a pointer to the vector of actors
-/*
- vector<Actor*>* StudentWorld::getActorVector()
- {
- return &m_vActor;
- }
- */
+// get a pointer to the vector of actors. No longer needed
+// vector<Actor*>* StudentWorld::getActorVector() {return &m_vActor;}
 
 NachenBlaster* StudentWorld::getNachenBlaster()
 {
@@ -37,11 +32,7 @@ NachenBlaster* StudentWorld::getNachenBlaster()
 
 int StudentWorld::init()
 {
-    //m_NachenBlaster = new NachenBlaster(this);
-    
-    NachenBlaster* nb = new NachenBlaster(this);
-    m_NachenBlaster = nb;
-    m_vActor.push_back(nb); // create a NachenBlaster and add to Actor vector
+    m_NachenBlaster = new NachenBlaster(this);
     
     // create 30 stars
     for (int i = 0; i < 30; i++)
@@ -55,8 +46,8 @@ int StudentWorld::init()
 
 int StudentWorld::move()
 {
-    //if(m_NachenBlaster->isAlive())
-    //m_NachenBlaster->doSomething();
+    if(m_NachenBlaster->isAlive())
+        m_NachenBlaster->doSomething();
     
     // if actor is alive, call the doSomething() for every Actor (NachenBlaster, Stars, aliens, etc.)
     vector<Actor*>::iterator a;
@@ -136,13 +127,12 @@ int StudentWorld::move()
 void StudentWorld::cleanUp()
 {
     // delete NachenBlaster player
-    /*
-     if (m_NachenBlaster != nullptr)
-     {
-     delete m_NachenBlaster;
-     m_NachenBlaster = nullptr;
-     }
-     */
+    if (m_NachenBlaster != nullptr)
+    {
+        delete m_NachenBlaster;
+        m_NachenBlaster = nullptr;
+    }
+    
     // delete all other actors
     vector<Actor*>::iterator a;
     for(a = m_vActor.begin(); a != m_vActor.end(); )
@@ -168,8 +158,7 @@ Alien* StudentWorld::getOneCollidingAlien(const Actor* a) const
             double ysquare = (a->getY() - (*b)->getY()) * (a->getY() - (*b)->getY());
             double euclidian_dist = sqrt(xsquare + ysquare);
             if(euclidian_dist < 0.75 * (a->getRadius() + (*b)->getRadius()))
-                return (Alien *)*b; // cast an actor pointer into an alien pointer
-            // b is an iterator. Need to return a pointer. Get the object, an actor pointer. !!!!!!Do I cast it to Alien??
+                return (Alien *)*b; // cast an actor pointer into an alien pointer. b is an iterator. Need to return a pointer. Get the object, an actor pointer.
         }
     }
     return nullptr;
@@ -209,3 +198,4 @@ void StudentWorld::recordAlienDestroyed()
     m_C--;
     m_AlienDestroyed++;
 }
+

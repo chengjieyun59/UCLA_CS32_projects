@@ -1,13 +1,9 @@
+// Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
+
 #include "Actor.h"
 #include "StudentWorld.h"
 #include <iostream>
 using namespace std;
-
-// Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
-
-// TODO: replace the hard code of the damageAmt of the projectile (8.0 and 2.0)
-// TODO: when NachenBlaster hit the alien ship, make an explosion
-// TODO: when NachenBlaster hit a goodie, why was a life lost?
 
 Actor::Actor(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
 :GraphObject(imageID, startX, startY, dir, size, depth), m_isAlive(true), m_world(World)
@@ -80,7 +76,7 @@ void DamageableObject::incHitPt(double amt) {m_hitPt = m_hitPt + amt;} // Increa
 
 void DamageableObject::sufferDamage(double amt, int cause)
 {
-    m_hitPt = m_hitPt - amt; // TODO: const int HIT_BY_SHIP = 0; & const int HIT_BY_PROJECTILE = 1;
+    m_hitPt = m_hitPt - amt;
 } // This actor suffers an amount of damage caused by being hit by either a ship or a projectile (see constants above).
 
 NachenBlaster::NachenBlaster(StudentWorld* World)
@@ -136,7 +132,6 @@ void NachenBlaster::doSomething()
                     break;
             }
         }
-        // processCollision();
     }
     if (m_cabbagePt < 30)
         m_cabbagePt++;
@@ -199,7 +194,7 @@ void Alien::setDeltaY(double dy) {m_deltaY = dy;} // Set the player's y directio
 double Alien::getDeltaY() const {return m_deltaY;}
 double Alien::getDamageAmt() const {return m_damageAmt;}
 double Alien::getScoreValue() const {return m_scoreValue;}
-void Alien::setSpeed(double speed) {m_speed = speed;} // Set the player's speed.
+void Alien::setSpeed(double speed) {m_speed = speed;}
 double Alien::getSpeed() const {return m_speed;}
 void Alien::setFlightPlanLength(double fpLength) {m_flightPlanLength = fpLength;}
 
@@ -256,31 +251,24 @@ void Alien::sufferDamage(double amt, int cause)
     {
         incHitPt(-amt);
         if(getHitPt() <= 0)
-        {
-            // alien died
-            getWorld()->playSound(SOUND_DEATH);
-            setAlive("dead");
-            getWorld()->recordAlienDestroyed();
-            getWorld()->increaseScore(getScoreValue());
-            Explosion* e = new Explosion(getWorld(), getX(), getY(), 1.0);
-            getWorld()->addActor(e);
-            possiblyDropGoodie();
-        }
+            alienIsDying();
         else
             getWorld()->playSound(SOUND_BLAST);
     }
     
     if(cause == HIT_BY_SHIP) // means the alien collides with the nachenblaster
-    {
-        // alien died
-        getWorld()->playSound(SOUND_DEATH);
-        setAlive("dead");
-        getWorld()->recordAlienDestroyed();
-        getWorld()->increaseScore(getScoreValue());
-        Explosion* e = new Explosion(getWorld(), getX(), getY(), 1.0);
-        getWorld()->addActor(e);
-        possiblyDropGoodie();
-    }
+        alienIsDying();
+}
+
+void Alien::alienIsDying()
+{
+    getWorld()->playSound(SOUND_DEATH);
+    setAlive("dead");
+    getWorld()->recordAlienDestroyed();
+    getWorld()->increaseScore(getScoreValue());
+    Explosion* e = new Explosion(getWorld(), getX(), getY(), 1.0);
+    getWorld()->addActor(e);
+    possiblyDropGoodie();
 }
 
 void Alien::move()
@@ -294,8 +282,6 @@ bool Alien::damageCollidingPlayer()
     
     if(n != nullptr) // means the alien collides with the nachenblaster
     {
-        // Explosion* e = new Explosion(getWorld(), getX(), getY(), 1.0);
-        // getWorld()->addActor(e); // explosion here is only of size 1
         n->sufferDamage(getDamageAmt(), HIT_BY_SHIP);
         return true;
     }
@@ -305,9 +291,9 @@ bool Alien::damageCollidingPlayer()
 void Alien::possiblyDropGoodie()
 {
     // There is a 50% chance that a Smoregon will be a Repair Goodie, and a 50% chance that it will be a Flatulence Torpedo Goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-    if(isSmoregon() && randInt(1, 3) == 1) //1/3
+    if(isSmoregon() && randInt(1, 3) == 1)
     {
-        if(randInt(1, 2) == 1)// 1/2
+        if(randInt(1, 2) == 1)
         {
             RGoodie* a = new RGoodie(getWorld(), IID_REPAIR_GOODIE, getX(), getY());
             getWorld()->addActor(a);
@@ -320,7 +306,7 @@ void Alien::possiblyDropGoodie()
     }
     
     // There is a 1/6 chance that the destroyed Snagglegon ship will drop an Extra Life goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-    if(isSnagglegon() && randInt(1, 6) == 1) //1/6
+    if(isSnagglegon() && randInt(1, 6) == 1)
     {
         ELGoodie* a = new ELGoodie(getWorld(), IID_LIFE_GOODIE, getX(), getY());
         getWorld()->addActor(a);
@@ -506,7 +492,7 @@ void Goodie::doSomething()
 {
     if(isAlive() == false)
         return;
-    if(isInBound(getX(), getY()) == false)
+    else if(isInBound(getX(), getY()) == false)
     {
         setAlive("dead");
         return;
@@ -530,7 +516,7 @@ bool Goodie::processCollision()
     
     if(n != nullptr) // means the goodie collides with the nachenblaster
     {
-        getWorld()->increaseScore(100); // TODO: this if statement is never entered
+        getWorld()->increaseScore(100);
         getWorld()->playSound(SOUND_GOODIE);
         doDiffGoodieThing();
         return true;
@@ -572,5 +558,4 @@ FTGoodie::~FTGoodie()
 void FTGoodie::doDiffGoodieThing()
 {
     getWorld()->getNachenBlaster()->incTorpedoPt(5);
-}     // Inform the NachenBlaster object that it just received 5 Flatulence Torpedoes
-
+} // Inform the NachenBlaster object that it just received 5 Flatulence Torpedoes

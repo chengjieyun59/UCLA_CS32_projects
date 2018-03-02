@@ -1,6 +1,8 @@
 #ifndef STUDENTWORLD_H_
 #define STUDENTWORLD_H_
 
+// Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
+
 #include "GameWorld.h"
 #include "Actor.h"
 #include <vector>
@@ -9,8 +11,6 @@ using namespace std;
 
 class Actor;
 class Player;
-
-// Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
 class StudentWorld : public GameWorld
 {
@@ -21,9 +21,9 @@ public:
     virtual int move();
     virtual void cleanUp();
     
-    //vector<Actor*>* getActorVector();
+    //vector<Actor*>* getActorVector(); // no longer needed
     NachenBlaster* getNachenBlaster();
-
+    
     // If there's at least one alien that's collided with a, return
     // a pointer to one of them; otherwise, return a null pointer.
     Alien* getOneCollidingAlien(const Actor* a) const;
@@ -40,7 +40,7 @@ public:
     
     // Record that one more alien on the current level has been destroyed.
     void recordAlienDestroyed();
-
+    
 private:
     vector<Actor*> m_vActor;
     NachenBlaster* m_NachenBlaster;
@@ -49,3 +49,4 @@ private:
 };
 
 #endif // STUDENTWORLD_H_
+

@@ -108,6 +108,7 @@ public:
     
     virtual void doSomething();
     virtual void sufferDamage(double amt, int cause);
+    void alienIsDying();
     void move();
     virtual bool damageCollidingPlayer();
     virtual void possiblyDropGoodie();
@@ -260,4 +261,3 @@ private:
 };
 
 #endif // ACTOR_H_
-
