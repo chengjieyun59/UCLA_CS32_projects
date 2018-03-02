@@ -22,6 +22,7 @@ public:
     virtual void cleanUp();
     
     vector<Actor*>* getActorVector();
+    NachenBlaster* getNachenBlaster();
 
     /* Hint:
      void zapAllZappableActors(int x, int y) {

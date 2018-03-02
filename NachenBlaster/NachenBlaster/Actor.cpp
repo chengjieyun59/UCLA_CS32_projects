@@ -9,6 +9,7 @@ Actor::Actor(StudentWorld* World, int imageID, double startX, double startY, int
 :GraphObject(imageID, startX, startY, dir, size, depth), m_isAlive(true), m_world(World), m_createWhat("nothing")
 {}
 
+// TODO 
 Actor::~Actor()
 {} // delete getWorld(); // wrong!!!! Delete all the memories that only this class made. Or C++ will try to delete it twice. Bad pointer execution
 
@@ -36,11 +37,15 @@ bool Actor::isAlive()
 
 bool Actor::isAlien() const {return false;}
 bool Actor::isProjectile() const {return false;}
+bool Actor::isNachenBlaster() const {return false;}
+bool Actor::isStar() const {return false;}
 bool Actor::isTorpedo() const {return false;}
 bool Actor::isSmoregon() const {return false;}
 bool Actor::isSnagglegon() const {return false;}
 void Actor::setCreate(string createWhat) {m_createWhat = createWhat;}
 string Actor::getCreate() const {return m_createWhat;}
+// void Actor::setDamageAmt(double damageAmt) {m_damageAmt = damageAmt;} // TODO: implement getDamageAmt for all actors
+// double Actor::getDamageAmt() const {return m_damageAmt;} // TODO: implement getDamageAmt for all actors
 
 StudentWorld* Actor::getWorld() const
 {
@@ -53,6 +58,8 @@ Star::Star(StudentWorld* World, double startX)
 
 Star::~Star()
 {}
+
+bool Star::isStar() const {return false;}
 
 void Star::doSomething()
 {
@@ -80,6 +87,8 @@ NachenBlaster::NachenBlaster(StudentWorld* World)
 
 NachenBlaster::~NachenBlaster()
 {}
+
+bool NachenBlaster::isNachenBlaster() const {return true;}
 
 void NachenBlaster::doSomething()
 {
@@ -117,46 +126,19 @@ void NachenBlaster::doSomething()
                     }
                     break;
                     
-                case KEY_PRESS_LEFT:
-                    if(isInBound(x-6, y))
-                        moveTo(x-6, y);
-                    /*
-                    if (getWorld()->getCollidingPlayer(this) != nullptr) {
-                        if(getWorld()->getCollidingPlayer(this)->isAlien())
-                        {
-                            if(getWorld()->getCollidingPlayer(this)->isSnagglegon())
-                                sufferDamage(5, 0); // collide with a smallgon or snoregon
-                            else
-                                sufferDamage(15, 0); // collide with a snagglegon
-                        }
-
-                        else
-                        {
-                            if(getWorld()->getCollidingPlayer(this)->isTorpedo())
-                                sufferDamage(8, 1); // collide with a torpedo
-                            else
-                                sufferDamage(2, 1); // collide with a turnip or cabbage
-                        }
-                    } // Of course, any movement may cause a collision with an alien ship or projectile, so you must check for this. TODO: How to make this work? Later, add to the other 3 directions
-                     */
-                    break;
-                case KEY_PRESS_RIGHT:  if(isInBound(x+6, y)) moveTo(x+6, y);
-                    
-                    break;
-                case KEY_PRESS_DOWN:   if(isInBound(x, y-6)) moveTo(x, y-6);
-                    
-                    break;
-                case KEY_PRESS_UP:     if(isInBound(x, y+6)) moveTo(x, y+6);
-                    
-                    break;
-                    
+                case KEY_PRESS_LEFT:   if(isInBound(x-6, y)) moveTo(x-6, y); break;
+                case KEY_PRESS_RIGHT:  if(isInBound(x+6, y)) moveTo(x+6, y); break;
+                case KEY_PRESS_DOWN:   if(isInBound(x, y-6)) moveTo(x, y-6); break;
+                case KEY_PRESS_UP:     if(isInBound(x, y+6)) moveTo(x, y+6); break;
                     // TODO: case KEY_PRESS_ESCAPE: ; break;
                     
                 default:
                     break;
             }
         }
+        processCollision();
     }
+    
     if (getCabbagePt() < 30)
         setCabbagePt(getCabbagePt() + 1);
 }
@@ -168,30 +150,46 @@ void NachenBlaster::incHitPt(double amt)
     // display text?
 }
 
-void NachenBlaster::sufferDamage(double amt, int cause)
+void NachenBlaster::processCollision()
 {
     vector<Actor*>* m_vActor = getWorld()->getActorVector();
-
-    for(auto a = *m_vActor->begin(); a != *m_vActor->end(); a++) // put a star to de-reference the m_vActor pointer
+    
+    for(auto a = (*m_vActor).begin(); a != (*m_vActor).end(); a++) // put a star to de-reference the m_vActor pointer
     {
-        NachenBlaster* n = getWorld()->getCollidingPlayer(a);
-
-        if(a->isProjectile() && n != nullptr) // means they collided
-        {
-            incHitPt(amt);
-            getWorld()->playSound(SOUND_BLAST);
-            a->setAlive("dead");
-        }
+        if((*a)->isNachenBlaster() || (*a)->isStar())
+            continue;
         
-        if (a->isAlien() && n != nullptr)
-        {
-            incHitPt(amt);
-            getWorld()->playSound(SOUND_DEATH);
-            a->setAlive("dead");
-            getWorld()->recordAlienDestroyed();
+        NachenBlaster* n = getWorld()->getCollidingPlayer(*a);
+
+        if (n != nullptr) {
+            if((*a)->isAlien())
+            {
+                getWorld()->recordAlienDestroyed();
+                if(!(*a)->isSnagglegon())
+                    sufferDamage(5, 0); // collide with a smallgon or snoregon
+                else
+                    sufferDamage(15, 0); // collide with a snagglegon
+            }
+            else if((*a)->isProjectile())
+            {
+                if((*a)->isTorpedo())
+                    sufferDamage(8, 1); // collide with a torpedo
+                else
+                    sufferDamage(2, 1); // collide with a turnip or cabbage
+            }
+            (*a)->setAlive("dead");
         }
     }
+}
 
+void NachenBlaster::sufferDamage(double amt, int cause)
+{
+    if (cause == 0)
+        getWorld()->playSound(SOUND_DEATH);
+    else
+        getWorld()->playSound(SOUND_BLAST);
+
+    incHitPt(-amt);
     if(getHitPt() <= 0)
         getWorld()->decLives();
 }
@@ -228,7 +226,7 @@ void Explosion::doSomething()
 ///////////
 
 Alien::Alien(StudentWorld* World, int imageID, double startX, double startY, double hitPoint, double damageAmt, double deltaX, double deltaY, double speed, unsigned int scoreValue)
-:DamageableObject(World, imageID, startX, startY, 0, 1.5, 1, hitPoint), m_damageAmt(damageAmt), m_deltaY(deltaY), m_speed(speed), m_flightPlanLength(0), m_scoreValue(scoreValue)
+:DamageableObject(World, imageID, startX, startY, 0, 1.5, 1, hitPoint), m_deltaY(deltaY), m_speed(speed), m_flightPlanLength(0), m_scoreValue(scoreValue)
 {}
 
 Alien::~Alien()
@@ -250,7 +248,7 @@ void Alien::doSomething()
     damageCollidingPlayer(m_damageAmt);
 
     // 4.
-    if(getY() == VIEW_WIDTH-1 || getY() == 0 || m_flightPlanLength <= 0)
+    if(getY() == VIEW_HEIGHT-1 || getY() == 0 || m_flightPlanLength <= 0)
     {
         if(getY() == VIEW_HEIGHT-1)
             setDeltaY(-1.0);
@@ -273,9 +271,7 @@ void Alien::doSomething()
     }
     
     // 5.
-
-    NachenBlaster* n = new NachenBlaster(getWorld());
-    if (n->getX() < getX() && n->getY()-4 <= getY() && n->getY()+4 >= getY())
+    if (getWorld()->getNachenBlaster()->getX() < getX() && getWorld()->getNachenBlaster()->getY()-4 <= getY() && getWorld()->getNachenBlaster()->getY()+4 >= getY())
     {
         if(!isSnagglegon() && randInt(1, (20/getWorld()->getLevel())+5) == 1)
         {
@@ -622,11 +618,10 @@ RGoodie::~RGoodie()
 
 void RGoodie::doDiffGoodieThing()
 {
-    NachenBlaster* nb = new NachenBlaster(getWorld());
-    if(nb->getHitPt() <= 40)
-        nb->incHitPt(10);
+    if(getWorld()->getNachenBlaster()->getHitPt() <= 40)
+        getWorld()->getNachenBlaster()->incHitPt(10);
     else
-        nb->incHitPt(nb->getHitPt() - nb->getHitPt() + 50);
+        getWorld()->getNachenBlaster()->incHitPt(getWorld()->getNachenBlaster()->getHitPt() - getWorld()->getNachenBlaster()->getHitPt() + 50);
 } // Inform the NachenBlaster object that it just got 10 additional hit points (any additional hit points must NOT cause the NachenBlaster to exceed 50 hit points).
 
 FTGoodie::FTGoodie(StudentWorld* World, int imageID, double startX, double startY)
@@ -638,6 +633,5 @@ FTGoodie::~FTGoodie()
 
 void FTGoodie::doDiffGoodieThing()
 {
-    NachenBlaster* nb = new NachenBlaster(getWorld());
-    nb->setTorpedoPt(nb->getTorpedoPt() + 5);
+    getWorld()->getNachenBlaster()->setTorpedoPt(getWorld()->getNachenBlaster()->getTorpedoPt() + 5);
 }     // Inform the NachenBlaster object that it just received 5 Flatulence Torpedoes

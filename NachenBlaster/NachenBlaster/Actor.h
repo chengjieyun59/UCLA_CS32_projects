@@ -23,6 +23,8 @@ public:
     bool isAlive();
     virtual bool isAlien() const;
     virtual bool isProjectile() const;
+    virtual bool isStar() const;
+    virtual bool isNachenBlaster() const;
     virtual bool isTorpedo() const;
     virtual bool isSmoregon() const;
     virtual bool isSnagglegon() const;
@@ -51,6 +53,7 @@ public:
     Star(StudentWorld* World, double startX);
     virtual ~Star();
     virtual void doSomething();
+    virtual bool isStar() const;
 }; // page 26
 
 class Explosion: public Actor
@@ -90,6 +93,8 @@ public:
     virtual void doSomething();
     virtual void incHitPt(double amt);
     virtual void sufferDamage(double amt, int cause);
+    void processCollision();
+    virtual bool isNachenBlaster() const;
 
     void setHealthPt(int newHealthPt);
     int getHealthPt() const;
@@ -101,7 +106,7 @@ public:
     int getTorpedoPt() const;
     
 private:
-    int m_healthPt;
+    int m_healthPt = 100; // TODO: verify with spec
     int m_cabbagePt;
     int m_torpedoPt;
 }; // the algorithm that controls the ship object is the user’s own brain and hand, and the keyboard
@@ -122,6 +127,7 @@ public:
     void setSpeed(double speed);
     double getSpeed() const;
     void setFlightPlanLength(double fpLength);
+    double getDamageAmt() const;
 
     virtual void doSomething(); // Hint: getWorld->zapAllZappableActors(getX(), getY());
     virtual void sufferDamage(double amt, int cause);

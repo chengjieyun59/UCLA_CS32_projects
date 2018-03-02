@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <sstream>  // defines the type std::ostringstream
+#include <iomanip>  // defines the manipulator setw
 using namespace std;
 
 GameWorld* createStudentWorld(string assetDir)
@@ -27,11 +29,17 @@ vector<Actor*>* StudentWorld::getActorVector()
     return &m_vActor;
 }
 
+NachenBlaster* StudentWorld::getNachenBlaster()
+{
+    return m_NachenBlaster;
+}
+
 int StudentWorld::init()
 {
     NachenBlaster* nb = new NachenBlaster(this);
+    m_NachenBlaster = nb;
     m_vActor.push_back(nb); // create a NachenBlaster and add to Actor vector
-    
+
     // create 30 stars
     for (int i = 0; i < 30; i++)
     {
@@ -52,11 +60,9 @@ int StudentWorld::move()
         if((*a)->isAlive())
         {
             (*a)->doSomething();
-            
-            // TODO: If an actor does something that causes the NachenBlaster to die (e.g., a projectile or alien ship collides with the NachenBlaster), then the move() method should immediately return GWSTATUS_PLAYER_DIED. TODO: is this correct?
-            
-            //if (m_NachenBlaster == nullptr) // NachenBlaster died during this tick
-                //return GWSTATUS_PLAYER_DIED;
+                        
+            if (m_NachenBlaster == nullptr) // NachenBlaster died during this tick // TODO: If an actor does something that causes the NachenBlaster to die (e.g., a projectile or alien ship collides with the NachenBlaster). Correct?
+                return GWSTATUS_PLAYER_DIED;
 
             if(m_AlienDestroyed >= 6+4*getLevel())
             {
@@ -93,8 +99,7 @@ int StudentWorld::move()
     int M = 4 + (0.5 * getLevel()); // maximum number of alien ships that should be on the screen at a time
     
     
-    int C = 0; // TODO: current number of alien ships on the screen
-    
+    int C = 0; // current number of alien ships on the screen
     for(a = m_vActor.begin(); a != m_vActor.end();a++)
     {
         if((*a)->isAlien())
@@ -115,7 +120,13 @@ int StudentWorld::move()
             m_vActor.push_back(new Snagglegon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
     }
     
-    // cout << "Lives: " << m_NachenBlaster->getHealthPt() << "  Health: " << m_NachenBlaster->getHitPt() << "%  Score: " << getScore() << " Level: " << getLevel() << "  Cabbages: " << m_NachenBlaster->getCabbagePt() << "% Torpedoes: " << m_NachenBlaster->getTorpedoPt();
+    // string s = "Lives: " + (int)m_NachenBlaster->getHealthPt() + "  Health: " + (int)m_NachenBlaster->getHitPt() + "%  Score: " + (int)getScore() + " Level: " + (int)getLevel() + "  Cabbages: " + (int)m_NachenBlaster->getCabbagePt() + "% Torpedoes: " + (int)m_NachenBlaster->getTorpedoPt();
+
+    
+    stringstream s;
+    s <<"Lives: " << (int)m_NachenBlaster->getHealthPt() << "  Health: " << (int)2*m_NachenBlaster->getHitPt() << "%  Score: " << (int)getScore() << " Level: " << (int)getLevel() << "  Cabbages: " << (int)10*m_NachenBlaster->getCabbagePt()/3 << "% Torpedoes: " << (int)m_NachenBlaster->getTorpedoPt();
+    setGameStatText(s.str());
+    
     // TODO: check HitPt percentage & cabbage point percentage
 
     // Update the Game Status Line
@@ -136,12 +147,12 @@ void StudentWorld::cleanUp()
     
     // delete all other actors
     vector<Actor*>::iterator a;
-    for(a = m_vActor.begin(); a != m_vActor.end();)
+    for(a = m_vActor.begin(); a != m_vActor.end(); )
     {
-        delete *a;
+        if((*a) != nullptr)
+            delete *a;
         a = m_vActor.erase(a);
     }
-    
 }
 
 // If there's at least one alien that's collided with a, return
@@ -167,14 +178,13 @@ Alien* StudentWorld::getOneCollidingAlien(const Actor* a) const
 // otherwise, return a null pointer.
 NachenBlaster* StudentWorld::getCollidingPlayer(const Actor* a) const
 {
-    /*
     double xsquare = (a->getX() - m_NachenBlaster->getX()) * (a->getX() - m_NachenBlaster->getX());
     double ysquare = (a->getY() - m_NachenBlaster->getY()) * (a->getY() - m_NachenBlaster->getY());
     double euclidian_dist = sqrt(xsquare + ysquare);
     
     if(euclidian_dist < 0.75 * (a->getRadius() + m_NachenBlaster->getRadius()))
         return m_NachenBlaster;
-   */
+
     return nullptr;
 }
 
