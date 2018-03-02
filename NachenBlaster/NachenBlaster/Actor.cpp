@@ -10,12 +10,13 @@ Actor::Actor(StudentWorld* World, int imageID, double startX, double startY, int
 {}
 
 // TODO : don't delete star when NB bump into them
+// TODO: ships go off the top and bottom. They shouldn't
 Actor::~Actor()
 {} // delete getWorld(); // wrong!!!! Delete all the memories that only this class made. Or C++ will try to delete it twice. Bad pointer execution
 
 bool Actor::isInBound(int x, int y) const
 {
-    if (x < VIEW_WIDTH && x >= 0 && y < VIEW_HEIGHT && y >= 0)
+    if (x < VIEW_WIDTH && x >= 0)
         return true;
     return false;
 }
@@ -247,32 +248,29 @@ void Alien::doSomething()
     if(isAlive() == false)
         return;
     
-    // 3.
-    damageCollidingPlayer(m_damageAmt);
-
     // 4.
-    if(getY() == VIEW_HEIGHT-1 || getY() == 0 || m_flightPlanLength <= 0)
+    if(getY() >= VIEW_HEIGHT-1 || getY() <= 0 || m_flightPlanLength == 0)
     {
-        if(getY() == VIEW_HEIGHT-1)
-            setDeltaY(-1.0);
+        if(getY() >= VIEW_HEIGHT-1)
+            setDeltaY(-1.0); // If the Smallgon’s or Smoregon's y coordinate is greater than or equal to VIEW_HEIGHT-1, then the Smallgon will set its travel direction to down and left.
         
-        else if (getY() == 0)
+        else if (getY() <= 0)
             setDeltaY(1.0);
         
-        else if (!isSnagglegon() && m_flightPlanLength <= 0)
-        {
-            int random = randInt(1, 3);
-            if (random == 1)
-                setDeltaY(0.0);
-            else if (random == 2)
-                setDeltaY(-1.0);
-            else
-                setDeltaY(1.0);
-        } // Otherwise if the Smallgon or Smoregon’s flight plan length is 0, it will set its travel direction by randomly selecting a new one from these three choices: due left, up and left, or down and left.
+        else if (!isSnagglegon() && m_flightPlanLength == 0)
+            setDeltaY(randInt(-1, 1));
+        
         if(!isSnagglegon())
             m_flightPlanLength = randInt(1, 32);
     }
     
+    // 6.
+    move();
+    m_flightPlanLength--;
+    
+    // 3.
+    damageCollidingPlayer(m_damageAmt);
+
     // 5.
     if (getWorld()->getNachenBlaster()->getX() < getX() && getWorld()->getNachenBlaster()->getY()-4 <= getY() && getWorld()->getNachenBlaster()->getY()+4 >= getY())
     {
@@ -286,9 +284,7 @@ void Alien::doSomething()
         doDiffAlienThing();
     }
     
-    // 6.
-    move();
-    m_flightPlanLength--;
+    
     
     // 7.
     damageCollidingPlayer(m_damageAmt);

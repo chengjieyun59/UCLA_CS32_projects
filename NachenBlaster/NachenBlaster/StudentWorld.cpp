@@ -62,10 +62,13 @@ int StudentWorld::move()
         if((*a)->isAlive())
         {
             (*a)->doSomething();
-                        
-            if (m_NachenBlaster == nullptr) // NachenBlaster died during this tick // TODO: If an actor does something that causes the NachenBlaster to die (e.g., a projectile or alien ship collides with the NachenBlaster). Correct?
+            
+            if(getLives() != prevLives) // NachenBlaster died during this tick
+            {
+                prevLives = getLives();
                 return GWSTATUS_PLAYER_DIED;
-
+            }
+            
             if(m_AlienDestroyed >= 6+4*getLevel())
             {
                 if((*a)->isSnagglegon())
@@ -77,13 +80,6 @@ int StudentWorld::move()
             }
         }
     }
-    
-    if(getLives() != prevLives)
-    {
-        prevLives = getLives();
-        return GWSTATUS_PLAYER_DIED;
-    }
-    
     // It is possible that one actor (e.g., a cabbage projectile) may destroy another actor (e.g., a Smallgon) during the current tick. If an actor has died earlier in the current tick, then the dead actor must not have a chance to do something during the current tick (since it’s dead).
     
     // Remove newly-dead actors after each tick
@@ -129,15 +125,11 @@ int StudentWorld::move()
             m_vActor.push_back(new Snagglegon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
     }
 
+    // Update the Game Status Line
     stringstream s;
     s <<"Lives: " << (int)getLives() << "  Health: " << (int)2*m_NachenBlaster->getHitPt() << "%  Score: " << (int)getScore() << " Level: " << (int)getLevel() << "  Cabbages: " << (int)10*m_NachenBlaster->getCabbagePt()/3 << "% Torpedoes: " << (int)m_NachenBlaster->getTorpedoPt();
     setGameStatText(s.str());
-    
-    // TODO: check HitPt percentage & cabbage point percentage
 
-    // Update the Game Status Line
-    // updateDisplayText(); // update the score/lives/level text at screen top
- 
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -156,8 +148,11 @@ void StudentWorld::cleanUp()
     for(a = m_vActor.begin(); a != m_vActor.end(); )
     {
         if((*a) != nullptr)
+        {
             delete *a;
-        a = m_vActor.erase(a);
+            *a = nullptr;
+            a = m_vActor.erase(a);
+        }
     }
 }
 
