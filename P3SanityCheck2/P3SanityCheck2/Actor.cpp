@@ -16,7 +16,8 @@ bool Actor::isInBound(int x, int y) const
 {
     if (x < VIEW_WIDTH && x >= 0 && y >= 0 && y < VIEW_HEIGHT)
         return true;
-    return false;
+    else
+        return false;
 }
 
 void Actor::setAlive(string aliveStatus)
@@ -72,6 +73,7 @@ DamageableObject::~DamageableObject()
 {}
 
 double DamageableObject::getHitPt() const {return m_hitPt;}
+void DamageableObject::setHitPt(double amt) {m_hitPt = amt;}
 void DamageableObject::incHitPt(double amt) {m_hitPt = m_hitPt + amt;} // Increase this actor's hit points by amt.
 
 void DamageableObject::sufferDamage(double amt, int cause)
@@ -141,7 +143,7 @@ void NachenBlaster::sufferDamage(double amt, int cause)
 {
     if (cause == HIT_BY_PROJECTILE)
         getWorld()->playSound(SOUND_BLAST);
-    incHitPt(-amt);
+    DamageableObject::sufferDamage(amt, HIT_BY_PROJECTILE);
     if(getHitPt() <= 0)
         setAlive("dead");
 }
@@ -156,10 +158,11 @@ int NachenBlaster::healthPercentage() const {return (getHitPt()*100/50);}
 // maximum hit point is only 50
 void NachenBlaster::incHitPt(double amt)
 {
+    cout << getHitPt() << ", "; // TODO: delete this debugging code
     if(getHitPt() + amt <= 50)
         DamageableObject::incHitPt(amt);
     else
-        DamageableObject::incHitPt(getHitPt()-getHitPt()+50);
+        setHitPt(50);
 }
 
 Explosion::Explosion(StudentWorld* World, double startX, double startY, double size)
@@ -249,7 +252,7 @@ void Alien::sufferDamage(double amt, int cause)
 {
     if(cause == HIT_BY_PROJECTILE)
     {
-        incHitPt(-amt);
+        DamageableObject::sufferDamage(amt, HIT_BY_PROJECTILE);
         if(getHitPt() <= 0)
             alienIsDying();
         else
@@ -291,9 +294,9 @@ bool Alien::damageCollidingPlayer()
 void Alien::possiblyDropGoodie()
 {
     // There is a 50% chance that a Smoregon will be a Repair Goodie, and a 50% chance that it will be a Flatulence Torpedo Goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-    if(isSmoregon() && randInt(1, 3) == 1)
+    if(isSmoregon() && randInt(1, 3) >= 1) // TODO:change back to equal
     {
-        if(randInt(1, 2) == 1)
+        if(randInt(1, 2) >= 1)
         {
             RGoodie* a = new RGoodie(getWorld(), IID_REPAIR_GOODIE, getX(), getY());
             getWorld()->addActor(a);
@@ -306,7 +309,7 @@ void Alien::possiblyDropGoodie()
     }
     
     // There is a 1/6 chance that the destroyed Snagglegon ship will drop an Extra Life goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-    if(isSnagglegon() && randInt(1, 6) == 1)
+    if(isSnagglegon() && randInt(1, 6) >= 1)
     {
         ELGoodie* a = new ELGoodie(getWorld(), IID_LIFE_GOODIE, getX(), getY());
         getWorld()->addActor(a);
@@ -559,3 +562,4 @@ void FTGoodie::doDiffGoodieThing()
 {
     getWorld()->getNachenBlaster()->incTorpedoPt(5);
 } // Inform the NachenBlaster object that it just received 5 Flatulence Torpedoes
+

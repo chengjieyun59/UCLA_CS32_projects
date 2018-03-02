@@ -4,7 +4,8 @@
 #include "StudentWorld.h"
 #include <iostream>
 using namespace std;
-
+// TODO: extra life goodie, something else is adding extra life too?
+// TODO: repair goodie, doesn't add hit points?
 Actor::Actor(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
 :GraphObject(imageID, startX, startY, dir, size, depth), m_isAlive(true), m_world(World)
 {}
@@ -73,6 +74,7 @@ DamageableObject::~DamageableObject()
 {}
 
 double DamageableObject::getHitPt() const {return m_hitPt;}
+void DamageableObject::setHitPt(double amt) {m_hitPt = amt;}
 void DamageableObject::incHitPt(double amt) {m_hitPt = m_hitPt + amt;} // Increase this actor's hit points by amt.
 
 void DamageableObject::sufferDamage(double amt, int cause)
@@ -142,7 +144,7 @@ void NachenBlaster::sufferDamage(double amt, int cause)
 {
     if (cause == HIT_BY_PROJECTILE)
         getWorld()->playSound(SOUND_BLAST);
-    incHitPt(-amt);
+    DamageableObject::sufferDamage(amt, HIT_BY_PROJECTILE);
     if(getHitPt() <= 0)
         setAlive("dead");
 }
@@ -160,7 +162,7 @@ void NachenBlaster::incHitPt(double amt)
     if(getHitPt() + amt <= 50)
         DamageableObject::incHitPt(amt);
     else
-        DamageableObject::incHitPt(getHitPt()-getHitPt()+50);
+      setHitPt(50);
 }
 
 Explosion::Explosion(StudentWorld* World, double startX, double startY, double size)
@@ -250,7 +252,7 @@ void Alien::sufferDamage(double amt, int cause)
 {
     if(cause == HIT_BY_PROJECTILE)
     {
-        incHitPt(-amt);
+        DamageableObject::sufferDamage(amt, HIT_BY_PROJECTILE);
         if(getHitPt() <= 0)
             alienIsDying();
         else
@@ -292,22 +294,24 @@ bool Alien::damageCollidingPlayer()
 void Alien::possiblyDropGoodie()
 {
     // There is a 50% chance that a Smoregon will be a Repair Goodie, and a 50% chance that it will be a Flatulence Torpedo Goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-    if(isSmoregon() && randInt(1, 3) == 1)
+    if(isSmoregon() && randInt(1, 3) >= 1) // TODO:change back to equal
     {
-        if(randInt(1, 2) == 1)
+        if(randInt(1, 2) < 1)
         {
             RGoodie* a = new RGoodie(getWorld(), IID_REPAIR_GOODIE, getX(), getY());
             getWorld()->addActor(a);
         }
         else
         {
-            FTGoodie* a = new FTGoodie(getWorld(), IID_TORPEDO_GOODIE, getX(), getY());
+            //FTGoodie* a = new FTGoodie(getWorld(), IID_TORPEDO_GOODIE, getX(), getY());
+            //getWorld()->addActor(a); // TODO: uncomment these 2 and delete next 2
+            ELGoodie* a = new ELGoodie(getWorld(), IID_LIFE_GOODIE, getX(), getY());
             getWorld()->addActor(a);
         }
     }
     
     // There is a 1/6 chance that the destroyed Snagglegon ship will drop an Extra Life goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-    if(isSnagglegon() && randInt(1, 6) == 1)
+    if(isSnagglegon() && randInt(1, 6) >= 1)
     {
         ELGoodie* a = new ELGoodie(getWorld(), IID_LIFE_GOODIE, getX(), getY());
         getWorld()->addActor(a);

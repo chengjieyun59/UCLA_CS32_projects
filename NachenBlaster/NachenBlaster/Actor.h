@@ -57,6 +57,7 @@ public:
     DamageableObject(StudentWorld* world, int imageID, double startX, double startY, int dir, double size, int depth, double hitPoints);
     virtual ~DamageableObject();
     double getHitPt() const;
+    void setHitPt(double amt); // Set the hit points to be amt
     virtual void incHitPt(double amt); // Increase this actor's hit points by amt.
     virtual void sufferDamage(double amt, int cause); // This actor suffers an amount of damage caused by being hit by either a ship or a projectile (see constants above).
     

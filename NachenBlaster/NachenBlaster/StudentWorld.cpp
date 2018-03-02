@@ -57,7 +57,8 @@ int StudentWorld::move()
 {
     if(m_NachenBlaster->isAlive())
         m_NachenBlaster->doSomething();
-    
+    cout << m_NachenBlaster->getHitPt() << ", "; // TODO: delete this debugging code
+
     // if actor is alive, call the doSomething() for every Actor (NachenBlaster, Stars, aliens, etc.)
     vector<Actor*>::iterator a;
     for(a = m_vActor.begin(); a != m_vActor.end();a++)
@@ -97,7 +98,7 @@ int StudentWorld::move()
         m_vActor.push_back(new Star(this, VIEW_WIDTH-1));
     
     m_RemainingAlienToDestroy = 6 + 4 * getLevel() - m_AlienDestroyed; // Update number of remaining alien ships
-    cout << m_CurrentAlienOnScreen; // TODO: delete this debugging code
+    // cout << m_CurrentAlienOnScreen; // for debugging purposes
     
     // create new aliens
     if(m_CurrentAlienOnScreen < min(m_MaxAlienOnScreen,m_RemainingAlienToDestroy))
