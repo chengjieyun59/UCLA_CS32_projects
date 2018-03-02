@@ -9,7 +9,7 @@ Actor::Actor(StudentWorld* World, int imageID, double startX, double startY, int
 :GraphObject(imageID, startX, startY, dir, size, depth), m_isAlive(true), m_world(World), m_createWhat("nothing")
 {}
 
-// TODO 
+// TODO : don't delete star when NB bump into them
 Actor::~Actor()
 {} // delete getWorld(); // wrong!!!! Delete all the memories that only this class made. Or C++ will try to delete it twice. Bad pointer execution
 
@@ -191,11 +191,14 @@ void NachenBlaster::sufferDamage(double amt, int cause)
 
     incHitPt(-amt);
     if(getHitPt() <= 0)
+    {
         getWorld()->decLives();
+        //getWorld()->advanceToNextLevel();
+    }
 }
 
-void NachenBlaster::setHealthPt(int newHealthPt){m_healthPt = newHealthPt;}
-int NachenBlaster::getHealthPt() const {return m_healthPt;}
+//void NachenBlaster::setHealthPt(int newHealthPt){m_healthPt = newHealthPt;}
+//int NachenBlaster::getHealthPt() const {return m_healthPt;}
 
 void NachenBlaster::setCabbagePt(int newCabbagePt){m_cabbagePt = newCabbagePt;}
 int NachenBlaster::getCabbagePt() const {return m_cabbagePt;}

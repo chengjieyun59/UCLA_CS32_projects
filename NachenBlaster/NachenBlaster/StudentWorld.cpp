@@ -7,6 +7,8 @@
 #include <iomanip>  // defines the manipulator setw
 using namespace std;
 
+int prevLives = 3;
+
 GameWorld* createStudentWorld(string assetDir)
 {
 	return new StudentWorld(assetDir);
@@ -70,11 +72,18 @@ int StudentWorld::move()
                     increaseScore(1000);
                 else
                     increaseScore(250);
-                advanceToNextLevel();
+                // advanceToNextLevel();
                 return GWSTATUS_FINISHED_LEVEL;
             }
         }
     }
+    
+    if(getLives() != prevLives)
+    {
+        prevLives = getLives();
+        return GWSTATUS_PLAYER_DIED;
+    }
+    
     // It is possible that one actor (e.g., a cabbage projectile) may destroy another actor (e.g., a Smallgon) during the current tick. If an actor has died earlier in the current tick, then the dead actor must not have a chance to do something during the current tick (since it’s dead).
     
     // Remove newly-dead actors after each tick
@@ -119,12 +128,9 @@ int StudentWorld::move()
         if(randInt(1, 4) == 1) // TODO: placeholder for probability S3/S
             m_vActor.push_back(new Snagglegon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
     }
-    
-    // string s = "Lives: " + (int)m_NachenBlaster->getHealthPt() + "  Health: " + (int)m_NachenBlaster->getHitPt() + "%  Score: " + (int)getScore() + " Level: " + (int)getLevel() + "  Cabbages: " + (int)m_NachenBlaster->getCabbagePt() + "% Torpedoes: " + (int)m_NachenBlaster->getTorpedoPt();
 
-    
     stringstream s;
-    s <<"Lives: " << (int)m_NachenBlaster->getHealthPt() << "  Health: " << (int)2*m_NachenBlaster->getHitPt() << "%  Score: " << (int)getScore() << " Level: " << (int)getLevel() << "  Cabbages: " << (int)10*m_NachenBlaster->getCabbagePt()/3 << "% Torpedoes: " << (int)m_NachenBlaster->getTorpedoPt();
+    s <<"Lives: " << (int)getLives() << "  Health: " << (int)2*m_NachenBlaster->getHitPt() << "%  Score: " << (int)getScore() << " Level: " << (int)getLevel() << "  Cabbages: " << (int)10*m_NachenBlaster->getCabbagePt()/3 << "% Torpedoes: " << (int)m_NachenBlaster->getTorpedoPt();
     setGameStatText(s.str());
     
     // TODO: check HitPt percentage & cabbage point percentage

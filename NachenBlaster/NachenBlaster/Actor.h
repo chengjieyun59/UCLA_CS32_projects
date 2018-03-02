@@ -96,8 +96,8 @@ public:
     void processCollision();
     virtual bool isNachenBlaster() const;
 
-    void setHealthPt(int newHealthPt);
-    int getHealthPt() const;
+    //void setHealthPt(int newHealthPt);
+    //int getHealthPt() const;
     
     void setCabbagePt(int newCabbagePt);
     int getCabbagePt() const;
