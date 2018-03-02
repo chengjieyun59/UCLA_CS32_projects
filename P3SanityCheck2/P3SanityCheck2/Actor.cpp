@@ -142,42 +142,6 @@ void NachenBlaster::doSomething()
         m_cabbagePt++;
 }
 
-/*
- void NachenBlaster::processCollision()
- {
- vector<Actor*>* m_vActor = getWorld()->getActorVector();
- 
- for(auto a = (*m_vActor).begin(); a != (*m_vActor).end(); a++) // put a star to de-reference the m_vActor pointer
- {
- if((*a)->isNachenBlaster() || (*a)->isStar())
- continue;
- 
- NachenBlaster* n = getWorld()->getCollidingPlayer(*a);
- 
- if (n != nullptr) {
- if((*a)->isAlien())
- {
- getWorld()->recordAlienDestroyed();
- if(!(*a)->isSnagglegon())
- sufferDamage(5, 0); // collide with a smallgon or snoregon
- else
- sufferDamage(15, 0); // collide with a snagglegon
- Explosion* e = new Explosion(getWorld(), getX(), getY(), 1.0);
- getWorld()->addActor(e); // TODO: Why wasn't any explosion created?
- }
- else if((*a)->isProjectile())
- {
- if((*a)->isTorpedo())
- sufferDamage(8, 1); // collide with a torpedo
- else
- sufferDamage(2, 1); // collide with a turnip or cabbage
- }
- (*a)->setAlive("dead");
- }
- }
- }
- */
-
 void NachenBlaster::sufferDamage(double amt, int cause)
 {
     if (cause == HIT_BY_PROJECTILE)
@@ -493,7 +457,7 @@ void Projectile::doSomething()
 }
 
 Cabbage::Cabbage(StudentWorld* World, double startX, double startY)
-:Projectile(World, IID_CABBAGE, startX, startY, 0, 2.0, 8.0, false)
+:Projectile(World, IID_CABBAGE, startX, startY, 0, 2.0, 8.0, true)
 // Projectile(World, IID_CABBAGE, startX, startY, 0, damageAmt, deltaX, rotates)
 {}
 
@@ -502,14 +466,14 @@ Cabbage::~Cabbage(){}
 bool Cabbage::isFiredByNachenBlaster() const {return true;}
 
 Turnip::Turnip(StudentWorld* World, double startX, double startY)
-:Projectile(World, IID_TURNIP, startX, startY, 0, 2.0, -6.0, false)
+:Projectile(World, IID_TURNIP, startX, startY, 0, 2.0, -6.0, true)
 {}
 
 Turnip::~Turnip()
 {}
 
 Torpedo::Torpedo(StudentWorld* World, double startX, double startY, int dir, double deltaX)
-:Projectile(World, IID_TORPEDO, startX, startY, 0, 8.0, deltaX, true)
+:Projectile(World, IID_TORPEDO, startX, startY, 0, 8.0, deltaX, false)
 {}
 
 Torpedo::~Torpedo()
@@ -567,7 +531,6 @@ bool Goodie::processCollision()
     if(n != nullptr) // means the goodie collides with the nachenblaster
     {
         getWorld()->increaseScore(100); // TODO: this if statement is never entered
-        // setAlive("dead"); // set later
         getWorld()->playSound(SOUND_GOODIE);
         doDiffGoodieThing();
         return true;

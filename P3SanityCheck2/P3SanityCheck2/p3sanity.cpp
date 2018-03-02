@@ -143,34 +143,70 @@ int main()
 
 void part2Checks(GameWorld* gw, GraphObject* player)
 {
-    // An alien must have been added at depth 1.  It might have moved.
-    if (depth1.size() != 1)
-        die("Exactly one object at depth 1 (an alien) was not created");
+    // An alien must have been added at depth 1.  It might have moved or
+    // it might have fired, adding a projectile at depth 1.
+    GraphObject* alien1 = nullptr;
+    GraphObject* projectile = nullptr;
+    for (auto go : depth1)
+    {
+        if (go->getY() < 0  ||  go->getY() >= VIEW_HEIGHT)
+            die("Alien (or possibly projectile) created in wrong place");
+        if (alien1 == nullptr)
+        {
+            alien1 = go;
+            continue;
+        }
+        if (projectile != nullptr)
+            die("Too many objects were created at depth 1");
+        if (go->getY() != alien1->getY())
+            die("Projectile not created at same y coordinate as the alien that fired it");
+        if (go->getX() + 14 == alien1->getY())
+            projectile = go;
+        else if (go->getX() - 14 == alien1->getY())
+        {
+            projectile = alien1;
+            alien1 = go;
+        }
+        else
+            die("Projectile fired by alien was created at wrong x coordinate");
+    }
+    if (alien1 == nullptr)
+        die("An alien was not created at depth 1");
     
-    GraphObject* alien1 = *(depth1.begin());
     double alien1X = alien1->getX();
-    if (alien1X > VIEW_WIDTH-1  ||  alien1X < VIEW_WIDTH-3  ||
-        alien1->getY() < 0  ||  alien1->getY() >= VIEW_HEIGHT)
+    if (alien1X > VIEW_WIDTH-1  ||
+        (alien1X < VIEW_WIDTH-3  &&  alien1X != VIEW_WIDTH-6 /* ramming speed */))
         die("Alien created in wrong place");
     if (alien1->getSize() != 1.5)
         die("Newly-created alien has the wrong size");
+    
+    if (projectile != nullptr)
+    {
+        // Get player out of the line of fire
+        double playerY = alien1->getY();
+        if (playerY >= 100)
+            playerY -= 50;
+        else
+            playerY += 50;
+        player->moveTo(player->getX(), playerY);
+    }
     
     cout << "OK" << endl;
     
     // **********************
     // Move 2.  Act as if a space was pressed.
+    int oldDepth1Size = depth1.size();
     cout << "Calling move for the StudentWorld with simulated space key press..." << flush;
     gw->setKey(' ');
     if (gw->move() != GWSTATUS_CONTINUE_GAME)
         die("StudentWorld::move did not return GWSTATUS_CONTINUE_GAME");
     
     // A second alien and a cabbage must have been created at depth 1.
-    // Either may have moved.
-    GraphObject* alien2 = nullptr;
+    // The cabbage may have moved.  The alien may have moved or fired.
+    if (depth1.size() < oldDepth1Size+2)
+        die("Did not create a cabbage and a new alien");
+    //
     GraphObject* cabbage = nullptr;
-    
-    if (depth1.size() != 3)
-        die("Did not create exactly one cabbage and exactly one new alien");
     
     bool alien1StillExists = false;
     for (auto go : depth1)
@@ -182,26 +218,22 @@ void part2Checks(GameWorld* gw, GraphObject* player)
         }
         if (go->getX() < VIEW_WIDTH/2 )  // cabbage in left half
             cabbage = go;
-        else
-            alien2 = go;
     }
-    if (alien2 == nullptr  ||  alien2->getX() > VIEW_WIDTH-1  ||
-        alien2->getX() < VIEW_WIDTH-3  ||
-        alien2->getY() < 0  ||  alien2->getY() >= VIEW_HEIGHT)
-        die("A second alien in the proper place was not created");
     if (cabbage == nullptr)
         die("A cabbage was not created");
     double cabbageX = cabbage->getX();
     if ((cabbageX != 6+12  && cabbageX != 6+12+8)  ||
-        cabbage->getY() < 0  ||  cabbage->getY() >= VIEW_HEIGHT)
+        cabbage->getY() != player->getY())
         die("A cabbage in the proper place was not created");
     double cabbageDir = cabbage->getDirection();
     if (cabbageDir != 0  &&  cabbageDir != 20)
-        die("The new cabbage was not created with the proper direction");
+        die("A new cabbage was not created with the proper direction");
     if (!alien1StillExists)
         die("The alien created in the first move call has disappeared");
     
-    if (alien1->getX() < alien1X - 2  ||  alien1->getX() > alien1X - 1)
+    if (alien1->getX() > alien1X  ||
+        (alien1->getX() == alien1X  &&  depth1.size() != 4)  ||
+        (alien1->getX() < alien1X - 2  &&  alien1->getX() != alien1X - 5))
         die("The alien created in the first move call did not move to the proper place");
     alien1X = alien1->getX();
     
@@ -212,9 +244,6 @@ void part2Checks(GameWorld* gw, GraphObject* player)
     cout << "Calling move for the StudentWorld..." << flush;
     if (gw->move() != GWSTATUS_CONTINUE_GAME)
         die("StudentWorld::move did not return GWSTATUS_CONTINUE_GAME");
-    
-    if (alien1->getX() < alien1X - 2  ||  alien1->getX() > alien1X - 1)
-        die("The alien created in the first move call did not move to the proper place");
     
     if (cabbage->getX() != cabbageX+8)
         die("The cabbage did not move to the proper place");
@@ -233,6 +262,7 @@ void part2Checks(GameWorld* gw, GraphObject* player)
     
     // **********************
     // Move 4.  The cabbage should be gone.
+    cabbageDir = cabbage->getDirection();
     cout << "Calling move for the StudentWorld..." << flush;
     if (gw->move() != GWSTATUS_CONTINUE_GAME)
         die("StudentWorld::move did not return GWSTATUS_CONTINUE_GAME");
@@ -242,7 +272,8 @@ void part2Checks(GameWorld* gw, GraphObject* player)
     {
         if (go == alien1)
             alien1StillExists = true;
-        if (go == cabbage)
+        if (go == cabbage  &&
+            (go->getDirection() == cabbageDir  ||  go->getDirection() == cabbageDir+20))
             die("The collision did not destroy the cabbage");
     }
     if (!alien1StillExists)
@@ -258,18 +289,3 @@ void part2Checks(GameWorld* gw, GraphObject* player)
     
     cout << "didn't crash" << endl;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

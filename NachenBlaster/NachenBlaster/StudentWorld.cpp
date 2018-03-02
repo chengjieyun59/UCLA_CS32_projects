@@ -55,26 +55,24 @@ int StudentWorld::init()
 
 int StudentWorld::move()
 {
-    // if(m_NachenBlaster->isAlive())
+    //if(m_NachenBlaster->isAlive())
     //m_NachenBlaster->doSomething();
     
     // if actor is alive, call the doSomething() for every Actor (NachenBlaster, Stars, aliens, etc.)
     vector<Actor*>::iterator a;
     for(a = m_vActor.begin(); a != m_vActor.end();a++)
     {
-        if((*a)->isAlive())
-        {
+        if((*a)->isAlive() == true)
             (*a)->doSomething();
-            
-            if(m_NachenBlaster->isAlive() == false)
-            {
-                decLives();
-                return GWSTATUS_PLAYER_DIED;
-            }
-            
-            if(m_AlienDestroyed >= 6+4*getLevel())
-                return GWSTATUS_FINISHED_LEVEL;
+        
+        if(m_NachenBlaster->isAlive() == false)
+        {
+            decLives();
+            return GWSTATUS_PLAYER_DIED;
         }
+        
+        if(m_AlienDestroyed >= 6+4*getLevel())
+            return GWSTATUS_FINISHED_LEVEL;
     }
     // It is possible that one actor (e.g., a cabbage projectile) may destroy another actor (e.g., a Smallgon) during the current tick. If an actor has died earlier in the current tick, then the dead actor must not have a chance to do something during the current tick (since it’s dead).
     
@@ -99,14 +97,6 @@ int StudentWorld::move()
     // variables for creating new aliens
     int R = 6 + 4 * getLevel() - m_AlienDestroyed; // Remaining alien ships that must be destroyed before the level is completed
     int M = 4 + (0.5 * getLevel()); // maximum number of alien ships that should be on the screen at a time
-    
-    /*
-     for(a = m_vActor.begin(); a != m_vActor.end();a++)
-     {
-     if((*a)->isAlien())
-     C++;
-     }
-     */
     
     // create new aliens
     if(m_C < min(M,R))
@@ -219,4 +209,3 @@ void StudentWorld::recordAlienDestroyed()
     m_C--;
     m_AlienDestroyed++;
 }
-
