@@ -59,7 +59,7 @@ public:
     
     double getHitPt() const;
     void incHitPt(double amt); // Increase this actor's hit points by amt.
-    virtual void sufferDamage(double amt, int cause); // This actor suffers an amount of damage caused by being hit by either a ship or a projectile (see constants above).
+    virtual void sufferDamage(double amt, int cause) = 0; // This actor suffers an amount of damage caused by being hit by either a ship or a projectile (see constants above).
     
 private:
     double m_hitPt;

@@ -8,6 +8,9 @@ using namespace std;
 // TODO: replace the hard code of the damageAmt of the projectile (8.0 and 2.0)
 // TODO: when NachenBlaster hit the alien ship, make an explosion
 // TODO: when NachenBlaster hit a goodie, why was a life lost?
+// TODO: eating torpedo goodie should create a sound
+// TODO: getting to new level too soon, incorrectly
+// TODO: increase score properly when bumping into aliens
 
 Actor::Actor(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
 :GraphObject(imageID, startX, startY, dir, size, depth), m_isAlive(true), m_world(World), m_createWhat("nothing")
@@ -72,11 +75,6 @@ DamageableObject::DamageableObject(StudentWorld* world, int imageID, double star
 double DamageableObject::getHitPt() const {return m_hitPt;}
 void DamageableObject::incHitPt(double amt) {m_hitPt = m_hitPt + amt;} // Increase this actor's hit points by amt.
 
-void DamageableObject::sufferDamage(double amt, int cause)
-{
-    m_hitPt = m_hitPt - amt; // TODO: const int HIT_BY_SHIP = 0; & const int HIT_BY_PROJECTILE = 1;
-} // This actor suffers an amount of damage caused by being hit by either a ship or a projectile (see constants above).
-
 NachenBlaster::NachenBlaster(StudentWorld* World)
  :DamageableObject(World, IID_NACHENBLASTER, 0, 128, 0, 1.0, 0, 50), m_cabbagePt(30), m_torpedoPt(0)
 {}
@@ -126,12 +124,13 @@ void NachenBlaster::doSomething()
                 default: break;
             }
         }
-        processCollision();
+        // processCollision(); !!!!!!! NB doesn't process collision at all?
     }
     if (getCabbagePt() < 30)
         setCabbagePt(getCabbagePt() + 1);
 }
 
+/*
 void NachenBlaster::processCollision()
 {
     vector<Actor*>* m_vActor = getWorld()->getActorVector();
@@ -148,33 +147,32 @@ void NachenBlaster::processCollision()
             {
                 getWorld()->recordAlienDestroyed();
                 if(!(*a)->isSnagglegon())
-                    sufferDamage(5, 0); // collide with a smallgon or snoregon
+                    sufferDamage(5, HIT_BY_SHIP); // collide with a smallgon or snoregon
                 else
-                    sufferDamage(15, 0); // collide with a snagglegon
+                    sufferDamage(15, HIT_BY_SHIP); // collide with a snagglegon
                 Explosion* e = new Explosion(getWorld(), getX(), getY(), 1.0);
                 getWorld()->addActor(e); // TODO: Why wasn't any explosion created?
             }
             else if((*a)->isProjectile())
             {
                 if((*a)->isTorpedo())
-                    sufferDamage(8, 1); // collide with a torpedo
+                    sufferDamage(8, HIT_BY_PROJECTILE); // collide with a torpedo
                 else
-                    sufferDamage(2, 1); // collide with a turnip or cabbage
+                    sufferDamage(2, HIT_BY_PROJECTILE); // collide with a turnip or cabbage
             }
             (*a)->setAlive("dead");
         }
     }
 }
+*/
 
 void NachenBlaster::sufferDamage(double amt, int cause)
 {
-    if (cause == HIT_BY_SHIP)
-        getWorld()->playSound(SOUND_DEATH);
-    else
+    if (cause == HIT_BY_PROJECTILE)
         getWorld()->playSound(SOUND_BLAST);
     incHitPt(-amt);
     if(getHitPt() <= 0)
-        setAlive("dead"); // instead of getWorld()->decLives();
+        setAlive("dead"); // getWorld()->decLives();// instead of !!!!!!!!!!
 }
 
 void NachenBlaster::setCabbagePt(int newCabbagePt){m_cabbagePt = newCabbagePt;}
@@ -221,6 +219,12 @@ void Alien::doSomething()
     if(isAlive() == false)
         return;
     
+    // alien bumps into Nachenblaster
+    if(damageCollidingPlayer(m_damageAmt))
+        sufferDamage(-1, HIT_BY_SHIP);
+
+    
+    // flight plan
     if(getY() >= VIEW_HEIGHT-1 || getY() <= 0 || m_flightPlanLength == 0)
     {
         if(getY() >= VIEW_HEIGHT-1)
@@ -232,12 +236,8 @@ void Alien::doSomething()
         if(!isSnagglegon())
             m_flightPlanLength = randInt(1, 32);
     }
-    move();
-    m_flightPlanLength--;
     
-    damageCollidingPlayer(m_damageAmt);
-
-    if (getWorld()->getNachenBlaster()->getX() < getX() && getWorld()->getNachenBlaster()->getY()-4 <= getY() && getWorld()->getNachenBlaster()->getY()+4 >= getY())
+    if (getWorld()->playerInLineOfFire(this))
     {
         if(!isSnagglegon() && randInt(1, (20/getWorld()->getLevel())+5) == 1)
         {
@@ -249,15 +249,23 @@ void Alien::doSomething()
         doDiffAlienThing();
     }
     
-    damageCollidingPlayer(m_damageAmt);
+    move();
+    m_flightPlanLength--;
+    
+    // check again if alien bumps into Nachenblaster
+    if(damageCollidingPlayer(m_damageAmt))
+        sufferDamage(-1, HIT_BY_SHIP);
 }
 
 void Alien::sufferDamage(double amt, int cause)
 {
     if(cause == HIT_BY_PROJECTILE)
+    {
         incHitPt(-amt);
+        getWorld()->playSound(SOUND_BLAST);
+    }
 
-    if(damageCollidingPlayer(m_damageAmt) == true) // means the alien collides with the nachenblaster
+    if(cause == HIT_BY_SHIP || getHitPt() <= 0) // means the alien collides with the nachenblaster
     {
         setAlive("dead");
         getWorld()->recordAlienDestroyed();
@@ -265,6 +273,7 @@ void Alien::sufferDamage(double amt, int cause)
         getWorld()->playSound(SOUND_DEATH);
         Explosion* e = new Explosion(getWorld(), getX(), getY(), 1.0);
         getWorld()->addActor(e);
+        possiblyDropGoodie();
     }
 }
 
@@ -279,7 +288,7 @@ bool Alien::damageCollidingPlayer(double amt)
     
     if(n != nullptr) // means the alien collides with the nachenblaster
     {
-        n->sufferDamage(m_damageAmt, 0);
+        n->sufferDamage(m_damageAmt, HIT_BY_SHIP);
         return true;
     }
     return false;
@@ -288,9 +297,9 @@ bool Alien::damageCollidingPlayer(double amt)
 void Alien::possiblyDropGoodie()
 {
     // There is a 50% chance that a Smoregon will be a Repair Goodie, and a 50% chance that it will be a Flatulence Torpedo Goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-    if(isSmoregon() && randInt(1, 3) == 1) //1/3
+    if(isSmoregon() && randInt(1, 3) > 1) //1/3
     {
-        if(randInt(1, 2) == 1)// 1/2
+        if(randInt(1, 2) > 1)// 1/2 // TODO: change back to equal
         {
             RGoodie* a = new RGoodie(getWorld(), IID_REPAIR_GOODIE, getX(), getY());
             getWorld()->addActor(a);
@@ -303,7 +312,7 @@ void Alien::possiblyDropGoodie()
     }
     
     // There is a 1/6 chance that the destroyed Snagglegon ship will drop an Extra Life goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-    if(isSnagglegon() && randInt(1, 6) == 1) //1/6
+    if(isSnagglegon() && randInt(1, 6) > 1) //1/6
     {
         ELGoodie* a = new ELGoodie(getWorld(), IID_LIFE_GOODIE, getX(), getY());
         getWorld()->addActor(a);
@@ -402,9 +411,9 @@ void Projectile::doCommonThingOnce()
         if(a != nullptr) // means the projectile collides with an alien
         {
             if(isTorpedo())
-                a->sufferDamage(8.0, 1);
+                a->sufferDamage(8.0, HIT_BY_PROJECTILE);
             else
-                a->sufferDamage(2.0, 1);
+                a->sufferDamage(2.0, HIT_BY_PROJECTILE);
             if(a->getHitPt() <= 0)
             {
                 // if the alien dies, increase the player's score
@@ -418,7 +427,7 @@ void Projectile::doCommonThingOnce()
                 getWorld()->playSound(SOUND_DEATH);
                 Explosion* e = new Explosion(getWorld(), a->getX(), a->getY(), 1.0);
                 getWorld()->addActor(e); // Introduce a new explosion object into the space field at the same x,y location as the Smallgon.
-                a->possiblyDropGoodie();
+                // a->possiblyDropGoodie(); // coded elsewhere
             }
             else
                 getWorld()->playSound(SOUND_BLAST);
@@ -434,9 +443,9 @@ void Projectile::doCommonThingOnce()
         if(n != nullptr) // means the projectile collides with the nachenblaster
         {
             if(isTorpedo())
-                n->sufferDamage(8.0, 1);
+                n->sufferDamage(8.0, HIT_BY_PROJECTILE);
             else
-                n->sufferDamage(2.0, 1);
+                n->sufferDamage(2.0, HIT_BY_PROJECTILE);
             getWorld()->playSound(SOUND_BLAST);
             setAlive("dead");
             return;

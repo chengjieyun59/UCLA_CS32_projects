@@ -4,10 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>  // defines the type std::ostringstream
-#include <iomanip>  // defines the manipulator setw
 using namespace std;
-
-int prevLives = 3;
 
 GameWorld* createStudentWorld(string assetDir)
 {
@@ -26,15 +23,17 @@ StudentWorld::~StudentWorld()
 }
 
 // get a pointer to the vector of actors
+/*
 vector<Actor*>* StudentWorld::getActorVector()
 {
     return &m_vActor;
 }
+*/
 
 NachenBlaster* StudentWorld::getNachenBlaster()
 {
     return m_NachenBlaster;
-}
+} // !!!!! Need it?
 
 int StudentWorld::init()
 {
@@ -63,18 +62,20 @@ int StudentWorld::move()
         {
             (*a)->doSomething();
             
-            if(getLives() != prevLives) // NachenBlaster died during this tick
+            if(m_NachenBlaster->isAlive() == false)
             {
-                prevLives = getLives();
+                decLives();
                 return GWSTATUS_PLAYER_DIED;
             }
             
             if(m_AlienDestroyed >= 6+4*getLevel())
             {
+                /*
                 if((*a)->isSnagglegon())
                     increaseScore(1000);
                 else
                     increaseScore(250);
+                 */
                 // advanceToNextLevel();
                 return GWSTATUS_FINISHED_LEVEL;
             }
@@ -92,18 +93,17 @@ int StudentWorld::move()
             delete *a2; // delete the pointer first
             a2 = m_vActor.erase(a2); // delete the object that the pointer pointed to
         }
-        else a2++;
+        else
+            a2++;
     }
     
     // Possibly create a new star on the far right side on a 1/15 chance
     if (randInt(1, 15) == 1)
         m_vActor.push_back(new Star(this, VIEW_WIDTH-1));
     
-    // introduce new alien ship
+    // variables for creating new aliens
     int R = 6 + 4 * getLevel() - m_AlienDestroyed; // Remaining alien ships that must be destroyed before the level is completed
     int M = 4 + (0.5 * getLevel()); // maximum number of alien ships that should be on the screen at a time
-    
-    
     int C = 0; // current number of alien ships on the screen
     for(a = m_vActor.begin(); a != m_vActor.end();a++)
     {
@@ -111,6 +111,7 @@ int StudentWorld::move()
             C++;
     }
     
+    // create new aliens
     if(C < min(M,R))
     {
         int S1 = 60;
@@ -118,11 +119,11 @@ int StudentWorld::move()
         int S3 = 5 + getLevel() * 10;
         int S = S1+S2+S3;
         
-        if(randInt(1, 2) == 1) // TODO: placeholder for probability S1/S
+        if(randInt(1, S) < S1) // probability S1/S
             m_vActor.push_back(new Smallgon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
-        if(randInt(1, 3) == 1) // TODO: placeholder for probability S2/S
+        if(randInt(1, S) < S2) // probability S2/S
             m_vActor.push_back(new Smoregon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
-        if(randInt(1, 4) == 1) // TODO: placeholder for probability S3/S
+        if(randInt(1, S) < S3) // probability S3/S
             m_vActor.push_back(new Snagglegon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
     }
 
@@ -144,10 +145,9 @@ void StudentWorld::cleanUp()
         delete m_NachenBlaster;
         m_NachenBlaster = nullptr;
     }
-     */
+    */
     
-    // delete all other actors, which include NachenBlaster
-    
+    // delete all other actors
     vector<Actor*>::iterator a;
     for(a = m_vActor.begin(); a != m_vActor.end(); )
     {
@@ -173,7 +173,7 @@ Alien* StudentWorld::getOneCollidingAlien(const Actor* a) const
             double euclidian_dist = sqrt(xsquare + ysquare);
             if(euclidian_dist < 0.75 * (a->getRadius() + (*b)->getRadius()))
                 return (Alien *)*b; // cast an actor pointer into an alien pointer
-            // b is an iterator. Need to return a pointer. Get the object, an actor pointer.
+            // b is an iterator. Need to return a pointer. Get the object, an actor pointer. !!!!!!Do I cast it to Alien??
         }
     }
     return nullptr;
@@ -196,7 +196,7 @@ NachenBlaster* StudentWorld::getCollidingPlayer(const Actor* a) const
 // Is the player in the line of fire of a, which might cause a to attack?
 bool StudentWorld::playerInLineOfFire(const Actor* a) const
 {
-    if(a->getY() == m_NachenBlaster->getY())
+    if(a->getY() == m_NachenBlaster->getY() && m_NachenBlaster->getY()-4 <= a->getY() && m_NachenBlaster->getY()+4 >= a->getY())
         return true;
     return false;
 }
