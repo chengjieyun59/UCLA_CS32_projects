@@ -163,7 +163,6 @@ public:
     virtual bool isFiredByNachenBlaster() const;
     virtual void doSomething();
     void doCommonThingOnce();
-    virtual void attacked();
     
 private:
     virtual void doDiffProjectileThing() = 0;
@@ -233,7 +232,7 @@ public:
     Goodie(StudentWorld* World, int imageID, double startX, double startY);
     virtual ~Goodie();
     virtual void doSomething();
-    virtual void attacked();
+    void processCollision();
     
 private:
     virtual void doDiffGoodieThing() = 0;

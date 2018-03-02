@@ -24,14 +24,6 @@ public:
     vector<Actor*>* getActorVector();
     NachenBlaster* getNachenBlaster();
 
-    /* Hint:
-     void zapAllZappableActors(int x, int y) {
-        for (p = actors.begin(); p != actors.end(); p++)
-            if (p->isAt(x,y) && p->isZappable())
-                p->zap();
-     }
-     */
-    
     // If there's at least one alien that's collided with a, return
     // a pointer to one of them; otherwise, return a null pointer.
     Alien* getOneCollidingAlien(const Actor* a) const;

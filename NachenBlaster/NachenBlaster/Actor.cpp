@@ -168,13 +168,13 @@ void NachenBlaster::processCollision()
 
 void NachenBlaster::sufferDamage(double amt, int cause)
 {
-    if (cause == 0)
+    if (cause == HIT_BY_SHIP)
         getWorld()->playSound(SOUND_DEATH);
     else
         getWorld()->playSound(SOUND_BLAST);
     incHitPt(-amt);
     if(getHitPt() <= 0)
-        getWorld()->decLives();
+        setAlive("dead"); // instead of getWorld()->decLives();
 }
 
 void NachenBlaster::setCabbagePt(int newCabbagePt){m_cabbagePt = newCabbagePt;}
@@ -254,7 +254,7 @@ void Alien::doSomething()
 
 void Alien::sufferDamage(double amt, int cause)
 {
-    if(cause == 1)
+    if(cause == HIT_BY_PROJECTILE)
         incHitPt(-amt);
 
     if(damageCollidingPlayer(m_damageAmt) == true) // means the alien collides with the nachenblaster
@@ -279,8 +279,6 @@ bool Alien::damageCollidingPlayer(double amt)
     
     if(n != nullptr) // means the alien collides with the nachenblaster
     {
-        // Explosion* e = new Explosion(getWorld(), getX(), getY(), 1.0);
-        // getWorld()->addActor(e); // explosion here is only of size 1
         n->sufferDamage(m_damageAmt, 0);
         return true;
     }
@@ -290,9 +288,9 @@ bool Alien::damageCollidingPlayer(double amt)
 void Alien::possiblyDropGoodie()
 {
     // There is a 50% chance that a Smoregon will be a Repair Goodie, and a 50% chance that it will be a Flatulence Torpedo Goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-    if(isSmoregon() && randInt(1, 1) == 1) //1,3
+    if(isSmoregon() && randInt(1, 3) == 1) //1/3
     {
-        if(randInt(1, 1) == 1)// 1,2
+        if(randInt(1, 2) == 1)// 1/2
         {
             RGoodie* a = new RGoodie(getWorld(), IID_REPAIR_GOODIE, getX(), getY());
             getWorld()->addActor(a);
@@ -305,7 +303,7 @@ void Alien::possiblyDropGoodie()
     }
     
     // There is a 1/6 chance that the destroyed Snagglegon ship will drop an Extra Life goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-    if(isSnagglegon() && randInt(1, 1) == 1) //1,6
+    if(isSnagglegon() && randInt(1, 6) == 1) //1/6
     {
         ELGoodie* a = new ELGoodie(getWorld(), IID_LIFE_GOODIE, getX(), getY());
         getWorld()->addActor(a);
@@ -456,9 +454,6 @@ void Projectile::doSomething()
     doCommonThingOnce();
 }
 
-void Projectile::attacked()
-{}
-
 Cabbage::Cabbage(StudentWorld* World, double startX, double startY)
 :Projectile(World, IID_CABBAGE, startX, startY, 0, 2.0, 0.0, false)
 // Projectile(World, IID_CABBAGE, startX, startY, 0, damageAmt, deltaX, rotates)
@@ -535,30 +530,24 @@ void Goodie::doSomething()
 {
     if(isAlive() == false)
         return;
-    
-    if(getWorld()->getCollidingPlayer(this) != nullptr)
-    {
-        getWorld()->increaseScore(100);
-        setAlive("dead");
-        getWorld()->playSound(SOUND_GOODIE);
-        doDiffGoodieThing();
-        return;
-    }
-    
+    processCollision();
     moveTo(getX()-0.75, getY()-0.75);
-    
-    if(getWorld()->getCollidingPlayer(this) != nullptr)
+    processCollision();
+}
+
+void Goodie::processCollision()
+{
+    NachenBlaster* n = getWorld()->getCollidingPlayer(this);
+
+    if(n != nullptr) // means the goodie collides with the nachenblaster
     {
-        getWorld()->increaseScore(100);
+        getWorld()->increaseScore(100); // TODO: this if statement is never entered
         setAlive("dead");
         getWorld()->playSound(SOUND_GOODIE);
         doDiffGoodieThing();
         return;
     }
 }
-
-void Goodie::attacked()
-{}
 
 ELGoodie::ELGoodie(StudentWorld* World, int imageID, double startX, double startY)
 :Goodie(World, IID_LIFE_GOODIE, startX, startY)
