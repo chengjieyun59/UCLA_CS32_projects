@@ -493,7 +493,7 @@ void Projectile::doSomething()
 }
 
 Cabbage::Cabbage(StudentWorld* World, double startX, double startY)
-:Projectile(World, IID_CABBAGE, startX, startY, 0, 2.0, 8.0, true)
+:Projectile(World, IID_CABBAGE, startX, startY, 0, 2.0, 8.0, false)
 // Projectile(World, IID_CABBAGE, startX, startY, 0, damageAmt, deltaX, rotates)
 {}
 
@@ -502,14 +502,14 @@ Cabbage::~Cabbage(){}
 bool Cabbage::isFiredByNachenBlaster() const {return true;}
 
 Turnip::Turnip(StudentWorld* World, double startX, double startY)
-:Projectile(World, IID_TURNIP, startX, startY, 0, 2.0, -6.0, true)
+:Projectile(World, IID_TURNIP, startX, startY, 0, 2.0, -6.0, false)
 {}
 
 Turnip::~Turnip()
 {}
 
 Torpedo::Torpedo(StudentWorld* World, double startX, double startY, int dir, double deltaX)
-:Projectile(World, IID_TORPEDO, startX, startY, 0, 8.0, deltaX, false)
+:Projectile(World, IID_TORPEDO, startX, startY, 0, 8.0, deltaX, true)
 {}
 
 Torpedo::~Torpedo()
@@ -610,5 +610,4 @@ void FTGoodie::doDiffGoodieThing()
 {
     getWorld()->getNachenBlaster()->incTorpedoPt(5);
 }     // Inform the NachenBlaster object that it just received 5 Flatulence Torpedoes
-
 

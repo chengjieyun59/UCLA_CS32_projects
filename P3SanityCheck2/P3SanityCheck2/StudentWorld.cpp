@@ -115,7 +115,6 @@ int StudentWorld::move()
         int S2 = 20 + getLevel() * 5;
         int S3 = 5 + getLevel() * 10;
         int S = S1+S2+S3;
-        
         int rand = randInt(1, S);
         
         if(rand <= S1) // probability S1/S
@@ -123,12 +122,12 @@ int StudentWorld::move()
             m_vActor.push_back(new Smallgon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
             m_C++;
         }
-        else if(rand <= S2 + S1) // probability S2/S
+        else if(rand <= S1 + S2) // probability S2/S
         {
             m_vActor.push_back(new Smoregon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
             m_C++;
         }
-        else // if(randInt(1, S) <= S3 + S2 + S1) // probability S3/S
+        else // if(rand <= S1 + S2 + S3) // probability S3/S
         {
             m_vActor.push_back(new Snagglegon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
             m_C++;
@@ -220,4 +219,3 @@ void StudentWorld::recordAlienDestroyed()
     m_C--;
     m_AlienDestroyed++;
 }
-
