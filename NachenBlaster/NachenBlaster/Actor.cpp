@@ -5,14 +5,16 @@ using namespace std;
 
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
 
+// TODO: replace the hard code of the damageAmt of the projectile (8.0 and 2.0)
+// TODO: when NachenBlaster hit the alien ship, make an explosion
+// TODO: when NachenBlaster hit a goodie, why was a life lost?
+
 Actor::Actor(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth)
 :GraphObject(imageID, startX, startY, dir, size, depth), m_isAlive(true), m_world(World), m_createWhat("nothing")
 {}
 
-// TODO : don't delete star when NB bump into them
-// TODO: ships go off the top and bottom. They shouldn't
 Actor::~Actor()
-{} // delete getWorld(); // wrong!!!! Delete all the memories that only this class made. Or C++ will try to delete it twice. Bad pointer execution
+{}
 
 bool Actor::isInBound(int x, int y) const
 {
@@ -43,15 +45,11 @@ bool Actor::isStar() const {return false;}
 bool Actor::isTorpedo() const {return false;}
 bool Actor::isSmoregon() const {return false;}
 bool Actor::isSnagglegon() const {return false;}
-void Actor::setCreate(string createWhat) {m_createWhat = createWhat;}
-string Actor::getCreate() const {return m_createWhat;}
-// void Actor::setDamageAmt(double damageAmt) {m_damageAmt = damageAmt;} // TODO: implement getDamageAmt for all actors
-// double Actor::getDamageAmt() const {return m_damageAmt;} // TODO: implement getDamageAmt for all actors
 
 StudentWorld* Actor::getWorld() const
 {
     return m_world;
-} // a method in one of its base classes that returns a pointer to a StudentWorld), and then uses this pointer to call the getKey() method.
+} // a method in one of its base classes that returns a pointer to a StudentWorld), and then uses this pointer to call any methods in StudentWorld.cpp
 
 Star::Star(StudentWorld* World, double startX)
 :Actor(World, IID_STAR, startX, randInt(0, VIEW_HEIGHT-1), 0, randInt(5, 50)/100.0, 3)
@@ -60,7 +58,7 @@ Star::Star(StudentWorld* World, double startX)
 Star::~Star()
 {}
 
-bool Star::isStar() const {return false;}
+bool Star::isStar() const {return true;}
 
 void Star::doSomething()
 {
@@ -74,13 +72,10 @@ DamageableObject::DamageableObject(StudentWorld* world, int imageID, double star
 double DamageableObject::getHitPt() const {return m_hitPt;}
 void DamageableObject::incHitPt(double amt) {m_hitPt = m_hitPt + amt;} // Increase this actor's hit points by amt.
 
-// This actor suffers an amount of damage caused by being hit by either
-// a ship or a projectile (see constants above).
 void DamageableObject::sufferDamage(double amt, int cause)
 {
-    m_hitPt = m_hitPt - amt;
-    // TODO: const int HIT_BY_SHIP = 0; & const int HIT_BY_PROJECTILE = 1;
-}
+    m_hitPt = m_hitPt - amt; // TODO: const int HIT_BY_SHIP = 0; & const int HIT_BY_PROJECTILE = 1;
+} // This actor suffers an amount of damage caused by being hit by either a ship or a projectile (see constants above).
 
 NachenBlaster::NachenBlaster(StudentWorld* World)
  :DamageableObject(World, IID_NACHENBLASTER, 0, 128, 0, 1.0, 0, 50), m_cabbagePt(30), m_torpedoPt(0)
@@ -107,7 +102,7 @@ void NachenBlaster::doSomething()
                 case KEY_PRESS_SPACE:
                     if(getCabbagePt() >= 5)
                     {
-                        // used method 1 before, but there was a lot of code in void StudentWorld::addActor(Actor* a)
+                        // Method 1: used this before, but there was a lot of code in void StudentWorld::addActor(Actor* a)
                         // setCreate("cabbage");
                         
                         // method 2:
@@ -116,7 +111,6 @@ void NachenBlaster::doSomething()
                         getWorld()->playSound(SOUND_PLAYER_SHOOT);
                         setCabbagePt(getCabbagePt() - 5);
                     } break;
-                    
                 case KEY_PRESS_TAB:
                     if(getTorpedoPt() > 0)
                     {
@@ -124,31 +118,18 @@ void NachenBlaster::doSomething()
                         getWorld()->addActor(a);
                         getWorld()->playSound(SOUND_TORPEDO);
                         setTorpedoPt(getTorpedoPt() - 1);
-                    }
-                    break;
-                    
+                    } break;
                 case KEY_PRESS_LEFT:   if(isInBound(x-6, y)) moveTo(x-6, y); break;
                 case KEY_PRESS_RIGHT:  if(isInBound(x+6, y)) moveTo(x+6, y); break;
-                case KEY_PRESS_DOWN:   if(isInBound(x, y-6)) moveTo(x, y-6); break;
-                case KEY_PRESS_UP:     if(isInBound(x, y+6)) moveTo(x, y+6); break;
-                    // TODO: case KEY_PRESS_ESCAPE: ; break;
-                    
-                default:
-                    break;
+                case KEY_PRESS_DOWN:   if(isInBound(x, y-6) && y-6 < VIEW_HEIGHT && y-6 >= 0) moveTo(x, y-6); break;
+                case KEY_PRESS_UP:     if(isInBound(x, y+6) && y+6 < VIEW_HEIGHT && y+6 >= 0) moveTo(x, y+6); break;
+                default: break;
             }
         }
         processCollision();
     }
-    
     if (getCabbagePt() < 30)
         setCabbagePt(getCabbagePt() + 1);
-}
-
-void NachenBlaster::incHitPt(double amt)
-{
-    // TODO
-    DamageableObject::incHitPt(amt);
-    // display text?
 }
 
 void NachenBlaster::processCollision()
@@ -161,7 +142,7 @@ void NachenBlaster::processCollision()
             continue;
         
         NachenBlaster* n = getWorld()->getCollidingPlayer(*a);
-
+            
         if (n != nullptr) {
             if((*a)->isAlien())
             {
@@ -170,6 +151,8 @@ void NachenBlaster::processCollision()
                     sufferDamage(5, 0); // collide with a smallgon or snoregon
                 else
                     sufferDamage(15, 0); // collide with a snagglegon
+                Explosion* e = new Explosion(getWorld(), getX(), getY(), 1.0);
+                getWorld()->addActor(e); // TODO: Why wasn't any explosion created?
             }
             else if((*a)->isProjectile())
             {
@@ -189,21 +172,13 @@ void NachenBlaster::sufferDamage(double amt, int cause)
         getWorld()->playSound(SOUND_DEATH);
     else
         getWorld()->playSound(SOUND_BLAST);
-
     incHitPt(-amt);
     if(getHitPt() <= 0)
-    {
         getWorld()->decLives();
-        //getWorld()->advanceToNextLevel();
-    }
 }
-
-//void NachenBlaster::setHealthPt(int newHealthPt){m_healthPt = newHealthPt;}
-//int NachenBlaster::getHealthPt() const {return m_healthPt;}
 
 void NachenBlaster::setCabbagePt(int newCabbagePt){m_cabbagePt = newCabbagePt;}
 int NachenBlaster::getCabbagePt() const {return m_cabbagePt;}
-
 void NachenBlaster::setTorpedoPt(int newTorpedoPt){m_torpedoPt = newTorpedoPt;}
 int NachenBlaster::getTorpedoPt() const {return m_torpedoPt;}
 
@@ -216,11 +191,9 @@ Explosion::~Explosion()
 
 void Explosion::doSomething()
 {
+    // First four powers of 1.5: 1.5, 2.25, 3.375, 5.0625
     if (getSize() < 6.0)
-    {
         setSize(1.5 * getSize());
-    } // First four powers of 1.5: 1.5, 2.25, 3.375, 5.0625
-    
     if (getSize() == 5.0625)
         setAlive("dead");
 }
@@ -248,30 +221,22 @@ void Alien::doSomething()
     if(isAlive() == false)
         return;
     
-    // 4.
     if(getY() >= VIEW_HEIGHT-1 || getY() <= 0 || m_flightPlanLength == 0)
     {
         if(getY() >= VIEW_HEIGHT-1)
-            setDeltaY(-1.0); // If the Smallgon’s or Smoregon's y coordinate is greater than or equal to VIEW_HEIGHT-1, then the Smallgon will set its travel direction to down and left.
-        
+            setDeltaY(-1.0); // hit top, go down
         else if (getY() <= 0)
-            setDeltaY(1.0);
-        
+            setDeltaY(1.0); // hit bottom, go up
         else if (!isSnagglegon() && m_flightPlanLength == 0)
-            setDeltaY(randInt(-1, 1));
-        
+            setDeltaY(randInt(-1, 1)); // with 1/3 change each, go up, down, or directly left
         if(!isSnagglegon())
             m_flightPlanLength = randInt(1, 32);
     }
-    
-    // 6.
     move();
     m_flightPlanLength--;
     
-    // 3.
     damageCollidingPlayer(m_damageAmt);
 
-    // 5.
     if (getWorld()->getNachenBlaster()->getX() < getX() && getWorld()->getNachenBlaster()->getY()-4 <= getY() && getWorld()->getNachenBlaster()->getY()+4 >= getY())
     {
         if(!isSnagglegon() && randInt(1, (20/getWorld()->getLevel())+5) == 1)
@@ -284,9 +249,6 @@ void Alien::doSomething()
         doDiffAlienThing();
     }
     
-    
-    
-    // 7.
     damageCollidingPlayer(m_damageAmt);
 }
 
@@ -306,34 +268,31 @@ void Alien::sufferDamage(double amt, int cause)
     }
 }
 
-// Move the player by the current speed in the direction indicated
-// by the x and y deltas.
 void Alien::move()
 {
     moveTo(getX() - 1.0 * m_speed, getY() + m_deltaY * m_speed);
-}
+} // Move the player by the current speed in the direction indicated by the x and y deltas.
 
-// If this alien collided with the player, damage the player and return
-// true; otherwise, return false.
 bool Alien::damageCollidingPlayer(double amt)
 {
     NachenBlaster* n = getWorld()->getCollidingPlayer(this);
     
     if(n != nullptr) // means the alien collides with the nachenblaster
     {
+        // Explosion* e = new Explosion(getWorld(), getX(), getY(), 1.0);
+        // getWorld()->addActor(e); // explosion here is only of size 1
         n->sufferDamage(m_damageAmt, 0);
         return true;
     }
     return false;
-}
+} // If this alien collided with the player, damage the player and return true; otherwise, return false.
 
-// If this alien drops goodies, drop one with the appropriate probability.
 void Alien::possiblyDropGoodie()
 {
-
-    if(isSmoregon() && randInt(1, 3) == 1)
+    // There is a 50% chance that a Smoregon will be a Repair Goodie, and a 50% chance that it will be a Flatulence Torpedo Goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
+    if(isSmoregon() && randInt(1, 1) == 1) //1,3
     {
-        if(randInt(1, 2) == 1)
+        if(randInt(1, 1) == 1)// 1,2
         {
             RGoodie* a = new RGoodie(getWorld(), IID_REPAIR_GOODIE, getX(), getY());
             getWorld()->addActor(a);
@@ -343,23 +302,26 @@ void Alien::possiblyDropGoodie()
             FTGoodie* a = new FTGoodie(getWorld(), IID_TORPEDO_GOODIE, getX(), getY());
             getWorld()->addActor(a);
         }
-    } // If a Snoregon decides to drop a goodie, there is a 50% chance that it will be a Repair Goodie, and a 50% chance that it will be a Flatulence Torpedo Goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
+    }
     
-    if(isSnagglegon() && randInt(1, 6) == 1)
+    // There is a 1/6 chance that the destroyed Snagglegon ship will drop an Extra Life goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
+    if(isSnagglegon() && randInt(1, 1) == 1) //1,6
     {
         ELGoodie* a = new ELGoodie(getWorld(), IID_LIFE_GOODIE, getX(), getY());
         getWorld()->addActor(a);
-    }// There is a 1/6 chance that the destroyed Snagglegon ship will drop an Extra Life goodie. The goodie must be added to the space field at the same x,y coordinates as the destroyed ship.
-}
+    }
+} // If this alien drops goodies, drop one with the appropriate probability.
 
 //////////////
 // Smallgon //
 //////////////
 
 Smallgon::Smallgon(StudentWorld* World, double startX, double startY)
-:Alien(World, IID_SMALLGON, startX, startY, 5.0, 5.0, -1.0, 0.0, 2.0, 250)
+:Alien(World, IID_SMALLGON, startX, startY, 0.0, 5.0, -1.0, 0.0, 2.0, 250)
 //Alien(World, IID_SMALLGON, startX, startY, (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1)), damageAmt, deltaX, deltaY, 2.0, scoreValue)
-{}
+{
+    incHitPt(5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1));
+}
 
 Smallgon::~Smallgon()
 {}
@@ -372,13 +334,15 @@ void Smallgon::doDiffAlienThing()
 //////////////
 
 Smoregon::Smoregon(StudentWorld* World, double startX, double startY)
-:Alien(World, IID_SMOREGON, startX, startY, 5.0, 5.0, -1.0, 0.0, 2.0, 250)
-{} // TODO: first 5.0 is (5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1))
+:Alien(World, IID_SMOREGON, startX, startY, 0.0, 5.0, -1.0, 0.0, 2.0, 250)
+{
+    incHitPt(5.0*(1.0+(getWorld()->getLevel()-1.0)*0.1));
+}
 
 Smoregon::~Smoregon()
 {}
 
-bool Smoregon::isSmoregon() const {return false;}
+bool Smoregon::isSmoregon() const {return true;}
 
 void Smoregon::doDiffAlienThing()
 {
@@ -395,21 +359,24 @@ void Smoregon::doDiffAlienThing()
 ////////////////
 
 Snagglegon::Snagglegon(StudentWorld* World, double startX, double startY)
-:Alien(World, IID_SNAGGLEGON, startX, startY, 10.0, 15.0, -1.0, 0.0, 1.75, 1000)
-{}// TODO: (10.0*(1.0+(getWorld()->getLevel()-1.0)*0.1))
+:Alien(World, IID_SNAGGLEGON, startX, startY, 0.0, 15.0, -1.0, -1.0, 1.75, 1000)
+{
+    incHitPt(10.0*(1.0+(getWorld()->getLevel()-1.0)*0.1));
+}
 
 Snagglegon::~Snagglegon()
 {}
 
-bool Snagglegon::isSnagglegon() const {return false;}
+bool Snagglegon::isSnagglegon() const {return true;}
 
 void Snagglegon::doDiffAlienThing()
 {
+    // Fire a Torpedo toward the NachenBlaster
     if(randInt(1, (15/getWorld()->getLevel())+10) == 1)
     {
-        AlienLaunchedTorpedo* a = new AlienLaunchedTorpedo(getWorld(), getX()-14, getY()); // Fire a Torpedo toward the NachenBlaster.
+        AlienLaunchedTorpedo* a = new AlienLaunchedTorpedo(getWorld(), getX()-14, getY());
         getWorld()->addActor(a);
-        getWorld()->playSound(SOUND_TORPEDO); //
+        getWorld()->playSound(SOUND_TORPEDO);
         return;
     }
 }
@@ -430,19 +397,16 @@ bool Projectile::isProjectile() const {return true;}
 
 void Projectile::doCommonThingOnce()
 {
-    // vector<Actor*>* m_vActor = getWorld()->getActorVector(); // TODO: Do I need this?
-    
+    // vector<Actor*>* m_vActor = getWorld()->getActorVector(); // Don't need this anymore
     if(isFiredByNachenBlaster())
     {
         Alien* a = getWorld()->getOneCollidingAlien(this);
-        
         if(a != nullptr) // means the projectile collides with an alien
         {
             if(isTorpedo())
                 a->sufferDamage(8.0, 1);
             else
                 a->sufferDamage(2.0, 1);
-
             if(a->getHitPt() <= 0)
             {
                 // if the alien dies, increase the player's score

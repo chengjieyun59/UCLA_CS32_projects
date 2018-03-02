@@ -9,9 +9,7 @@ using namespace std;
 const int HIT_BY_SHIP = 0;
 const int HIT_BY_PROJECTILE = 1;
 
-//class GameWorld;
 class StudentWorld;
-//class GameController;
 
 class Actor: public GraphObject
 {
@@ -29,22 +27,12 @@ public:
     virtual bool isSmoregon() const;
     virtual bool isSnagglegon() const;
     virtual void setAlive(std::string aliveStatus);
-    void setCreate(string createWhat);
-    string getCreate() const;
     StudentWorld* getWorld() const;
-    
-    // GameController* getControl();
-    
-    // Move this actor to x,y if onscreen; otherwise, don't move and mark
-    // this actor as dead.
-    // virtual void moveTo(double x, double y);
     
 private:
     bool m_isAlive;
     StudentWorld* m_world;
     string m_createWhat;
-    //GameController* m_control;
-    
 }; // Each actor has its own x,y location in space, its own internal state (e.g., a Snagglegon knows its location, what direction it’s moving, etc.) and its own special algorithms that control its actions in the game based on its own state and the state of the other objects in the world.
 
 class Star: public Actor
@@ -54,7 +42,7 @@ public:
     virtual ~Star();
     virtual void doSomething();
     virtual bool isStar() const;
-}; // page 26
+};
 
 class Explosion: public Actor
 {
@@ -62,24 +50,16 @@ public:
     Explosion(StudentWorld* World, double startX, double startY, double size);
     virtual ~Explosion();
     virtual void doSomething();
-    
-private:
-    
 };
 
 class DamageableObject : public Actor
 {
 public:
     DamageableObject(StudentWorld* world, int imageID, double startX, double startY, int dir, double size, int depth, double hitPoints);
-    // How many hit points does this actor have left?
+    
     double getHitPt() const;
-    
-    // Increase this actor's hit points by amt.
-    virtual void incHitPt(double amt);
-    
-    // This actor suffers an amount of damage caused by being hit by either
-    // a ship or a projectile (see constants above).
-    virtual void sufferDamage(double amt, int cause);
+    void incHitPt(double amt); // Increase this actor's hit points by amt.
+    virtual void sufferDamage(double amt, int cause); // This actor suffers an amount of damage caused by being hit by either a ship or a projectile (see constants above).
     
 private:
     double m_hitPt;
@@ -91,26 +71,19 @@ public:
     NachenBlaster(StudentWorld* world);
     virtual ~NachenBlaster();
     virtual void doSomething();
-    virtual void incHitPt(double amt);
     virtual void sufferDamage(double amt, int cause);
     void processCollision();
     virtual bool isNachenBlaster() const;
 
-    //void setHealthPt(int newHealthPt);
-    //int getHealthPt() const;
-    
     void setCabbagePt(int newCabbagePt);
     int getCabbagePt() const;
-    
     void setTorpedoPt(int newTorpedoPt);
     int getTorpedoPt() const;
     
 private:
-    int m_healthPt = 100; // TODO: verify with spec
     int m_cabbagePt;
     int m_torpedoPt;
-}; // the algorithm that controls the ship object is the user’s own brain and hand, and the keyboard
-// page 23-25
+};
 
 ///////////
 // Alien //
@@ -121,6 +94,7 @@ class Alien: public DamageableObject
 public:
     Alien(StudentWorld* World, int imageID, double startX, double startY, double hitPoint, double damageAmt, double deltaX, double deltaY, double speed, unsigned int scoreValue);
     virtual ~Alien();
+    
     virtual bool isAlien() const;
     void setDeltaY(double dy); // Set the player's y direction.
     double getDeltaY() const;
@@ -129,9 +103,8 @@ public:
     void setFlightPlanLength(double fpLength);
     double getDamageAmt() const;
 
-    virtual void doSomething(); // Hint: getWorld->zapAllZappableActors(getX(), getY());
+    virtual void doSomething();
     virtual void sufferDamage(double amt, int cause);
-    
     void move();
     virtual bool damageCollidingPlayer(double amt);
     virtual void possiblyDropGoodie();
@@ -153,7 +126,6 @@ public:
     
 private:
     virtual void doDiffAlienThing();
-    
 };
 
 class Smoregon: public Alien
@@ -165,7 +137,6 @@ public:
     
 private:
     virtual void doDiffAlienThing();
-
 };
 
 class Snagglegon: public Alien
@@ -177,7 +148,6 @@ public:
     
 private:
     virtual void doDiffAlienThing();
-
 };
 
 ////////////////
@@ -252,7 +222,6 @@ public:
 private:
     virtual void doDiffProjectileThing();
 };
-
 
 ////////////
 // Goodie //

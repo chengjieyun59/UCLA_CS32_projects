@@ -116,6 +116,7 @@ int StudentWorld::move()
         int S1 = 60;
         int S2 = 20 + getLevel() * 5;
         int S3 = 5 + getLevel() * 10;
+        int S = S1+S2+S3;
         
         if(randInt(1, 2) == 1) // TODO: placeholder for probability S1/S
             m_vActor.push_back(new Smallgon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
@@ -137,13 +138,16 @@ int StudentWorld::move()
 void StudentWorld::cleanUp()
 {
     // delete NachenBlaster player
+    /*
     if (m_NachenBlaster != nullptr)
     {
         delete m_NachenBlaster;
         m_NachenBlaster = nullptr;
     }
+     */
     
-    // delete all other actors
+    // delete all other actors, which include NachenBlaster
+    
     vector<Actor*>::iterator a;
     for(a = m_vActor.begin(); a != m_vActor.end(); )
     {
