@@ -16,7 +16,8 @@ bool Actor::isInBound(int x, int y) const
 {
     if (x < VIEW_WIDTH && x >= 0 && y >= 0 && y < VIEW_HEIGHT)
         return true;
-    return false;
+    else
+        return false;
 }
 
 void Actor::setAlive(string aliveStatus)

@@ -14,7 +14,7 @@ GameWorld* createStudentWorld(string assetDir)
 }
 
 StudentWorld::StudentWorld(string assetDir)
-: GameWorld(assetDir), m_NachenBlaster(nullptr), m_AlienDestroyed(0), m_C(0)// , m_vActor(0) // vectors have default constructors
+: GameWorld(assetDir), m_NachenBlaster(nullptr)// , m_vActor(0) // vectors have default constructors
 {}
 
 StudentWorld::~StudentWorld()
@@ -24,15 +24,24 @@ StudentWorld::~StudentWorld()
 
 // get a pointer to the vector of actors. No longer needed
 // vector<Actor*>* StudentWorld::getActorVector() {return &m_vActor;}
-
 NachenBlaster* StudentWorld::getNachenBlaster()
 {
     return m_NachenBlaster;
-} // !!!!! Need it?
+}
 
 int StudentWorld::init()
 {
     m_NachenBlaster = new NachenBlaster(this);
+    
+    // variables for creating new aliens
+    m_AlienDestroyed = 0;
+    m_CurrentAlienOnScreen = 0;
+    m_RemainingAlienToDestroy = 6 + 4 * getLevel() - m_AlienDestroyed; // Remaining alien ships that must be destroyed before the level is completed
+    m_MaxAlienOnScreen = 4 + (0.5 * getLevel()); // maximum number of alien ships that should be on the screen at a time
+    S1 = 60;
+    S2 = 20 + getLevel() * 5;
+    S3 = 5 + getLevel() * 10;
+    S = S1+S2+S3;
     
     // create 30 stars
     for (int i = 0; i < 30; i++)
@@ -74,6 +83,8 @@ int StudentWorld::move()
     {
         if((*a2)->isAlive() == false)
         {
+            if((*a2)->isAlien())
+                m_CurrentAlienOnScreen--;
             delete *a2; // delete the pointer first
             a2 = m_vActor.erase(a2); // delete the object that the pointer pointed to
         }
@@ -85,33 +96,28 @@ int StudentWorld::move()
     if (randInt(1, 15) == 1)
         m_vActor.push_back(new Star(this, VIEW_WIDTH-1));
     
-    // variables for creating new aliens
-    int R = 6 + 4 * getLevel() - m_AlienDestroyed; // Remaining alien ships that must be destroyed before the level is completed
-    int M = 4 + (0.5 * getLevel()); // maximum number of alien ships that should be on the screen at a time
+    m_RemainingAlienToDestroy = 6 + 4 * getLevel() - m_AlienDestroyed; // Update number of remaining alien ships
+    cout << m_CurrentAlienOnScreen; // TODO: delete this debugging code
     
     // create new aliens
-    if(m_C < min(M,R))
+    if(m_CurrentAlienOnScreen < min(m_MaxAlienOnScreen,m_RemainingAlienToDestroy))
     {
-        int S1 = 60;
-        int S2 = 20 + getLevel() * 5;
-        int S3 = 5 + getLevel() * 10;
-        int S = S1+S2+S3;
         int rand = randInt(1, S);
         
         if(rand <= S1) // probability S1/S
         {
             m_vActor.push_back(new Smallgon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
-            m_C++;
+            m_CurrentAlienOnScreen++;
         }
         else if(rand <= S1 + S2) // probability S2/S
         {
             m_vActor.push_back(new Smoregon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
-            m_C++;
+            m_CurrentAlienOnScreen++;
         }
         else // if(rand <= S1 + S2 + S3) // probability S3/S
         {
             m_vActor.push_back(new Snagglegon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
-            m_C++;
+            m_CurrentAlienOnScreen++;
         }
     }
     
@@ -195,7 +201,6 @@ void StudentWorld::addActor(Actor* a)
 // Record that one more alien on the current level has been destroyed.
 void StudentWorld::recordAlienDestroyed()
 {
-    m_C--;
     m_AlienDestroyed++;
 }
 
