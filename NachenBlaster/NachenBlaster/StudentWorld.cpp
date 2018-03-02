@@ -37,6 +37,8 @@ NachenBlaster* StudentWorld::getNachenBlaster()
 
 int StudentWorld::init()
 {
+    //m_NachenBlaster = new NachenBlaster(this);
+    
     NachenBlaster* nb = new NachenBlaster(this);
     m_NachenBlaster = nb;
     m_vActor.push_back(nb); // create a NachenBlaster and add to Actor vector
@@ -53,9 +55,11 @@ int StudentWorld::init()
 
 int StudentWorld::move()
 {
-    vector<Actor*>::iterator a;
+    // if(m_NachenBlaster->isAlive())
+        //m_NachenBlaster->doSomething();
     
     // if actor is alive, call the doSomething() for every Actor (NachenBlaster, Stars, aliens, etc.)
+    vector<Actor*>::iterator a;
     for(a = m_vActor.begin(); a != m_vActor.end();a++)
     {
         if((*a)->isAlive())
@@ -69,16 +73,7 @@ int StudentWorld::move()
             }
             
             if(m_AlienDestroyed >= 6+4*getLevel())
-            {
-                /*
-                if((*a)->isSnagglegon())
-                    increaseScore(1000);
-                else
-                    increaseScore(250);
-                 */
-                // advanceToNextLevel();
                 return GWSTATUS_FINISHED_LEVEL;
-            }
         }
     }
     // It is possible that one actor (e.g., a cabbage projectile) may destroy another actor (e.g., a Smallgon) during the current tick. If an actor has died earlier in the current tick, then the dead actor must not have a chance to do something during the current tick (since it’s dead).
@@ -129,7 +124,7 @@ int StudentWorld::move()
 
     // Update the Game Status Line
     stringstream s;
-    s <<"Lives: " << (int)getLives() << "  Health: " << (int)2*m_NachenBlaster->getHitPt() << "%  Score: " << (int)getScore() << " Level: " << (int)getLevel() << "  Cabbages: " << (int)10*m_NachenBlaster->getCabbagePt()/3 << "% Torpedoes: " << (int)m_NachenBlaster->getTorpedoPt();
+    s <<"Lives: " << (int)getLives() << "  Health: " << (int)m_NachenBlaster->healthPercentage() << "%  Score: " << (int)getScore() << " Level: " << (int)getLevel() << "  Cabbages: " << (int)m_NachenBlaster->cabbagePercentage() << "% Torpedoes: " << (int)m_NachenBlaster->getTorpedoPt();
     setGameStatText(s.str());
 
     return GWSTATUS_CONTINUE_GAME;
@@ -146,7 +141,6 @@ void StudentWorld::cleanUp()
         m_NachenBlaster = nullptr;
     }
     */
-    
     // delete all other actors
     vector<Actor*>::iterator a;
     for(a = m_vActor.begin(); a != m_vActor.end(); )

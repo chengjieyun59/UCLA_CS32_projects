@@ -21,7 +21,7 @@ public:
     virtual int move();
     virtual void cleanUp();
     
-    vector<Actor*>* getActorVector();
+    //vector<Actor*>* getActorVector();
     NachenBlaster* getNachenBlaster();
 
     // If there's at least one alien that's collided with a, return
