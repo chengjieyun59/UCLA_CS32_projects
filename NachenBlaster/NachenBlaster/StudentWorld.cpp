@@ -14,7 +14,7 @@ GameWorld* createStudentWorld(string assetDir)
 // Students:  Add code to this file, StudentWorld.h, Actor.h and Actor.cpp
 
 StudentWorld::StudentWorld(string assetDir)
-: GameWorld(assetDir), m_NachenBlaster(nullptr), m_AlienDestroyed(0)// , m_vActor(0) // vectors have default constructors
+: GameWorld(assetDir), m_NachenBlaster(nullptr), m_AlienDestroyed(0), m_C(0)// , m_vActor(0) // vectors have default constructors
 {}
 
 StudentWorld::~StudentWorld()
@@ -99,15 +99,17 @@ int StudentWorld::move()
     // variables for creating new aliens
     int R = 6 + 4 * getLevel() - m_AlienDestroyed; // Remaining alien ships that must be destroyed before the level is completed
     int M = 4 + (0.5 * getLevel()); // maximum number of alien ships that should be on the screen at a time
-    int C = 0; // current number of alien ships on the screen
+
+    /*
     for(a = m_vActor.begin(); a != m_vActor.end();a++)
     {
         if((*a)->isAlien())
             C++;
     }
+    */
     
     // create new aliens
-    if(C < min(M,R))
+    if(m_C < min(M,R))
     {
         int S1 = 60;
         int S2 = 20 + getLevel() * 5;
@@ -115,11 +117,20 @@ int StudentWorld::move()
         int S = S1+S2+S3;
         
         if(randInt(1, S) < S1) // probability S1/S
+        {
             m_vActor.push_back(new Smallgon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
+            m_C++;
+        }
         if(randInt(1, S) < S2) // probability S2/S
+        {
             m_vActor.push_back(new Smoregon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
+            m_C++;
+        }
         if(randInt(1, S) < S3) // probability S3/S
+        {
             m_vActor.push_back(new Snagglegon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
+            m_C++;
+        }
     }
 
     // Update the Game Status Line
@@ -204,5 +215,6 @@ void StudentWorld::addActor(Actor* a)
 // Record that one more alien on the current level has been destroyed.
 void StudentWorld::recordAlienDestroyed()
 {
+    m_C--;
     m_AlienDestroyed++;
 }

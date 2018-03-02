@@ -45,6 +45,7 @@ private:
     vector<Actor*> m_vActor;
     NachenBlaster* m_NachenBlaster;
     int m_AlienDestroyed;
+    int m_C; // current number of alien ships on the screen
 };
 
 #endif // STUDENTWORLD_H_
