@@ -1,30 +1,323 @@
-Jie-Yun Cheng 004460366
+Jie-Yun Cheng
+004460366
 
-1. A high-level description of each of your public member functions in each of your classes, and why you chose to define each member function in its host class; also explain why (or why not) you decided to make each function virtual or pure virtual. For example, “I chose to define a pure virtual version of the sneeze() function in my base Actor class because all actors in NachenBlaster are able to sneeze, and each type of actor sneezes in a different way.”
+
+2. 
+After 49 hours of coding, fixing hundreds of bugs, and having dreams about coding the project… plus 6 hours of office hours, 4 TA’s help, and 41 GitHub commits (https://github.com/chengjieyun59/UCLA_CS32_projects/commits/master), I’m proud to say that I believe that I have successfully finished all functionalities in the 51-page spec, which I’ve read around a dozen times in detail. My code passes the sanity check and never crashes as far as I’ve tried.
+
+
+3.
+I think every behavior has been defined pretty clearly in the spec or is clearly shown in the example game that I played. So I didn’t have to make any assumptions, but I did make some decisions. For the parts where two actors collide, I made sure that I only choose one class to implement it, so I didn’t accidentally make things happen twice. So I just picked the ones that were easier to implement because of the getOneCollidingAlien and getCollidingPlayer functions in StudentWorld.
+
+4.
+The sanity check was one of the ways I tested my program. When the sanity check for part 2 was posted, my project failed the sanity test. At first, it was creating more one alien per tick, because of a misunderstanding of the English used in the spec. Once that’s fixed, it included a BAD_EXE error message and couldn’t compile when going to Move 2 Part of the sanity check. I realized that I was trying to access Nachenblaster even though it has become a null pointer. 
+
+
+
+1. A high-level description of each of your public member functions in each of your classes, and why you chose to define each member function in its host class; also explain why (or why not) you decided to make each function virtual or pure virtual. For example, “I chose to define a pure virtual version of the sneeze() function in my base Actor class because all actors in Nachenblauter are able to sneeze, and each type of actor sneezes in a different way.”
+
+My overall Actor inheritance hierarchy looks like this:
+GraphObject
+    Actor
+        Star
+        Explosion
+        DamageableObject
+            Player
+            Alien
+                Smallgon
+                Smoregon
+                Snagglegon
+        Projectile
+            Cabbage
+            Turnip
+            Torpedo
+                PlayerLaunchedTorpedo
+                AlienLaunchedTorpedo
+        Goodie
+            ExtraLifeGoodie
+            RepairGoodie
+            TorpedoGoodie
 
 ///////////
 // Actor //
 ///////////
 
-The Actor class is derived from the GraphObject class. 
+// Actor constructor
+    Actor(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth);
+
+// the destructor of any base classes should always be virtual
+    virtual ~Actor();
+
+// if the actor is within the screen, return true. This can be used to decide when to destroy actors that go off the screen.
+    bool isInBound(int x, int y) const;
+
+// this helps me check if an actor is alive. If not, don’t make it doSomething
+    bool isAlive() const;
+
+// All the following accessors function are helpful to see what to delete (Ex: star), what specific flight plan needs to be chosen (Ex: isSmoregon(), isSnagglegon()) in the base class function implementation directly (Ex: Alien). Of course, all these return false here, but true in the respective subclasses.
+    virtual bool isAlien() const;
+    virtual bool isStar() const;
+    virtual bool isNachenBlaster() const;
+    virtual bool isSmoregon() const;
+    virtual bool isSnagglegon() const;
+    virtual bool isProjectile() const;
+    virtual bool isTorpedo() const;
+
+// This is a very important function that returns a pointer to the StudentWorld, so that I can access any public member functions in the StudentWorld from my Actor class, simply by using getWorld()->functionName();
+    StudentWorld* getWorld() const;
+
+// This makes me able to set an actor dead, so it can later be deleted
+    virtual void setAlive(std::string aliveStatus);
+
+// I made this pure virtual function, because Actor class is never meant to be called directly, and whatever I type in the implementation would have been dummy code. Every actor must doSomething anyway, and this ensures that I always define this function in Actor’s subclasses, or there would be an error.
+    virtual void doSomething() = 0;
+
+//////////
+// Star //
+//////////
+
+// Star constructor
+    Star(StudentWorld* World, double startX);
+
+// the destructor here doesn’t have to be virtual, but just to stay safer, in case I ever want to create a subclass of Star, I made it virtual here. In fact, I made all my destructors that inherit from the Actor base class virtual. And I will stop talking about destructors in other Actor subclasses.
+    virtual ~Star();
+
+// the stars just have to keep moving left, and make stars dead if it goes off the left side of the screen
+    virtual void doSomething();
+
+///////////////
+// Explosion //
+///////////////
+
+// Explosion constructor
+    Explosion(StudentWorld* World, double startX, double startY, double size);
+
+// the size of the explosion has to increase from 1.5 to 2.25 to 3.375 to 5.0625 in four ticks, and then set it dead.
+    virtual void doSomething();
+
+////////////////////////
+// Damageable Objects //
+////////////////////////
 
 
+    DamageableObject(StudentWorld* world, int imageID, double startX, double startY, int dir, double size, int depth, double hitPoints);
+
+// Nachenblaster, Smallgon, Smoregon, and Snagglegon are all objects that can be damaged, so they all need a hit point. So why not make this hit point accessible with these two functions? 
+    double getHitPt() const; // Get the hit points
+    void setHitPt(double amt); // Set the hit points to be amt
+
+// These two functions are made virtual so they can be redefined in nachenblaster and/ or the aliens
+    virtual void incHitPt(double amt); // Increase the actor's hit points by amt
+    virtual void sufferDamage(double amt, int cause); // Decrease the actor's hit points by amt
+
+///////////////////
+// NachenBlaster //
+///////////////////
+
+    NachenBlaster(StudentWorld* world);
+
+    
+// These are specific things that only a Nachenblaster has, so they have to be in here
+    int getCabbagePt() const;
+    int getTorpedoPt() const;
+    int cabbagePercentage() const;
+    int healthPercentage() const;
+    void setCabbagePt(int newCabbagePt);
+    void incTorpedoPt(int newTorpedoPt);
+
+// This is redefined from the DamageableObject class, because Nachenblaster’s hit point cannot exceed 50
+    virtual void incHitPt(double amt); // Increase this actor's hit points by amt.
+
+// I choose to let Nachenblaster handle playing sound blast when it’s hit by a projectile as opposed to letting projectile handle it. And I made sure to decrease points, and update alive status if the hit point goes to zero 
+    virtual void sufferDamage(double amt, int cause);
+
+// if the user types certain keys, then the Nachenblaster will have to move or shoot projectile as long as it’s alive. And to not increase cabbage point to be above 30
+    virtual void doSomething();
+
+///////////
+// Alien //
+///////////
+
+    Alien(StudentWorld* World, int imageID, double startX, double startY, double hitPoint, double damageAmt, double deltaX, double deltaY, double speed, unsigned int scoreValue);
+
+// These are specific traits that only aliens have, and all aliens share. The getDamageAmt() returns the damage amount that Nachenblaster has to take if attacked. Function getDeltaY() returns the direction that the alien plans to go (up being 1.0, down being -1.0, and if it’s only going left, then deltaY should be 0.0). The scoreValue is how much score the user can get when destroying each type of alien. The speed is how many pixels in one direction the alien will move per tick. 
+    double getDamageAmt() const;
+    double getDeltaY() const;
+    double getScoreValue() const;
+    double getSpeed() const;
+    void setDeltaY(double dy); // Set the player's y direction.
+    void setSpeed(double speed);
+
+// The flight plan keeps being updated
+    void setFlightPlanLength(double fpLength);
+
+// Since the alien can die in 2 ways: hit by a Nachenblaster or hit by a projectile that it shoots and have a hit point below zero, I made this function to not repeat code. This function does everything that needs to be done when an alien dies.
+    void alienIsDying();
+
+// Aliens move according to their flight plan and speed
+    void move();
+
+// If an alien collides with the Nachenblaster, then Nachenblaster should sufferDamage
+    virtual bool damageCollidingPlayer();
+
+// Aliens suffer damage differently from Nachenblaster does. That’s why it’s virtual since it’s inherited from DamageableObject class
+    virtual void sufferDamage(double amt, int cause);
+
+// Drop respective goodies from respective dying alien ships according to the probabilities given. To make something happen with a specific probability, randInt function was very helpful.
+    virtual void possiblyDropGoodie();
+
+// If the alien is alive, then it should damage a colliding player, move in one of the three specific ways, with the help of isSnagglegon() function because Snagglegon doesn’t have some implementations that the other two aliens have. For example, a Smoregon and Smallgon can both fire turnips. To account for specific things that only one alien does, I made a doDiffAlienThing() a private pure virtual function that’s called in this doSomething() public function.
+    virtual void doSomething();
+private:
+    virtual void doDiffAlienThing() = 0;
+
+//////////////
+// Smallgon //
+//////////////
+
+    Smallgon(StudentWorld* World, double startX, double startY);
+private:
+    virtual void doDiffAlienThing();
+
+//////////////
+// Smoregon //
+//////////////
+
+    Smoregon(StudentWorld* World, double startX, double startY);
+    virtual bool isSmoregon() const;
+private:
+    virtual void doDiffAlienThing();
+};
+
+////////////////
+// Snagglegon //
+////////////////
+
+    Snagglegon(StudentWorld* World, double startX, double startY);
+    virtual bool isSnagglegon() const;
+private:
+    virtual void doDiffAlienThing();
+
+////////////////
+// Projectile //
+////////////////
+
+    Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir, double damageAmt, double deltaX, bool rotates);
+
+// These are traits shared among all three projectiles, and are useful functions to move the projectile or to see how much hit point damage it needs to cost a Damageable object.
+    double getDeltaX() const;
+    double getDamageAmt() const;
+
+// This function helps reduce a lot of duplicate code. Only cabbage and PlayerLaunchedTorpedo are fired by the Nachenblaster. This is useful because I can also make sure that whatever projectile that is fired by the Nachenblaster can only damage an actor, and vice versa.
+    virtual bool isFiredByNachenBlaster() const;
+
+// I need to use a pointer to an Alien to getOneCollidingAlien from the StudentWorld in order to make the alien suffer from damage caused by a projectile fired by the Nachenblaster. Do the same for when the Nachenblaster is damaged by an alien-fired projectile.
+    void doCommonThingOnce();
+
+// If the projectile is still alive and on the screen, then doCommonThingOnce(), move to the correct place, maybe rotate, and doCommonThingOnce() again, because maybe the projectile has hit a DamageableObject after it has moved.
+    virtual void doSomething();
+
+/////////////
+// Cabbage //
+/////////////
+
+    Cabbage(StudentWorld* World, double startX, double startY);
+// this is true
+    virtual bool isFiredByNachenBlaster() const;
+
+////////////
+// Turnip //
+////////////
+
+    Turnip(StudentWorld* World, double startX, double startY);
+
+/////////////
+// Torpedo //
+/////////////
+
+    Torpedo(StudentWorld* World, double startX, double startY, int dir, double deltaX);
+
+///////////////////////////
+// PlayerLaunchedTorpedo //
+///////////////////////////
+
+    PlayerLaunchedTorpedo(StudentWorld* World, double startX, double startY);
+// this is true
+    virtual bool isFiredByNachenBlaster() const;
+
+//////////////////////////
+// AlienLaunchedTorpedo //
+//////////////////////////
+
+    AlienLaunchedTorpedo(StudentWorld* World, double startX, double startY);
+
+////////////
+// Goodie //
+////////////
+
+    Goodie(StudentWorld* World, int imageID, double startX, double startY);
+
+// When Nachenblaster and a goodie collides, it is easier to let the goodie check for the collision, because I made a getCollidingPlayer function in StudentWorld that returns a pointer to NachenBlaster. Each goodie actually does its own thing, so I included a doDiffGoodieThing() virtual function.
+    bool processCollision();
+
+// If the goodie is alive and on the screen, it has to process collision, move, and then process collision again, because maybe it has collided with the player after it has moved.
+    virtual void doSomething();
+    
+private:
+// I made this a private pure virtual function, because a goodie should never be called directly.
+    virtual void doDiffGoodieThing() = 0;
+
+///////////////////////
+// Extra Life Goodie //
+///////////////////////
+
+    ELGoodie(StudentWorld* World, int imageID, double startX, double startY);
+private:
+    virtual void doDiffGoodieThing();
+
+///////////////////
+// Repair Goodie //
+///////////////////
+
+    RGoodie(StudentWorld* World, int imageID, double startX, double startY);
+private:
+    virtual void doDiffGoodieThing();
+
+////////////////////
+// Torpedo Goodie //
+////////////////////
+
+    FTGoodie(StudentWorld* World, int imageID, double startX, double startY);
+private:
+    virtual void doDiffGoodieThing();
 
 
+//////////////////
+// StudentWorld //
+//////////////////
 
-
-
-
-
-
-
-2. A list of all functionality that you failed to finish as well as known bugs in your classes, e.g. “I didn’t implement the Turnip class.” or “My Snagglegon doesn’t work correctly yet so I treat it like a Smoregon right now.”
-
-
-
-3. A list of other design decisions and assumptions you made; e.g., “It was notspecified what to do in situation X, so this is what I decided to do.”
-
-
-4. A description of how you tested each of your classes (1-2 paragraphs perclass).
-
-
+class StudentWorld : public GameWorld
+{
+public:
+    StudentWorld(std::string assetDir);
+    virtual ~StudentWorld();
+    virtual int init();
+    virtual int move();
+    virtual void cleanUp();
+    
+    // accessors
+    NachenBlaster* getNachenBlaster();
+    NachenBlaster* getCollidingPlayer(const Actor* a) const;
+    Alien* getOneCollidingAlien(const Actor* a) const;
+    bool playerInLineOfFire(const Actor* a) const;
+    // mutators
+    void addActor(Actor* a);
+    void recordAlienDestroyed();
+    
+private:
+    vector<Actor*> m_vActor;
+    NachenBlaster* m_NachenBlaster;
+    int m_AlienDestroyed;
+    int m_RemainingAlienToDestroy, m_MaxAlienOnScreen, m_CurrentAlienOnScreen;
+    int S1, S2, S3, S;
+};

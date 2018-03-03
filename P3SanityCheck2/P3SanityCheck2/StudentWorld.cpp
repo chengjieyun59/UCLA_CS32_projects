@@ -14,7 +14,7 @@ GameWorld* createStudentWorld(string assetDir)
 }
 
 StudentWorld::StudentWorld(string assetDir)
-: GameWorld(assetDir), m_NachenBlaster(nullptr)// , m_vActor(0) // vectors have default constructors
+: GameWorld(assetDir), m_NachenBlaster(nullptr)
 {}
 
 StudentWorld::~StudentWorld()
@@ -22,22 +22,16 @@ StudentWorld::~StudentWorld()
     cleanUp();
 }
 
-// get a pointer to the vector of actors. No longer needed
-// vector<Actor*>* StudentWorld::getActorVector() {return &m_vActor;}
-NachenBlaster* StudentWorld::getNachenBlaster()
-{
-    return m_NachenBlaster;
-}
-
 int StudentWorld::init()
 {
+    // create the player
     m_NachenBlaster = new NachenBlaster(this);
     
     // variables for creating new aliens
     m_AlienDestroyed = 0;
     m_CurrentAlienOnScreen = 0;
-    m_RemainingAlienToDestroy = 6 + 4 * getLevel() - m_AlienDestroyed; // Remaining alien ships that must be destroyed before the level is completed
-    m_MaxAlienOnScreen = 4 + (0.5 * getLevel()); // maximum number of alien ships that should be on the screen at a time
+    m_RemainingAlienToDestroy = 6 + 4 * getLevel() - m_AlienDestroyed;
+    m_MaxAlienOnScreen = 4 + (0.5 * getLevel());
     S1 = 60;
     S2 = 20 + getLevel() * 5;
     S3 = 5 + getLevel() * 10;
@@ -49,35 +43,29 @@ int StudentWorld::init()
         Star* s = new Star(this, randInt(0, VIEW_WIDTH-1));
         m_vActor.push_back(s);
     }
-    
     return GWSTATUS_CONTINUE_GAME;
 }
 
 int StudentWorld::move()
 {
+    // every actor needs to do something
     if(m_NachenBlaster->isAlive())
         m_NachenBlaster->doSomething();
-    
-    // if actor is alive, call the doSomething() for every Actor (NachenBlaster, Stars, aliens, etc.)
     vector<Actor*>::iterator a;
     for(a = m_vActor.begin(); a != m_vActor.end();a++)
     {
         if((*a)->isAlive() == true)
             (*a)->doSomething();
-        
         if(m_NachenBlaster->isAlive() == false)
         {
             decLives();
             return GWSTATUS_PLAYER_DIED;
         }
-        
         if(m_AlienDestroyed >= 6+4*getLevel())
             return GWSTATUS_FINISHED_LEVEL;
     }
-    // It is possible that one actor (e.g., a cabbage projectile) may destroy another actor (e.g., a Smallgon) during the current tick. If an actor has died earlier in the current tick, then the dead actor must not have a chance to do something during the current tick (since it’s dead).
     
-    // Remove newly-dead actors after each tick
-    // if actor is dead, delete the dead actors
+    // It is possible that one actor may destroy another actor during the current tick, so remove newly-dead actors after each tick.
     // auto keyword is suggested by TA Jason Mao
     for(auto a2 = m_vActor.begin(); a2 != m_vActor.end();)
     {
@@ -92,18 +80,16 @@ int StudentWorld::move()
             a2++;
     }
     
-    // Possibly create a new star on the far right side on a 1/15 chance
+    // Create a new star
     if (randInt(1, 15) == 1)
         m_vActor.push_back(new Star(this, VIEW_WIDTH-1));
     
-    m_RemainingAlienToDestroy = 6 + 4 * getLevel() - m_AlienDestroyed; // Update number of remaining alien ships
-    // cout << m_CurrentAlienOnScreen; // for debugging purposes
-    
-    // create new aliens
-    if(m_CurrentAlienOnScreen < min(m_MaxAlienOnScreen,m_RemainingAlienToDestroy))
+    // Create new aliens
+    m_RemainingAlienToDestroy = 6 + 4 * getLevel() - m_AlienDestroyed;
+    if(m_CurrentAlienOnScreen < min(m_MaxAlienOnScreen, m_RemainingAlienToDestroy))
     {
+        // always create just one alien
         int rand = randInt(1, S);
-        
         if(rand <= S1) // probability S1/S
         {
             m_vActor.push_back(new Smallgon(this, VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1)));
@@ -129,7 +115,7 @@ int StudentWorld::move()
     return GWSTATUS_CONTINUE_GAME;
 }
 
-// Every actor in the entire game (the NachenBlaster and every alien, goodie, projectile, star, explosion object, etc.) must be deleted and removed from the StudentWorld’s container of active objects, resulting in an empty level. NachenBlaster lost a life (e.g., its hit points reached zero due to being shot) or has completed the current level
+// Every actor in the entire game must be deleted and removed from the StudentWorld’s container of active objects, resulting in an empty level. NachenBlaster lost a life or has completed the current level
 void StudentWorld::cleanUp()
 {
     // delete NachenBlaster player
@@ -152,8 +138,23 @@ void StudentWorld::cleanUp()
     }
 }
 
-// If there's at least one alien that's collided with a, return
-// a pointer to one of them; otherwise, return a null pointer.
+NachenBlaster* StudentWorld::getNachenBlaster()
+{
+    return m_NachenBlaster;
+}
+
+// If the player has collided with a, return a pointer to the player; otherwise, return a null pointer.
+NachenBlaster* StudentWorld::getCollidingPlayer(const Actor* a) const
+{
+    double xsquare = (a->getX() - m_NachenBlaster->getX()) * (a->getX() - m_NachenBlaster->getX());
+    double ysquare = (a->getY() - m_NachenBlaster->getY()) * (a->getY() - m_NachenBlaster->getY());
+    double euclidian_dist = sqrt(xsquare + ysquare);
+    if(euclidian_dist < 0.75 * (a->getRadius() + m_NachenBlaster->getRadius()))
+        return m_NachenBlaster;
+    return nullptr;
+}
+
+// If there's at least one alien that's collided with a, return a pointer to one of them; otherwise, return a null pointer.
 Alien* StudentWorld::getOneCollidingAlien(const Actor* a) const
 {
     for(auto b = m_vActor.begin(); b != m_vActor.end();b++)
@@ -170,21 +171,7 @@ Alien* StudentWorld::getOneCollidingAlien(const Actor* a) const
     return nullptr;
 }
 
-// If the player has collided with a, return a pointer to the player;
-// otherwise, return a null pointer.
-NachenBlaster* StudentWorld::getCollidingPlayer(const Actor* a) const
-{
-    double xsquare = (a->getX() - m_NachenBlaster->getX()) * (a->getX() - m_NachenBlaster->getX());
-    double ysquare = (a->getY() - m_NachenBlaster->getY()) * (a->getY() - m_NachenBlaster->getY());
-    double euclidian_dist = sqrt(xsquare + ysquare);
-    
-    if(euclidian_dist < 0.75 * (a->getRadius() + m_NachenBlaster->getRadius()))
-        return m_NachenBlaster;
-    
-    return nullptr;
-}
-
-// Is the player in the line of fire of a, which might cause a to attack?
+// An alien may attack if a player is in line of fire
 bool StudentWorld::playerInLineOfFire(const Actor* a) const
 {
     if(a->getY() == m_NachenBlaster->getY() && m_NachenBlaster->getY()-4 <= a->getY() && m_NachenBlaster->getY()+4 >= a->getY())
@@ -203,5 +190,3 @@ void StudentWorld::recordAlienDestroyed()
 {
     m_AlienDestroyed++;
 }
-
-

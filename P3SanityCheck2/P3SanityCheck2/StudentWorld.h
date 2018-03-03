@@ -1,7 +1,7 @@
+// Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
+
 #ifndef STUDENTWORLD_H_
 #define STUDENTWORLD_H_
-
-// Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
 #include "GameWorld.h"
 #include "Actor.h"
@@ -21,24 +21,13 @@ public:
     virtual int move();
     virtual void cleanUp();
     
-    //vector<Actor*>* getActorVector(); // no longer needed
+    // accessors
     NachenBlaster* getNachenBlaster();
-    
-    // If there's at least one alien that's collided with a, return
-    // a pointer to one of them; otherwise, return a null pointer.
-    Alien* getOneCollidingAlien(const Actor* a) const;
-    
-    // If the player has collided with a, return a pointer to the player;
-    // otherwise, return a null pointer.
     NachenBlaster* getCollidingPlayer(const Actor* a) const;
-    
-    // Is the player in the line of fire of a, which might cause a to attack?
+    Alien* getOneCollidingAlien(const Actor* a) const;
     bool playerInLineOfFire(const Actor* a) const;
-    
-    // Add an actor to the world.
+    // mutators
     void addActor(Actor* a);
-    
-    // Record that one more alien on the current level has been destroyed.
     void recordAlienDestroyed();
     
 private:
@@ -50,5 +39,3 @@ private:
 };
 
 #endif // STUDENTWORLD_H_
-
-
