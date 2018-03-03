@@ -1,88 +1,118 @@
+// Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
+
 #ifndef ACTOR_H_
 #define ACTOR_H_
 
 #include "GraphObject.h"
 #include <string>
 using namespace std;
-// Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 
 const int HIT_BY_SHIP = 0;
 const int HIT_BY_PROJECTILE = 1;
 
 class StudentWorld;
 
+///////////
+// Actor //
+///////////
+
 class Actor: public GraphObject
 {
 public:
     Actor(StudentWorld* World, int imageID, double startX, double startY, int dir, double size, int depth);
     virtual ~Actor();
-    virtual void doSomething() = 0; // move around, cause damage, grant bonuses, etc.
+    // accessors
     bool isInBound(int x, int y) const;
-    bool isAlive();
+    bool isAlive() const;
     virtual bool isAlien() const;
-    virtual bool isProjectile() const;
     virtual bool isStar() const;
     virtual bool isNachenBlaster() const;
-    virtual bool isTorpedo() const;
     virtual bool isSmoregon() const;
     virtual bool isSnagglegon() const;
-    virtual void setAlive(std::string aliveStatus);
+    virtual bool isProjectile() const;
+    virtual bool isTorpedo() const;
     StudentWorld* getWorld() const;
+    // mutator
+    virtual void setAlive(std::string aliveStatus);
+    // pure virtual function
+    virtual void doSomething() = 0;
     
 private:
     bool m_isAlive;
     StudentWorld* m_world;
-}; // Each actor has its own x,y location in space, its own internal state (e.g., a Snagglegon knows its location, what direction it’s moving, etc.) and its own special algorithms that control its actions in the game based on its own state and the state of the other objects in the world.
+};
+
+//////////
+// Star //
+//////////
 
 class Star: public Actor
 {
 public:
     Star(StudentWorld* World, double startX);
     virtual ~Star();
-    virtual void doSomething();
+    // accessor
     virtual bool isStar() const;
+    // mutator
+    virtual void doSomething();
+    
 };
+
+///////////////
+// Explosion //
+///////////////
 
 class Explosion: public Actor
 {
 public:
     Explosion(StudentWorld* World, double startX, double startY, double size);
     virtual ~Explosion();
+    // mutator
     virtual void doSomething();
 };
+
+////////////////////////
+// Damageable Objects //
+////////////////////////
 
 class DamageableObject: public Actor
 {
 public:
     DamageableObject(StudentWorld* world, int imageID, double startX, double startY, int dir, double size, int depth, double hitPoints);
     virtual ~DamageableObject();
+    // accessor
     double getHitPt() const;
+    // mutators
     void setHitPt(double amt); // Set the hit points to be amt
-    virtual void incHitPt(double amt); // Increase this actor's hit points by amt.
-    virtual void sufferDamage(double amt, int cause); // This actor suffers an amount of damage caused by being hit by either a ship or a projectile (see constants above).
+    virtual void incHitPt(double amt); // Increase the actor's hit points by amt
+    virtual void sufferDamage(double amt, int cause); // Decrease the actor's hit points by amt
     
 private:
     double m_hitPt;
 };
+
+///////////////////
+// NachenBlaster //
+///////////////////
 
 class NachenBlaster: public DamageableObject
 {
 public:
     NachenBlaster(StudentWorld* world);
     virtual ~NachenBlaster();
-    virtual void doSomething();
-    virtual void sufferDamage(double amt, int cause);
-    // void processCollision();
+    // accessors
     virtual bool isNachenBlaster() const;
-    
-    void setCabbagePt(int newCabbagePt);
     int getCabbagePt() const;
-    void incTorpedoPt(int newTorpedoPt);
     int getTorpedoPt() const;
     int cabbagePercentage() const;
     int healthPercentage() const;
+    // mutators
+    void setCabbagePt(int newCabbagePt);
+    void incTorpedoPt(int newTorpedoPt);
     virtual void incHitPt(double amt); // Increase this actor's hit points by amt.
-    
+    virtual void sufferDamage(double amt, int cause);
+    virtual void doSomething();
+
 private:
     int m_cabbagePt;
     int m_torpedoPt;
@@ -97,31 +127,36 @@ class Alien: public DamageableObject
 public:
     Alien(StudentWorld* World, int imageID, double startX, double startY, double hitPoint, double damageAmt, double deltaX, double deltaY, double speed, unsigned int scoreValue);
     virtual ~Alien();
-    
+    // accessors
     virtual bool isAlien() const;
-    void setDeltaY(double dy); // Set the player's y direction.
-    double getDeltaY() const;
-    void setSpeed(double speed);
-    double getSpeed() const;
-    void setFlightPlanLength(double fpLength);
     double getDamageAmt() const;
+    double getDeltaY() const;
     double getScoreValue() const;
-    
-    virtual void doSomething();
-    virtual void sufferDamage(double amt, int cause);
+    double getSpeed() const;
+    // mutators
+    void setDeltaY(double dy); // Set the player's y direction.
+    void setFlightPlanLength(double fpLength);
+    void setSpeed(double speed);
     void alienIsDying();
     void move();
     virtual bool damageCollidingPlayer();
+    virtual void sufferDamage(double amt, int cause);
     virtual void possiblyDropGoodie();
+    virtual void doSomething();
     
 private:
+    // private pure virtual function
     virtual void doDiffAlienThing() = 0;
-    double m_flightPlanLength;
-    double m_deltaY;
-    double m_speed;
     double m_damageAmt;
+    double m_deltaY;
+    double m_flightPlanLength;
+    double m_speed;
     unsigned int m_scoreValue;
 };
+
+//////////////
+// Smallgon //
+//////////////
 
 class Smallgon: public Alien
 {
@@ -133,22 +168,32 @@ private:
     virtual void doDiffAlienThing();
 };
 
+//////////////
+// Smoregon //
+//////////////
+
 class Smoregon: public Alien
 {
 public:
     Smoregon(StudentWorld* World, double startX, double startY);
     virtual ~Smoregon();
+    // accessor
     virtual bool isSmoregon() const;
     
 private:
     virtual void doDiffAlienThing();
 };
 
+////////////////
+// Snagglegon //
+////////////////
+
 class Snagglegon: public Alien
 {
 public:
     Snagglegon(StudentWorld* World, double startX, double startY);
     virtual ~Snagglegon();
+    // accessor
     virtual bool isSnagglegon() const;
     
 private:
@@ -164,26 +209,37 @@ class Projectile: public Actor
 public:
     Projectile(StudentWorld* World, int imageID, double startX, double startY, int dir, double damageAmt, double deltaX, bool rotates);
     virtual ~Projectile();
+    // accessors
     bool isProjectile() const;
-    virtual bool isFiredByNachenBlaster() const;
-    virtual void doSomething();
-    void doCommonThingOnce();
     double getDeltaX() const;
     double getDamageAmt() const;
-    
+    virtual bool isFiredByNachenBlaster() const;
+    // mutators
+    void doCommonThingOnce();
+    virtual void doSomething();
+
 private:
     double m_damageAmt;
     double m_deltaX;
     bool m_rotates;
 };
 
+/////////////
+// Cabbage //
+/////////////
+
 class Cabbage: public Projectile
 {
 public:
     Cabbage(StudentWorld* World, double startX, double startY);
     virtual ~Cabbage();
+    // accessor
     virtual bool isFiredByNachenBlaster() const;
 };
+
+////////////
+// Turnip //
+////////////
 
 class Turnip: public Projectile
 {
@@ -192,20 +248,34 @@ public:
     virtual ~Turnip();
 };
 
+/////////////
+// Torpedo //
+/////////////
+
 class Torpedo: public Projectile
 {
 public:
     Torpedo(StudentWorld* World, double startX, double startY, int dir, double deltaX);
     virtual ~Torpedo();
+    // accessor
     virtual bool isTorpedo() const;
 };
+
+///////////////////////////
+// PlayerLaunchedTorpedo //
+///////////////////////////
 
 class PlayerLaunchedTorpedo : public Torpedo
 {
 public:
     PlayerLaunchedTorpedo(StudentWorld* World, double startX, double startY);
+    // accessor
     virtual bool isFiredByNachenBlaster() const;
 };
+
+//////////////////////////
+// AlienLaunchedTorpedo //
+//////////////////////////
 
 class AlienLaunchedTorpedo : public Torpedo
 {
@@ -222,14 +292,19 @@ class Goodie: public Actor
 public:
     Goodie(StudentWorld* World, int imageID, double startX, double startY);
     virtual ~Goodie();
-    virtual void doSomething();
+    // mutators
     bool processCollision();
+    virtual void doSomething();
     
 private:
+    // private pure virtual function
     virtual void doDiffGoodieThing() = 0;
     NachenBlaster* m_NachenBlaster;
 };
 
+///////////////////////
+// Extra Life Goodie //
+///////////////////////
 
 class ELGoodie: public Goodie // extra life goodies
 {
@@ -241,6 +316,10 @@ private:
     virtual void doDiffGoodieThing();
 };
 
+///////////////////
+// Repair Goodie //
+///////////////////
+
 class RGoodie: public Goodie // repair goodies
 {
 public:
@@ -250,6 +329,10 @@ public:
 private:
     virtual void doDiffGoodieThing();
 };
+
+////////////////////
+// Torpedo Goodie //
+////////////////////
 
 class FTGoodie: public Goodie // flatulence torpedo goodies
 {
