@@ -33,8 +33,7 @@ public:
 private:
     vector<Actor*> m_vActor;
     NachenBlaster* m_NachenBlaster;
-    int m_AlienDestroyed;
-    int m_RemainingAlienToDestroy, m_MaxAlienOnScreen, m_CurrentAlienOnScreen;
+    int m_AlienDestroyed, m_RemainingAlienToDestroy, m_MaxAlienOnScreen, m_CurrentAlienOnScreen;
     int S1, S2, S3, S;
 };
 

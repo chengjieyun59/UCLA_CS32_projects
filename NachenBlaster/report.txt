@@ -7,12 +7,14 @@ After 49 hours of coding, fixing hundreds of bugs, and having dreams about codin
 
 
 3.
-I think every behavior has been defined pretty clearly in the spec or is clearly shown in the example game that I played. So I didn’t have to make any assumptions, but I did make some decisions. For the parts where two actors collide, I made sure that I only choose one class to implement it, so I didn’t accidentally make things happen twice. So I just picked the ones that were easier to implement because of the getOneCollidingAlien and getCollidingPlayer functions in StudentWorld. Details are described below in comments of partial code. 
+I think every behavior has been defined pretty clearly in the spec or is clearly shown in the example game that I played. So I didn’t have to make any assumptions, but I did make some decisions. I was thinking if I should include Nachenblaster in the actor vector or not, and had 2 different ways of making it work. I later decided that it was easier to just not include Nachenblaster in the actor vector, and deal with it specifically for certain things. For the parts where two actors collide, I made sure that I only choose one class to implement it, so I didn’t accidentally make things happen twice. So I just picked the ones that were easier to implement because of the getOneCollidingAlien and getCollidingPlayer functions in StudentWorld. Details are described in the comments of partial code shown in section 1 below. 
+
 
 4.
-The sanity check was one of the ways I tested my program. When the sanity check for part 2 was posted, my project failed the sanity test. At first, it was creating more one alien per tick, because of a misunderstanding of the English used in the spec. Once that’s fixed, it included a BAD_EXE error message and couldn’t compile when going to Move 2 Part of the sanity check. I realized that I was trying to access Nachenblaster even though it has become a null pointer. 
+The sanity check was one of the ways I tested my program. When the sanity check for part 2 was posted, my project failed the sanity test. At first, it was creating more one alien per tick, because of a misunderstanding of the English used in the spec. Once that’s fixed, it included a BAD_EXE error message and couldn’t compile when going to Move 2 Part of the sanity check. I realized that I was trying to access Nachenblaster even though it has become a null pointer. The checks I made for each class is described at the end of every class or groups of class in section 1 below.
 
 
+1.
 My overall Actor inheritance hierarchy looks like this:
 GraphObject
     Actor
@@ -69,6 +71,8 @@ GraphObject
 // I made this pure virtual function, because Actor class is never meant to be called directly, and whatever I type in the implementation would have been dummy code. Every actor must doSomething anyway, and this ensures that I always define this function in Actor’s subclasses, or there would be an error.
     virtual void doSomething() = 0;
 
+I tested if I really couldn’t initiate the Actor class. Tested that isInBound and isAlive returns the correct thing through cassert. Made sure that setAlive(“dead”) indeed changes the alive status through cassert. Made sure that the getWorld()->someFunction does work on Star in part 1 of homework submission. 
+
 //////////
 // Star //
 //////////
@@ -82,6 +86,8 @@ GraphObject
 // the stars just have to keep moving left, and make stars dead if it goes off the left side of the screen
     virtual void doSomething();
 
+I checked to make sure that every star moves left after being created on the screen, and that each gets deleted correctly with no BAD_EXE error when cleaning up in StudentWorld for part 1 of the project. Also that stars are indeed created on the right of the screen.
+
 ///////////////
 // Explosion //
 ///////////////
@@ -92,10 +98,11 @@ GraphObject
 // the size of the explosion has to increase from 1.5 to 2.25 to 3.375 to 5.0625 in four ticks, and then set it dead.
     virtual void doSomething();
 
+I made sure that explosion does look like it’s increasing in size three times since it was created just by looking at it. I made sure that when an alien dies, whether through hitting the Nachenblaster or through being killed by a projectile, an explosion happens. For my previous versions of the code, I found out that I didn’t make an explosion happen when the Nachenblaster and the alien collides, because I let the wrong functions handle it. In later versions, I found out that I made an explosion happen twice in different places of the code by using control+F.
+
 ////////////////////////
 // Damageable Objects //
 ////////////////////////
-
 
     DamageableObject(StudentWorld* world, int imageID, double startX, double startY, int dir, double size, int depth, double hitPoints);
 
@@ -107,12 +114,13 @@ GraphObject
     virtual void incHitPt(double amt); // Increase the actor's hit points by amt
     virtual void sufferDamage(double amt, int cause); // Decrease the actor's hit points by amt
 
+I made sure that DamageableObject couldn’t be initiated directly. And that the incHitPt, setHitPt, and sufferDamage functions do work when I use it to print things on the screen and using cassert.
+
 ///////////////////
 // NachenBlaster //
 ///////////////////
 
     NachenBlaster(StudentWorld* world);
-
     
 // These are specific things that only a Nachenblaster has, so they have to be in here
     int getCabbagePt() const;
@@ -130,6 +138,8 @@ GraphObject
 
 // if the user types certain keys, then the Nachenblaster will have to move or shoot projectile as long as it’s alive. And to not increase cabbage point to be above 30
     virtual void doSomething();
+
+I made sure that all the accessors and one-line mutators are doing the correct thing using cassert and also the game status text at the top of the screen. The game status text was actually a way faster way to debug than to create break points in the code, step into, step out of, and step through the code. I made sure that when nachenblaster hits a projectile, the points are actually decreased. I hit all four arrow keys on the keyboard and all worked. I tried the space bar and it did shoot out cabbages and play the sound. Once I got the goodies working, I tried eating a torpedo goodie, and my Nachenblaster did fire torpedoes and made a fart noise. 
 
 ///////////
 // Alien //
@@ -168,6 +178,8 @@ GraphObject
 private:
     virtual void doDiffAlienThing() = 0;
 
+This is the most busy and complicated class of the whole project, so there are many things to check. I used cassert to check for all the one-line functions. Observe with my eyes to ensure that my aliens do move in a way that’s the same as the ones in the example game given by the professor. I printed out the fpLength variable onto the console to make sure that it looked reasonable. I made sure that the Nachenblaster did suffer when each specific alien collides into it by looking at how much the health percentage decreases on the screen. I tried changing the possibility of dropping a goodie to 100% when testing if a goodie really does what it’s supposed to. I made sure that I’m unable to initiate a direct object of type Alien.
+
 //////////////
 // Smallgon //
 //////////////
@@ -175,6 +187,8 @@ private:
     Smallgon(StudentWorld* World, double startX, double startY);
 private:
     virtual void doDiffAlienThing();
+
+This has nothing to check, because its doDiffAlienThing function is empty since it’s already covered in the doSomething function of Alien class.
 
 //////////////
 // Smoregon //
@@ -184,7 +198,8 @@ private:
     virtual bool isSmoregon() const;
 private:
     virtual void doDiffAlienThing();
-};
+
+I made sure that all Smoregons do speed up when I change the probability to 100%. The actual percentage that a Smoregon speeds up is too low for me to truly see if it works. After changing the probability, Smoregon did speed up and go straight left. 
 
 ////////////////
 // Snagglegon //
@@ -194,6 +209,8 @@ private:
     virtual bool isSnagglegon() const;
 private:
     virtual void doDiffAlienThing();
+
+To check for correctness, I played out the sound and changed the probability of a Snagglegon dropping a torpedo to be 1. I did see all Snagglgon firing a torpedo and creating a fart noise.
 
 ////////////////
 // Projectile //
@@ -214,6 +231,8 @@ private:
 // If the projectile is still alive and on the screen, then doCommonThingOnce(), move to the correct place, maybe rotate, and doCommonThingOnce() again, because maybe the projectile has hit a DamageableObject after it has moved.
     virtual void doSomething();
 
+It was hard to make collision work at the beginning. This was the first class that I tried modifying to handle a collision. Before I had the game status text working, I simply check how many times I had to shoot each kind of alien ship to kill it. And seeing these aliens die reassured that the checking for collision through getWorld()->getOneCollidingAlien really worked. Later on, when I added the game status text, I was able to get completely reassured that the Nachenblaster does suffer appropriate damage.
+
 /////////////
 // Cabbage //
 /////////////
@@ -222,17 +241,23 @@ private:
 // this is true
     virtual bool isFiredByNachenBlaster() const;
 
+The way to check is already described at the end of the Projectile section.
+
 ////////////
 // Turnip //
 ////////////
 
     Turnip(StudentWorld* World, double startX, double startY);
 
+The way to check is already described at the end of the Projectile section.
+
 /////////////
 // Torpedo //
 /////////////
 
     Torpedo(StudentWorld* World, double startX, double startY, int dir, double deltaX);
+
+The way to check is already described at the end of the Projectile section.
 
 ///////////////////////////
 // PlayerLaunchedTorpedo //
@@ -242,11 +267,15 @@ private:
 // this is true
     virtual bool isFiredByNachenBlaster() const;
 
+I made sure that this only cause damage to an alien by trying to chase what I fired. 
+
 //////////////////////////
 // AlienLaunchedTorpedo //
 //////////////////////////
 
     AlienLaunchedTorpedo(StudentWorld* World, double startX, double startY);
+
+I made sure that this only cause damage to the Nachenblaster by patiently waiting when an alien fired and its projectile went straight through other aliens in front of it.
 
 ////////////
 // Goodie //
@@ -264,6 +293,8 @@ private:
 // I made this a private pure virtual function, because a goodie should never be called directly.
     virtual void doDiffGoodieThing() = 0;
 
+I made sure that I cannot initiate a Goodie object. I made sure that the processCollision returns the right thing by printing what it should return onto the console, and seeing a true statement pop up whenever I try to eat a goodie. The f key really helped with debugging, because I can check what’s printed onto the console by freezing the game.
+
 ///////////////////////
 // Extra Life Goodie //
 ///////////////////////
@@ -271,6 +302,8 @@ private:
     ELGoodie(StudentWorld* World, int imageID, double startX, double startY);
 private:
     virtual void doDiffGoodieThing();
+
+I checked the game status text that whenever I eat an extra life goodie, the life increases by 1. I actually mixed up the extra life goodie and repair goodie in my head at first, because the repair goodie has a plus sign, which I thought meant plus one extra life. So at first, I was checking the wrong variables with my eyes. And was having trouble finding what I did wrong in the code because everything looked fine. I realized that I mis-recognized the goodie when I checked the asset folder and saw what each tga image looked like.
 
 ///////////////////
 // Repair Goodie //
@@ -280,6 +313,8 @@ private:
 private:
     virtual void doDiffGoodieThing();
 
+I checked the game status text that whenever I eat a repair goodie, my health percentage goes up by 20, which is double the hit point. 
+
 ////////////////////
 // Torpedo Goodie //
 ////////////////////
@@ -288,6 +323,7 @@ private:
 private:
     virtual void doDiffGoodieThing();
 
+I checked the game status text that whenever I eat a torpedo goodie, my torpedo count increases by 5, and that I could shoot things out with tab bar, and it did destroy aliens with fewer shots that needed if I were to shoot a cabbage or turnip.
 
 //////////////////
 // StudentWorld //
@@ -329,3 +365,5 @@ private:
     int m_AlienDestroyed, m_RemainingAlienToDestroy, m_MaxAlienOnScreen, m_CurrentAlienOnScreen;
     int S1, S2, S3, S;
 };
+
+I checked if the game status text is shown correctly on the screen. I also checked the variables used to count how many aliens I may create by printing them out on the console in the move() function. The number of aliens on the screen turned out to be mostly 4’s when in level 1. The sanity check helped me realize that the probability of creating aliens was incorrect. I checked if I get to the next level appropriately by keep shooting aliens. At first, when I’m supposed to advance to the next level, the program stopped at the black screen notifying me that I can go to the next level, and returned me an error. I realized that I didn’t clean up things properly and I had to delete first before I erase. I made sure my init variables were correct by printing them out onto the console.
