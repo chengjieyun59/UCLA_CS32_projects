@@ -7,14 +7,11 @@ After 49 hours of coding, fixing hundreds of bugs, and having dreams about codin
 
 
 3.
-I think every behavior has been defined pretty clearly in the spec or is clearly shown in the example game that I played. So I didn’t have to make any assumptions, but I did make some decisions. For the parts where two actors collide, I made sure that I only choose one class to implement it, so I didn’t accidentally make things happen twice. So I just picked the ones that were easier to implement because of the getOneCollidingAlien and getCollidingPlayer functions in StudentWorld.
+I think every behavior has been defined pretty clearly in the spec or is clearly shown in the example game that I played. So I didn’t have to make any assumptions, but I did make some decisions. For the parts where two actors collide, I made sure that I only choose one class to implement it, so I didn’t accidentally make things happen twice. So I just picked the ones that were easier to implement because of the getOneCollidingAlien and getCollidingPlayer functions in StudentWorld. Details are described below in comments of partial code. 
 
 4.
 The sanity check was one of the ways I tested my program. When the sanity check for part 2 was posted, my project failed the sanity test. At first, it was creating more one alien per tick, because of a misunderstanding of the English used in the spec. Once that’s fixed, it included a BAD_EXE error message and couldn’t compile when going to Move 2 Part of the sanity check. I realized that I was trying to access Nachenblaster even though it has become a null pointer. 
 
-
-
-1. A high-level description of each of your public member functions in each of your classes, and why you chose to define each member function in its host class; also explain why (or why not) you decided to make each function virtual or pure virtual. For example, “I chose to define a pure virtual version of the sneeze() function in my base Actor class because all actors in Nachenblauter are able to sneeze, and each type of actor sneezes in a different way.”
 
 My overall Actor inheritance hierarchy looks like this:
 GraphObject
@@ -296,28 +293,39 @@ private:
 // StudentWorld //
 //////////////////
 
-class StudentWorld : public GameWorld
-{
-public:
-    StudentWorld(std::string assetDir);
-    virtual ~StudentWorld();
+The StudentWorld class inherits from the GameWorld. This file handles all the actions of game play, like creating and deleting players and making each available actor move during every tick. I used a vector of actors to add actors using push_back and delete actors using erase with the help of an iterator. My Nachenblaster is created as a separate pointer, and is not included in the actor vector.
+
+// This is called when the level is being initialized. A new NachenBlaster is created, variables for creating new aliens are reset, and the initial 30 stars are created.
     virtual int init();
+
+// if any actors are alive, they must doSomething according to their Actor subclass implementation. If Nachblaster died, then decrease life, and return GWSTATUS_PLAYER_DIED so the game handler knows that the player died. It is possible that one actor may destroy another actor during the current tick, so remove newly-dead actors after each tick and decrease the number of aliens seen on screen. Create a new star or an alien according to their probabilities, and increase the number of aliens seen on screen accordingly. Use the stringstream type to display a game status line on the top of the file. This really helps with debugging when I could see certain variables on the screen immediately, instead of using break points and tracing through their values.
     virtual int move();
+
+// Every actor in the entire game must be deleted and removed from the StudentWorld’s container of active objects, resulting in an empty level. This happens when NachenBlaster lost a life or has completed the current level. 
     virtual void cleanUp();
     
-    // accessors
+// this is used for the goodies to call Nachenblaster to increase its hit points or torpedo points
     NachenBlaster* getNachenBlaster();
+
+// If the player has collided with a, return a pointer to the player; otherwise, return a null pointer. This is very useful for handling all collisions with the Nachenblaster.
     NachenBlaster* getCollidingPlayer(const Actor* a) const;
+
+// If there's at least one alien that's collided with a, return a pointer to one of them; otherwise, return a null pointer. This is very useful for handling all collisions with an alien.
     Alien* getOneCollidingAlien(const Actor* a) const;
+
+// An alien may attack if a player is in line of fire.
     bool playerInLineOfFire(const Actor* a) const;
-    // mutators
+
+// Add actor to the vector
     void addActor(Actor* a);
+
+// used for Actor class to call when an alien dies
     void recordAlienDestroyed();
     
 private:
     vector<Actor*> m_vActor;
     NachenBlaster* m_NachenBlaster;
-    int m_AlienDestroyed;
-    int m_RemainingAlienToDestroy, m_MaxAlienOnScreen, m_CurrentAlienOnScreen;
+    // used for computing probabilities to create a specific alien
+    int m_AlienDestroyed, m_RemainingAlienToDestroy, m_MaxAlienOnScreen, m_CurrentAlienOnScreen;
     int S1, S2, S3, S;
 };
