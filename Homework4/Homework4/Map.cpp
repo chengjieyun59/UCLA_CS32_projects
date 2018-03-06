@@ -1,5 +1,5 @@
 // Map.cpp
-
+/*
 #include "Map.h"
 
 Map::Map()
@@ -267,3 +267,4 @@ void subtract(const Map& m1, const Map& m2, Map& result)
         result.swap(res);
     }
 }
+*/

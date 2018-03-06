@@ -4,6 +4,19 @@ Homework 4 report by Jie-Yun Cheng
 // Problem 2 //
 ///////////////
 
+The error message was:
+Invalid operands to binary expression ('Coord' and 'const Coord')
+
+The cause of the error is in the find method, on this specific line:
+for (p = m_head->m_next; p != m_head && p->m_key != key; p = p->m_next)
+
+More specifically, for this particular operation:
+p->m_key != key
+
+This is because the key here is actually of a Coord class, as declared in the main function here:
+Map<Coord, int> mpi;
+
+And because there is no operator overloading in the Coord class that tells the compiler how to deal with the operator: !=, the operator doesn’t know how to compare if Coord A != Coord B.
 
 ////////////////
 // Problem 3b //
