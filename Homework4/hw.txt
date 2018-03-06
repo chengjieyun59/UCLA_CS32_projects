@@ -3,7 +3,6 @@ Homework 4 report by Jie-Yun Cheng
 ///////////////
 // Problem 2 //
 ///////////////
-
 The error message was:
 Invalid operands to binary expression ('Coord' and 'const Coord')
 
@@ -18,21 +17,41 @@ Map<Coord, int> mpi;
 
 And because there is no operator overloading in the Coord class that tells the compiler how to deal with the operator: !=, the operator doesn’t know how to compare if Coord A != Coord B.
 
+
 ////////////////
 // Problem 3b //
 ////////////////
+We couldn’t solve this with just one parameter, because
+
+We had to use a recursive function, because 
 
 
 ////////////////
 // Problem 4a //
 ////////////////
+O(n^3), because there are 3 nested for loops, where maximum of i, maximum of j, and maximum of k are all fixed at n. Multiple them together gives n*n*n = n^3.
 
 
 ////////////////
 // Problem 4b //
 ////////////////
 
+When i = 0,   j = 0,           k = 1, …, N
+When i = 1,   j = 0,1,         k = 1, …, N
+When i = 2,   j = 0,1,2        k = 1, …, N
+…
+When i = N-1, j = 0,1,2,…,N-1, k = 1, …, N
+
+N * (N-1) * 0.5 * N = 0.5* N^3 - 0.5 * N^2
+Take the highest order and eliminate the coefficient gives a big-o of O(n^3).
+
 
 ///////////////
 // Problem 5 //
 ///////////////
+
+The for loop runs smaller->size() times, which is N, because m1 and m2 both have N elements, and the “smaller” of them has N elements.
+
+Inside the for loop, smaller->get(n, k, vsmall) calls the get function. The get function takes a big-oh of N steps.
+
+So in total, N * N = N^2. The big-oh in terms of the number of linked list nodes visited during the execution of this function is O(N^2).
