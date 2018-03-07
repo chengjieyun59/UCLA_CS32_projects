@@ -33,7 +33,22 @@ Class::~Class()
 
 void listAll(const Class* c, string path)  // two-parameter overload
 {
-    // TODO: You will write this code.
+    path += c->name();
+    if (!path.empty())
+        cout << path << endl; // base case
+    
+    if (!c->subclasses().empty())
+        for (vector<Class*>::const_iterator it = c->subclasses().begin(); it!= c->subclasses().end(); it++)
+            listAll(*it, path + "=>");
+    
+    /*pseudocode:
+     save the first element first on one line
+     if path hasn't ended
+        print the name
+        if there is more subclasses
+            iterate through a vector
+                print child's name + "=>" by traversing with recursion
+     */
 }
 
 void listAll(const Class* c)  // one-parameter overload

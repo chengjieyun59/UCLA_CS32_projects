@@ -1,0 +1,23 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "536BF2E2C9D9843C508081623DAFE86BD8ABC4E4",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "536BF2E2C9D9843C508081623DAFE86BD8ABC4E4" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "C14B280D-4176-4319-943C-399FB7E56A60",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "536BF2E2C9D9843C508081623DAFE86BD8ABC4E4" : "UCLA_CS32_projects\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Homework4 #6",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Homework4\/Homework4 #6\/Homework4 #6.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/chengjieyun59\/UCLA_CS32_projects.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "536BF2E2C9D9843C508081623DAFE86BD8ABC4E4"
+    }
+  ]
+}

@@ -4,10 +4,6 @@
 #define MAP_INCLUDED
 
 template <typename KeyType, typename ValueType>
-
-// using KeyType = int;
-// using ValueType = double;
-
 class Map
 {
 public:
@@ -393,37 +389,43 @@ void subtract(const Map<KeyType, ValueType>& m1, const Map<KeyType, ValueType>& 
 
 // Inline implementations
 
-template <typename KeyType, typename ValueType> inline
+template <typename KeyType, typename ValueType>
+inline
 int Map<KeyType, ValueType>::size() const
 {
     return m_size;
 }
 
-template <typename KeyType, typename ValueType> inline
+template <typename KeyType, typename ValueType>
+inline
 bool Map<KeyType, ValueType>::empty() const
 {
     return size() == 0;
 }
 
-template <typename KeyType, typename ValueType> inline
+template <typename KeyType, typename ValueType>
+inline
 bool Map<KeyType, ValueType>::contains(const KeyType& key) const
 {
     return find(key) != m_head;
 }
 
-template <typename KeyType, typename ValueType> inline
+template <typename KeyType, typename ValueType>
+inline
 bool Map<KeyType, ValueType>::insert(const KeyType& key, const ValueType& value)
 {
     return doInsertOrUpdate(key, value, true /* insert */, false /* no update */);
 }
 
-template <typename KeyType, typename ValueType> inline
+template <typename KeyType, typename ValueType>
+inline
 bool Map<KeyType, ValueType>::update(const KeyType& key, const ValueType& value)
 {
     return doInsertOrUpdate(key, value, false /* no insert */, true /* update */);
 }
 
-template <typename KeyType, typename ValueType> inline
+template <typename KeyType, typename ValueType>
+inline
 bool Map<KeyType, ValueType>::insertOrUpdate(const KeyType& key, const ValueType& value)
 {
     return doInsertOrUpdate(key, value, true /* insert */, true /* update */);

@@ -15,21 +15,19 @@ p->m_key != key
 This is because the key here is actually of a Coord class, as declared in the main function here:
 Map<Coord, int> mpi;
 
-And because there is no operator overloading in the Coord class that tells the compiler how to deal with the operator: !=, the operator doesn’t know how to compare if Coord A != Coord B.
+And because there is no operator overloading in the Coord class that tells the compiler how to deal with the operator: !=, the operator doesn’t know how to compare if Coord A != Coord B. To solve this, we need to define operator!=.
 
 
 ////////////////
 // Problem 3b //
 ////////////////
-We couldn’t solve this with just one parameter, because
-
-We had to use a recursive function, because 
+We couldn’t solve this with just one parameter, because we wouldn’t be able to keep track of the path from the root to all the nodes in the tree while appending the names of the subclasses to the string that shows the inheritance path. That’s why we use a recursive call while keep appending subclasses and “=>” to the path.
 
 
 ////////////////
 // Problem 4a //
 ////////////////
-O(n^3), because there are 3 nested for loops, where maximum of i, maximum of j, and maximum of k are all fixed at n. Multiple them together gives n*n*n = n^3.
+O(N^3), because there are 3 nested for loops, where maximum of i, maximum of j, and maximum of k are all fixed at N. Multiple them together gives N*N*N = N^3.
 
 
 ////////////////
@@ -42,8 +40,8 @@ When i = 2,   j = 0,1,2        k = 1, …, N
 …
 When i = N-1, j = 0,1,2,…,N-1, k = 1, …, N
 
-N * (N-1) * 0.5 * N = 0.5* N^3 - 0.5 * N^2
-Take the highest order and eliminate the coefficient gives a big-o of O(n^3).
+(N * (N-1) * 0.5) * N = 0.5* N^3 - 0.5 * N^2
+Take the highest order and eliminate the coefficient still gives a big-o of O(N^3), just like in problem 4a.
 
 
 ///////////////
