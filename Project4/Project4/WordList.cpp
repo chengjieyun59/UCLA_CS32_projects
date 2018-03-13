@@ -4,6 +4,9 @@
 #include <functional>
 using namespace std;
 
+template<typename KeyType, typename ValueType>
+class MyHash;
+
 class WordListImpl
 {
 public:
@@ -29,7 +32,7 @@ vector<string> WordListImpl::findCandidates(string cipherWord, string currTransl
 }
 
 //***** hash functions for string, int, and char *****
-
+// may call from our MyHash class to obtain an unsigned int value between 0 and roughly 4 billion
 unsigned int hash(const std::string& s)
 {
     return std::hash<std::string>()(s);
@@ -44,6 +47,12 @@ unsigned int hash(const char& c)
 {
     return std::hash<char>()(c);
 }
+
+////////////
+// MyHash //
+////////////
+// TODO:
+
 
 //******************** WordList functions ************************************
 
