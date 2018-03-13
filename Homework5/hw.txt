@@ -4,38 +4,102 @@ Homework 5 report by Jie-Yun Cheng
 // Problem 1 //
 ///////////////
 
-a. 
+a.
+                       50
 
+             20                  60
 
+     10              40                    70
 
-b. 
+        15       30                   65        80
 
+                25  36                         74
 
+b.
+In-order: 10 15 20 25 30 36 40 50 60 65 70 74 80
+Pre-order: 50 20 10 15 40 30 25 36 60 70 65 80 74
+Post-order: 15 10 25 36 30 40 20 65 74 80 70 60 50
 
-c. 
+c.
+Replace 30 by its left subtree’s largest value: 25.
+Delete node 25.
+Replace 20 by its left subtree’s largest value: 15.
+Delete node 15.
+
+                       50
+
+             15                  60
+
+     10              40                    70
+
+                 25                   65        80
+
+                    36                         74
 
 ////////////////
 // Problem 2 //
 ////////////////
 
 a.
+struct BST
+{
+    int value;
+    node *leftchild, *rightchild, *parent;
+};
 
+node *rootptr;
 
 b.
-
+void BSTinsert(const int &value)
+    If our tree is empty
+        allocate a new node
+        point the root pointer to it – then we’re done!
+    Start traversing down from the root of the tree. 
+        If our value is already in the tree
+            then we’re done - just return.
+        If the value to insert is less than the current node’s value
+            then go left.
+            If there is a node to our left
+                advance to that node and continue.
+            Otherwise we’ve found the proper spot for our new value! 
+                Add our value as the left child of the current node.
+                Return.
+        Otherwise if the value we want to insert is greater than the current node’s value
+            then traverse/insert to the right.
+            If there is a node to our right
+                advance to that node and continue.
+            Otherwise we’ve found the proper spot for our new value! 
+                Add our value as the right child of the current node.
+                Return.
 
 ///////////////
 // Problem 3 //
 ///////////////
 
 a.
+          8
 
+     3        6
+
+   0   2     4
 
 b.
-
+array index: 0 1 2 3 4 5
+array value: 8 3 6 0 2 4
 
 c.
+Replace value 8 by the bottom-most, right-most value 4.
+Delete node 4.
+Sift by exchanging 4 and 6.
 
+          6
+
+     3        4
+
+   0   2
+
+array index: 0 1 2 3 4
+array value: 6 3 4 0 2
 
 ///////////////
 // Problem 4 //

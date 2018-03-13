@@ -7,15 +7,38 @@ template<typename KeyType, typename ValueType>
 class MyHash
 {
 public:
-    MyHash(double maxLoadFactor = 0.5);
-    ~MyHash();
-    void reset();
-    void associate(const KeyType& key, const ValueType& value);
-    int getNumItems() const;
-    double getLoadFactor() const;
+    MyHash(double maxLoadFactor = 0.5)
+    {}
+    
+    ~MyHash()
+    {}
+    
+    void reset()
+    {
+        
+    }
+    
+    void associate(const KeyType& key, const ValueType& value)
+    {
+        
+    }
+    
+    int getNumItems() const
+    {
+        
+        return 2;
+    }
+    double getLoadFactor() const
+    {
+        
+        return 2.5;
+    }
     
     // for a map that can't be modified, return a pointer to const ValueType
-    const ValueType* find(const KeyType& key) const;
+    const ValueType* find(const KeyType& key) const
+    {
+        return <ValueType*>(<const MyHash*>(this)->find(key));
+    }
     
     // for a modifiable map, return a pointer to modifiable ValueType
     ValueType* find(const KeyType& key)
@@ -28,5 +51,6 @@ public:
     MyHash& operator=(const MyHash&) = delete;
     
 private:
+    
 };
 
