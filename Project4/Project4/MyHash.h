@@ -3,6 +3,8 @@
 // Skeleton for the MyHash class template.  You must implement the first seven
 // member functions; we have implemented the eighth.
 
+// TODO: You must put these implementations in one of your .cpp files, not in MyHash.h. It will simplify our grading scripts if, when you turn in your project, the .cpp file you put the hash() implementations in is WordList.cpp.
+
 // open hash table: each array bucket points to a linked list of key-value pairs
 template<typename KeyType, typename ValueType>
 class MyHash
@@ -48,7 +50,7 @@ public:
         }
     }
     
-    // must free all of the memory associated with the current hash table, then allocate a new empty hash table of the default size of 100 buckets. The maximum load factor is unchanged. This method must run in O(B) time where B is the number of buckets in the table to be reset.
+    // must free all of the memory associated with the current hash table, then allocate a new empty hash table of the default size of 100 buckets
     void reset()
     {
         double temp_loadfactor = getLoadFactor();
@@ -56,16 +58,19 @@ public:
         MyHash(temp_loadfactor);
     }
     
-    // TODO: transform the values returned by the hash functions in WordList.cpp to produce a bucket number within the range of your array. p.17
     void associate(const KeyType& key, const ValueType& value)
     {
-        
+        insert(key, value);
+        // if too many items affect efficiency, resize the hash table
+        if(m_numItems/m_numBuckets > m_loadfactor)
+            doubleSize();
     }
     
     int getNumItems() const
     {
         return m_numItems;
     }
+    
     double getLoadFactor() const
     {
         return m_loadfactor;
@@ -88,7 +93,9 @@ public:
     MyHash& operator=(const MyHash&) = delete;
     
 private:
-    unsigned int getBucketNumber(const KeyType& key) const {
+    // Transform the values returned by the hash functions in WordList.cpp to produce a bucket number within the range of your array. p.17
+    unsigned int getBucketNumber(const KeyType& key) const
+    {
         unsigned int hash(const KeyType& k); // prototype
         unsigned int h = hash(key);
         return (h % m_numBuckets);
@@ -109,7 +116,7 @@ private:
         {
             table[i] = NULL;
         }
-        
+
         // delete the previous hash table
         for(int i = 0; i < prev_numBuckets; i++)
         {
@@ -119,7 +126,9 @@ private:
                 Bucket* currBucket = prevTable[i];
                 while(currBucket != NULL)
                 {
-                    // TODO: insert the key and values
+                    // move all of the items from the old array to the new array
+                    insert(currBucket->m_key, currBucket->m_value);
+                    // iterate
                     prevBucket = currBucket;
                     currBucket = currBucket->m_next;
                     delete prevBucket;
@@ -154,9 +163,6 @@ private:
             table[index] = new Bucket(key, value);
             m_numItems++;
         }
-        // if too many items affect efficiency, resize the hash table
-        if(m_numItems/m_numBuckets > m_loadfactor)
-            doubleSize();
     }
     
     struct Bucket
@@ -173,7 +179,3 @@ private:
     int m_numItems;
     // Bucket m_buckets[m_numBuckets];
 };
-
-// TODO: You must put these implementations in one of your .cpp files, not in MyHash.h. It will simplify our grading scripts if, when you turn in your project, the .cpp file you put the hash() implementations in is WordList.cpp.
-
-
