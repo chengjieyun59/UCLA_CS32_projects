@@ -3,17 +3,28 @@
 #include <vector>
 using namespace std;
 
+// You must not add any additional public member functions or data members to this class other than a destructor, should you need one. You may add as many private member functions or data members as you like.
 class TokenizerImpl
 {
 public:
     TokenizerImpl(string separators);
     vector<string> tokenize(const std::string& s) const;
 private:
-    bool isSeparator(char pos);
+    bool isSeparator(char pos) const;
     string m_buffer;
     string m_token;
     string m_separator;
 };
+
+bool TokenizerImpl::isSeparator(char pos) const
+{
+    for(int i = 0; i < m_separator.length(); i++)
+    {
+        if(pos == m_separator[i])
+            return true;
+    }
+    return false;
+}
 
 // The Tokenizer constructor must initialize a new Tokenizer object. When you construct a Tokenizer object, you pass in a list of separators, e.g., " ,.$-!;".
 TokenizerImpl::TokenizerImpl(string separators)
@@ -27,21 +38,19 @@ vector<string> TokenizerImpl::tokenize(const std::string& s) const
     vector<string> tokens;
     string token;
     
-    /* pseudocode
-     while haven't exhausted the string yet
-        while (!isSeparator(pos))
+    for(int i = 0; i < s.length(); i++)
+    {
+        char pos = s[i];
+        // record each full word
+        while(!isSeparator(pos))
+        {
             token += pos;
-            pos++;
+            i++;
+        }
+        // add that full word to the vector
         tokens.push_back(token);
-     */
-    
-    return tokens;  // This compiles, but may not be correct
-}
-
-bool TokenizerImpl::isSeparator(char pos)
-{
-    // todo
-    return false;
+    }
+    return tokens;
 }
 
 //******************** Tokenizer functions ************************************

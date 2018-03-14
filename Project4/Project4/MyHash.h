@@ -48,6 +48,7 @@ public:
             }
             delete[] table;
         }
+        // TODO: do I need to put m_numItems back to 0?
     }
     
     // must free all of the memory associated with the current hash table, then allocate a new empty hash table of the default size of 100 buckets
@@ -145,7 +146,9 @@ private:
         // if there's an empty slot/ bucket
         if(table[index] == NULL)
         {
-            table[index] = new Bucket(key, value);
+            table[index] = new Bucket;
+            table[index]->key = key;
+            table[index]->value = value;
             m_numItems++;
         }
         // if the bucket isn't empty, keep traversing down the linked list
@@ -160,11 +163,14 @@ private:
                 }
                 currBucket = currBucket->m_next;
             }
-            table[index] = new Bucket(key, value);
+            table[index] = new Bucket;
+            table[index]->key = key;
+            table[index]->value = value;
             m_numItems++;
         }
     }
     
+    // similar to project 2, map.h and map.cpp
     struct Bucket
     {
         KeyType m_key;
