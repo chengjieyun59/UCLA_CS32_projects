@@ -91,7 +91,72 @@ private:
     unsigned int getBucketNumber(const KeyType& key) const {
         unsigned int hash(const KeyType& k); // prototype
         unsigned int h = hash(key);
-        // TODO: ...
+        return (h % m_numBuckets);
+    }
+    
+    void doubleSize()
+    {
+        // prepare
+        int prev_numBuckets = m_numBuckets;
+        m_numBuckets = m_numBuckets * 2;
+        m_loadfactor = m_loadfactor/2;
+        
+        // make new hash table
+        Bucket** prevTable = table;
+        table = new Bucket*[m_numBuckets];
+        m_numItems = 0;
+        for(int i = 0; i < m_numBuckets; i++)
+        {
+            table[i] = NULL;
+        }
+        
+        // delete the previous hash table
+        for(int i = 0; i < prev_numBuckets; i++)
+        {
+            if(prevTable[i] != NULL)
+            {
+                Bucket* prevBucket;
+                Bucket* currBucket = prevTable[i];
+                while(currBucket != NULL)
+                {
+                    // TODO: insert the key and values
+                    prevBucket = currBucket;
+                    currBucket = currBucket->m_next;
+                    delete prevBucket;
+                }
+            }
+            delete[] prevTable;
+        }
+    }
+    
+    void insert(const KeyType& key, const ValueType& value)
+    {
+        // get the bucket number of where to insert
+        int index = getBucketNumber(key);
+        // if there's an empty slot/ bucket
+        if(table[index] == NULL)
+        {
+            table[index] = new Bucket(key, value);
+            m_numItems++;
+        }
+        // if the bucket isn't empty, keep traversing down the linked list
+        else
+        {
+            Bucket* currBucket = table[index];
+            while(currBucket->m_next != NULL)
+            {
+                if(currBucket->m_key == key)
+                {
+                    currBucket->m_value = value; // replace the value if same key is found
+                }
+                currBucket = currBucket->m_next;
+            }
+            table[index] = new Bucket(key, value);
+            m_numItems++;
+        }
+        // if too many items affect efficiency, resize the hash table
+        if(m_numItems/m_numBuckets > m_loadfactor)
+            doubleSize();
     }
     
     struct Bucket
