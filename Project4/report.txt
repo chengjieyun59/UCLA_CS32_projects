@@ -1,0 +1,77 @@
+Jie-Yun Cheng
+004460366
+
+1. Any classes with known bugs:
+
+
+2. A high-level description of the data structures and algorithms I used for each class (a paragraph or two description or half a page pseudocode per class):
+
+////////////
+// MyHash //
+////////////
+
+
+
+///////////////
+// Tokenizer //
+///////////////
+
+
+
+//////////////
+// WordList //
+//////////////
+
+
+
+////////////////
+// Translator //
+////////////////
+
+
+
+///////////////
+// Decrypter //
+///////////////
+
+
+
+
+3. Does each of my method satisfy the big-O requirements? If not, what’s my big-O?
+
+////////////
+// MyHash //
+////////////
+
+
+
+///////////////
+// Tokenizer //
+///////////////
+
+
+
+//////////////
+// WordList //
+//////////////
+
+bool loadWordList(std::string filename)
+ If the word list text file contains W unique words, then this method must run in O(W) time. (For the purpose of this requirement, we're assuming that there is some constant
+bool contains(std::string word) const
+ This this method must run in O(1) time regardless of the size of the word list. (For the purpose of this requirement, we're assuming that there is some constant such that no word has a length that exceeds that constant.)
+
+std::vector<std::string> findCandidates(std::string cipherWord, std::string currTranslation) const
+ Your function must run in O(Q) time where Q is the number of words in the word list that match the letter pattern of cipherWord. Note that Q is much, much smaller than the number of words in the word list.
+
+////////////////
+// Translator //
+////////////////
+
+
+
+///////////////
+// Decrypter //
+///////////////
+
+
+

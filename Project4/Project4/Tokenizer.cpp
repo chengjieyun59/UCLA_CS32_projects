@@ -72,4 +72,3 @@ vector<string> Tokenizer::tokenize(const std::string& s) const
 {
     return m_impl->tokenize(s);
 }
-
