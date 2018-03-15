@@ -25,7 +25,7 @@ public:
 private:
     MyHash<string, int> m_wordlist;
     MyHash<string, vector<string>> patternwordlist; // map to capitalized A to Z. Pattern, and the word
-    string patternTranslator(const string word);
+    string patternTranslator(const string word) const;
 };
 
 WordListImpl::WordListImpl()
@@ -80,10 +80,42 @@ bool WordListImpl::contains(string word) const
 
 vector<string> WordListImpl::findCandidates(string cipherWord, string currTranslation) const
 {
-    return vector<string>();  // This compiles, but may not be correct
+    for(int i = 0; i < cipherWord.size(); i++)
+    {
+        if(isalpha(currTranslation[i]))
+            if(tolower(cipherWord[i]) != tolower(currTranslation[i]))
+                return vector<string>();
+        if(currTranslation[i] == '?')
+            if(! isalpha(cipherWord[i]))
+                return vector<string>();
+        if(currTranslation[i] == '\'')
+            if(cipherWord[i] != '\'')
+                return vector<string>();
+    }
+    
+    string patternCipherWord = patternTranslator(cipherWord);
+    vector<string> linkedlist = *(patternwordlist.find(patternCipherWord));
+    vector<string> result;
+    for(vector<string>::iterator it = linkedlist.begin(); it != linkedlist.end(); it++)
+    {
+        string w = *(it);
+        bool doesMatch = false;
+        for(int i = 0; i < cipherWord.size(); i++)
+        {
+            if((isalpha(currTranslation[i]) && tolower(w[i]) == tolower(currTranslation[i])) ||
+               (currTranslation[i] == '?' && isalpha(w[i])) ||
+               (currTranslation[i] == '\'' && w[i] != '\''))
+                doesMatch = true;
+            else
+                break;
+        }
+        if(doesMatch)
+            result.push_back(w);
+    }
+    return result;  // This compiles, but may not be correct
 }
 
-string WordListImpl::patternTranslator(const string word)
+string WordListImpl::patternTranslator(const string word) const
 {
     string result = "";
     string match = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
