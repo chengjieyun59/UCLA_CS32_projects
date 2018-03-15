@@ -5,6 +5,11 @@
 #include <iostream>
 using namespace std;
 
+/////////////////////////////////////// below is from translator.cpp /////////////
+
+const int SIZE_OF_ALPHABET = 26;
+const string ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+
 class TranslatorImpl
 {
 public:
@@ -13,94 +18,152 @@ public:
     bool popMapping();
     string getTranslation(const string& ciphertext) const;
 private:
-    string m_map;
-    
-    class selfMadeStack
+    class Stack
     {
     public:
-        selfMadeStack()
+        Stack()
         {
-            m_head = NULL;
+            head = nullptr;
         }
         
-        void push(string maps)
+        void push(string newestMap)
         {
-            Node *temp = new Node(maps);
-            if(m_head == NULL)
+            Node *temp = new Node(newestMap);
+            if(head == NULL)
                 temp->m_next = NULL;
             else
-                temp->m_next = m_head;
-            m_head = temp;
+                temp->m_next = head;
+            head = temp;
         }
         
         void pop()
         {
-            if(m_head == NULL)
+            if (head == nullptr)
                 return;
-            Node *temp = m_head;
-            m_head = m_head->m_next;
+            
+            Node* temp = head;
+            head = head->m_next;
             delete temp;
         }
         
         string top()
         {
-            if(m_head == NULL)
+            if (head == nullptr)
                 return "";
-            return m_head->m_data;
+            else
+                return head->m_map;
         }
+        
     private:
         struct Node
         {
-            // constructor
             Node(string maps)
-            :m_data(maps){
-                m_next = NULL;
-            }
+            {    m_map = maps; }
             
-            // in each node
-            string m_data;
+            string m_map;
             Node* m_next;
         };
-        Node* m_head;
+        
+        Node* head;
     };
     
-    selfMadeStack m_stack;
+    Stack m_stackOfMaps;
+    string m_currentMap;
+    
+    int m_pushCount;
+    int m_popCount;
 };
 
 TranslatorImpl::TranslatorImpl()
-:m_map("??????????????????????????")
 {
+    m_pushCount = 0;
+    m_popCount = 0;
+    
+    m_currentMap = "??????????????????????????";
 }
 
 bool TranslatorImpl::pushMapping(string ciphertext, string plaintext)
 {
-    if(ciphertext.size() != plaintext.size())
+    //FALSE CASES
+    if (ciphertext.size() != plaintext.size())
         return false;
-    // if the new character mappings they specify, together with the current collection of character mappings, would be inconsistent, then this function must return false
-    MyHash<char, char> checkConsistency;
-    for(int i = 0; i < ciphertext.size(); i++)
+    
+    MyHash<char, char> characterMap;
+    
+    for (int i = 0; i < ciphertext.size(); i++)
     {
-        if(!isalpha(ciphertext[i]) || !isalpha(plaintext[i]))
+        if (!isalpha(ciphertext[i]) || !isalpha(plaintext[i]))
             return false;
-        if(checkConsistency.find(ciphertext[i]) == NULL)
-            checkConsistency.associate(ciphertext[i], plaintext[i]);
-        else if (ciphertext[i] != *(checkConsistency.find(ciphertext[i])))
-            return false;
+        
+        if (characterMap.find(plaintext[i]) == nullptr)
+            characterMap.associate(plaintext[i], ciphertext[i]);
+        else
+            if (*(characterMap.find(plaintext[i])) != ciphertext[i])
+                return false;
     }
-    return true;  // This compiles, but may not be correct
+    
+    if (m_stackOfMaps.top() != "")
+        m_currentMap = m_stackOfMaps.top();
+    
+    for (int i = 0; i < ALPHABET.size(); i++)
+        if (characterMap.find(ALPHABET[i]) != nullptr)
+            m_currentMap[i] = *(characterMap.find(ALPHABET[i]));
+    
+    m_stackOfMaps.push(m_currentMap);
+    m_pushCount++;
+    return true;
 }
 
 bool TranslatorImpl::popMapping()
 {
+    if (m_popCount >= m_pushCount)
+        return false;
     
+    m_currentMap = m_stackOfMaps.top();
+    m_stackOfMaps.pop();
     
-    return false;  // This compiles, but may not be correct
+    m_popCount++;
+    return true;
 }
 
 string TranslatorImpl::getTranslation(const string& ciphertext) const
 {
-    return ""; // This compiles, but may not be correct
+    MyHash<char, char> characterMap;
+    
+    //Associate
+    
+    string translatedString;
+    
+    for (int i = 0; i < ciphertext.size(); i++)
+    {
+        translatedString += ' ';
+    }
+    
+    for (int i = 0; i < ciphertext.size(); i++)
+    {
+        for (int j = 0; j < ALPHABET.size(); j++)
+        {
+            if (ciphertext[i] == ALPHABET[j])
+            {
+                if (m_currentMap[i] == '?')
+                    translatedString[i] = '?';
+                else if (isalpha(m_currentMap[i]))
+                {
+                    if (isupper(ciphertext[i]))
+                        translatedString[i] = toupper(m_currentMap[i]);
+                    else
+                        translatedString[i];
+                }
+                else
+                    translatedString[i] = ciphertext[i];
+            }
+        }
+    }
+    
+    return translatedString;
 }
+
+/////////////////////////////////////// above is from translator.cpp /////////////
 
 class TranslatorImpl;
 

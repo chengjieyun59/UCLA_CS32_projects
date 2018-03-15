@@ -23,7 +23,7 @@ public:
     bool contains(string word) const;
     vector<string> findCandidates(string cipherWord, string currTranslation) const;
 private:
-    MyHash<string, int> m_wordlist;
+    MyHash<string, bool> containWord;
     MyHash<string, vector<string>> patternwordlist; // map to capitalized A to Z. Pattern, and the word
     string patternTranslator(const string word) const;
 };
@@ -36,7 +36,7 @@ WordListImpl::~WordListImpl()
 
 bool WordListImpl::loadWordList(string filename)
 {
-    m_wordlist.reset();
+    patternwordlist.reset();
     ifstream infile(filename);
     // path: "/Users/jycheng/Desktop/CS 32/UCLA_CS32_projects/Project4/wordlist.txt"
     if(! infile)
@@ -54,11 +54,21 @@ bool WordListImpl::loadWordList(string filename)
         }
         if(!doesIgnore)
         {
+            containWord.associate(eachWord, true);
             string translatedPattern = patternTranslator(eachWord);
-            vector<string> linkedlist = *patternwordlist.find(translatedPattern);
-            m_wordlist.associate(eachWord, 1);
-            patternwordlist.associate(patternTranslator(eachWord), linkedlist);
-            // m_allWords.push_back(eachWord);
+            vector<string>* linkedlist = patternwordlist.find(translatedPattern);
+            
+            vector<string> temp;
+            temp.push_back(eachWord);
+            
+            if(linkedlist != NULL)
+            {
+                linkedlist->push_back(eachWord);
+                patternwordlist.associate(translatedPattern, *linkedlist);
+                // m_allWords.push_back(eachWord);
+            }
+            else
+                patternwordlist.associate(translatedPattern, temp);
         }
         eachWord = "";
     }
@@ -70,9 +80,7 @@ bool WordListImpl::contains(string word) const
     string lowercase_word = "";
     for(int i = 0; i < word.size(); i++)
         lowercase_word += tolower(word[i]);
-    if(m_wordlist.find(lowercase_word) == NULL)
-        return false;
-    return false; // This compiles, but may not be correct
+    return containWord.find(lowercase_word);
 }
 
 vector<string> WordListImpl::findCandidates(string cipherWord, string currTranslation) const

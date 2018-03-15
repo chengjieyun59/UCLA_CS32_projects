@@ -21,12 +21,12 @@ public:
     {
         int index = getBucketNumber(key);
         Bucket* currBucket = table[index];
-        while(currBucket->m_next != NULL)
+        while(currBucket->m_next != nullptr)
         {
             if(currBucket->m_key == key)
                 return &(currBucket->m_value);
         }
-        return NULL;
+        return nullptr;
     }
     
     ValueType* find(const KeyType& key)
@@ -74,7 +74,7 @@ MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor)
     table = new Bucket* [m_numBuckets];
     for(int i = 0; i < m_numBuckets; i++)
     {
-        table[i] = NULL;
+        table[i] = nullptr;
         // m_buckets[i] = new item;
         // m_buckets[i]->key = "empty";
         // m_buckets[i].used = false;
@@ -88,11 +88,11 @@ MyHash<KeyType, ValueType>::~MyHash()
     for(int i = 0; i < m_numBuckets; i++)
     {
         // delete m_buckets[i];
-        if(table[i] != NULL)
+        if(table[i] != nullptr)
         {
-            Bucket* prevBucket = NULL;
+            Bucket* prevBucket = nullptr;
             Bucket* currBucket = table[i];
-            while(currBucket != NULL)
+            while(currBucket != nullptr)
             {
                 prevBucket = currBucket;
                 currBucket = currBucket->m_next;
@@ -113,11 +113,11 @@ void MyHash<KeyType, ValueType>::reset()
     for(int i = 0; i < m_numBuckets; i++)
     {
         // delete m_buckets[i];
-        if(table[i] != NULL)
+        if(table[i] != nullptr)
         {
-            Bucket* prevBucket = NULL;
+            Bucket* prevBucket = nullptr;
             Bucket* currBucket = table[i];
-            while(currBucket != NULL)
+            while(currBucket != nullptr)
             {
                 prevBucket = currBucket;
                 currBucket = currBucket->m_next;
@@ -135,7 +135,7 @@ void MyHash<KeyType, ValueType>::reset()
     table = new Bucket* [m_numBuckets];
     for(int i = 0; i < m_numBuckets; i++)
     {
-        table[i] = NULL;
+        table[i] = nullptr;
     }
 }
 
@@ -183,17 +183,17 @@ void MyHash<KeyType, ValueType>::doubleSize()
     m_numItems = 0;
     for(int i = 0; i < m_numBuckets; i++)
     {
-        table[i] = NULL;
+        table[i] = nullptr;
     }
     
     // delete the previous hash table
     for(int i = 0; i < prev_numBuckets; i++)
     {
-        if(prevTable[i] != NULL)
+        if(prevTable[i] != nullptr)
         {
             Bucket* prevBucket;
             Bucket* currBucket = prevTable[i];
-            while(currBucket != NULL)
+            while(currBucket != nullptr)
             {
                 // move all of the items from the old array to the new array
                 insert(currBucket->m_key, currBucket->m_value);
@@ -213,7 +213,7 @@ void MyHash<KeyType, ValueType>::insert(const KeyType& key, const ValueType& val
     // get the bucket number of where to insert
     int index = getBucketNumber(key);
     // if there's an empty slot/ bucket
-    if(table[index] == NULL)
+    if(table[index] == nullptr)
     {
         table[index] = new Bucket;
         table[index]->m_key = key;
@@ -224,7 +224,7 @@ void MyHash<KeyType, ValueType>::insert(const KeyType& key, const ValueType& val
     else
     {
         Bucket* currBucket = table[index];
-        while(currBucket->m_next != NULL)
+        while(currBucket->m_next != nullptr)
         {
             if(currBucket->m_key == key)
             {
@@ -245,12 +245,12 @@ template<typename KeyType, typename ValueType>
 typename MyHash<KeyType, ValueType>::ValueType* MyHash<KeyType, ValueType>::find(const KeyType& key) const
 {
     Bucket* currBucket = table[index];
-    while(currBucket->m_next != NULL)
+    while(currBucket->m_next != nullptr)
     {
         if(currBucket->m_key == key)
             return &(currBucket->m_value);
     }
-    return NULL;
+    return nullptr;
 }
 
 // for a modifiable map, return a pointer to modifiable ValueType
