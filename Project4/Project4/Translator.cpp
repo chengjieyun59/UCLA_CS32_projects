@@ -1,4 +1,5 @@
 #include "provided.h"
+#include "MyHash.h"
 #include <string>
 using namespace std;
 
@@ -11,71 +12,86 @@ public:
     string getTranslation(const string& ciphertext) const;
 private:
     string m_map;
-    struct Node
+    
+    class selfMadeStack
     {
-        // constructor
-        Node(string maps)
-        :m_data(maps){
-            m_next = NULL;
+    public:
+        selfMadeStack()
+        {
+            m_head = NULL;
         }
         
-        // in each node
-        string m_data;
-        Node* m_next;
+        void push(string maps)
+        {
+            Node *temp = new Node(maps);
+            if(m_head == NULL)
+                temp->m_next = NULL;
+            else
+                temp->m_next = m_head;
+            m_head = temp;
+        }
+        
+        void pop()
+        {
+            if(m_head == NULL)
+                return;
+            Node *temp = m_head;
+            m_head = m_head->m_next;
+            delete temp;
+        }
+        
+        string top()
+        {
+            if(m_head == NULL)
+                return "";
+            return m_head->m_data;
+        }
+    private:
+        struct Node
+        {
+            // constructor
+            Node(string maps)
+            :m_data(maps){
+                m_next = NULL;
+            }
+            
+            // in each node
+            string m_data;
+            Node* m_next;
+        };
+        Node* m_head;
     };
-    Node* m_head;
     
-    void push(string maps)
-    {
-        Node *temp = new Node(maps);
-        if(m_head == NULL)
-            temp->m_next = NULL;
-        else
-            temp->m_next = m_head;
-        m_head = temp;
-    }
-    
-    void pop()
-    {
-        if(m_head == NULL)
-            return;
-        Node *temp = m_head;
-        m_head = m_head->m_next;
-        delete temp;
-    }
-    
-    string top()
-    {
-        if(m_head == NULL)
-            return "";
-        return m_head->m_data;
-    }
+    selfMadeStack m_stack;
 };
 
 TranslatorImpl::TranslatorImpl()
 :m_map("??????????????????????????")
 {
-    m_head = NULL;
 }
 
 bool TranslatorImpl::pushMapping(string ciphertext, string plaintext)
 {
     if(ciphertext.size() != plaintext.size())
         return false;
+    // if the new character mappings they specify, together with the current collection of character mappings, would be inconsistent, then this function must return false
+    MyHash<char, char> checkConsistency;
     for(int i = 0; i < ciphertext.size(); i++)
     {
         if(!isalpha(ciphertext[i]) || !isalpha(plaintext[i]))
             return false;
+        if(checkConsistency.find(ciphertext[i]) == NULL)
+            checkConsistency.associate(ciphertext[i], plaintext[i]);
+        else if (ciphertext[i] != *(checkConsistency.find(ciphertext[i])))
+            return false;
     }
-    // TODO: if the new character mappings they specify, together with the current collection of character mappings, would be inconsistent, then this function must return false
-    
-    
-    
     return true;  // This compiles, but may not be correct
 }
 
 bool TranslatorImpl::popMapping()
 {
+    
+    
     return false;  // This compiles, but may not be correct
 }
 

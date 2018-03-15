@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5A23653A205A40A80086A591 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A236539205A40A80086A591 /* main.cpp */; };
+		5A23653A205A40A80086A591 /* testWordList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A236539205A40A80086A591 /* testWordList.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +24,7 @@
 
 /* Begin PBXFileReference section */
 		5A236536205A40A80086A591 /* test WordList */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test WordList"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5A236539205A40A80086A591 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		5A236539205A40A80086A591 /* testWordList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = testWordList.cpp; sourceTree = "<group>"; };
 		5A236540205A419C0086A591 /* substituteMyHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = substituteMyHash.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -58,7 +58,7 @@
 		5A236538205A40A80086A591 /* test WordList */ = {
 			isa = PBXGroup;
 			children = (
-				5A236539205A40A80086A591 /* main.cpp */,
+				5A236539205A40A80086A591 /* testWordList.cpp */,
 				5A236540205A419C0086A591 /* substituteMyHash.h */,
 			);
 			path = "test WordList";
@@ -121,7 +121,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5A23653A205A40A80086A591 /* main.cpp in Sources */,
+				5A23653A205A40A80086A591 /* testWordList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
