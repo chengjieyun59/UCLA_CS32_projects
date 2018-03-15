@@ -106,15 +106,15 @@ array value: 6 3 4 0 2
 ///////////////
 
 Finding if course C has student S in it:
-a. O(C+S), vector, list
+a. O(C+logS), vector, sorted list
 b. O(logC+S), map, list
 c. O(logC+logS), map, set
 d. O(logS), unordered map, set
-e. O(S), unordered map, unordered set
+e. O(1), unordered map, unordered set
 
 For a particular course C, write the id numbers of all the students in that course in sorted order:
 f. O(logC+S), map, set (print all)
-g. O(S*logS+S), unordered map, unordered set (sort, then print)
+g. O(S*logS), unordered map, unordered set (sort, then print)
 
 For a particular student S, write all the courses they’re enrolled in, in no particular order:
-h. O(C*S), unordered map, set
+h. O(C*logS), unordered map, ordered set

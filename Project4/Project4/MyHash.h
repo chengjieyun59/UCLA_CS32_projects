@@ -19,6 +19,7 @@ public:
     
     const ValueType* find(const KeyType& key) const
     {
+        int index = getBucketNumber(key);
         Bucket* currBucket = table[index];
         while(currBucket->m_next != NULL)
         {
@@ -107,7 +108,24 @@ template<typename KeyType, typename ValueType>
 void MyHash<KeyType, ValueType>::reset()
 {
     double temp_loadfactor = getLoadFactor();
-    ~MyHash();
+    
+    // delete current hash table
+    for(int i = 0; i < m_numBuckets; i++)
+    {
+        // delete m_buckets[i];
+        if(table[i] != NULL)
+        {
+            Bucket* prevBucket = NULL;
+            Bucket* currBucket = table[i];
+            while(currBucket != NULL)
+            {
+                prevBucket = currBucket;
+                currBucket = currBucket->m_next;
+                delete prevBucket;
+            }
+        }
+        delete[] table;
+    }
     
     // allocate a new empty hash table of default size of 100 buckets
     m_numBuckets = 100;
@@ -198,8 +216,8 @@ void MyHash<KeyType, ValueType>::insert(const KeyType& key, const ValueType& val
     if(table[index] == NULL)
     {
         table[index] = new Bucket;
-        table[index]->key = key;
-        table[index]->value = value;
+        table[index]->m_key = key;
+        table[index]->m_value = value;
         m_numItems++;
     }
     // if the bucket isn't empty, keep traversing down the linked list
@@ -215,8 +233,8 @@ void MyHash<KeyType, ValueType>::insert(const KeyType& key, const ValueType& val
             currBucket = currBucket->m_next;
         }
         table[index] = new Bucket;
-        table[index]->key = key;
-        table[index]->value = value;
+        table[index]->m_key = key;
+        table[index]->m_value = value;
         m_numItems++;
     }
 }

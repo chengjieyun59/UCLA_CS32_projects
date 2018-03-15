@@ -11,8 +11,6 @@ public:
     vector<string> tokenize(const std::string& s) const;
 private:
     bool isSeparator(char pos) const;
-    string m_buffer;
-    string m_token;
     string m_separator;
 };
 
@@ -28,9 +26,9 @@ bool TokenizerImpl::isSeparator(char pos) const
 
 // The Tokenizer constructor must initialize a new Tokenizer object. When you construct a Tokenizer object, you pass in a list of separators, e.g., " ,.$-!;".
 TokenizerImpl::TokenizerImpl(string separators)
-:m_buffer(""), m_token(""), m_separator(separators)
+:m_separator(separators)
 {
-    Tokenizer t(separators);
+    Tokenizer t(separators); // TODO: something wrong with this?
 }
 
 vector<string> TokenizerImpl::tokenize(const std::string& s) const
