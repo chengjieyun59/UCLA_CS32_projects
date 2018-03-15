@@ -29,19 +29,15 @@ private:
 };
 
 WordListImpl::WordListImpl()
-{
-    
-}
+{}
 
 WordListImpl::~WordListImpl()
-{
-    
-}
+{}
 
 bool WordListImpl::loadWordList(string filename)
 {
     m_wordlist.reset();
-    ifstream infile("/Users/jycheng/Desktop/CS 32/UCLA_CS32_projects/Project4/workdlist.txt");
+    ifstream infile(filename);
     if(! infile)
         return false; // cannot open the file
     string eachWord;
@@ -80,6 +76,9 @@ bool WordListImpl::contains(string word) const
 
 vector<string> WordListImpl::findCandidates(string cipherWord, string currTranslation) const
 {
+    
+    
+    
     for(int i = 0; i < cipherWord.size(); i++)
     {
         if(isalpha(currTranslation[i]))
