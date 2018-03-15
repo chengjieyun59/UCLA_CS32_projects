@@ -207,7 +207,7 @@ vector<string> WordList::findCandidates(string cipherWord, string currTranslatio
 
 int main() {
     WordList wl;
-    if ( ! wl.loadWordList("/Users/jycheng/Desktop/CS 32/UCLA_CS32_projects/Project4/workdlist.txt"))
+    if ( ! wl.loadWordList("/Users/jycheng/Desktop/CS 32/UCLA_CS32_projects/Project4/wordlist.txt"))
     {
         cout << "Unable to load word list" << endl;
         return -1;

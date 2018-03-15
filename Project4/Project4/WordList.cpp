@@ -38,6 +38,7 @@ bool WordListImpl::loadWordList(string filename)
 {
     m_wordlist.reset();
     ifstream infile(filename);
+    // path: "/Users/jycheng/Desktop/CS 32/UCLA_CS32_projects/Project4/wordlist.txt"
     if(! infile)
         return false; // cannot open the file
     string eachWord;
