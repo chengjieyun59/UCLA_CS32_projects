@@ -6,6 +6,7 @@
 #include <functional>
 #include <iostream>
 #include <fstream>
+#include <cctype>
 using namespace std;
 
 template<typename KeyType, typename ValueType>
@@ -69,8 +70,11 @@ bool WordListImpl::loadWordList(string filename)
 
 bool WordListImpl::contains(string word) const
 {
-    
-    
+    string lowercase_word = "";
+    for(int i = 0; i < word.size(); i++)
+        lowercase_word += tolower(word[i]);
+    if(m_wordlist.find(lowercase_word) == NULL)
+        return false;
     return false; // This compiles, but may not be correct
 }
 
