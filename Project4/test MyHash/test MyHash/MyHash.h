@@ -62,12 +62,7 @@ MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor)
     
     table = new Bucket* [m_numBuckets];
     for(int i = 0; i < m_numBuckets; i++)
-    {
         table[i] = nullptr;
-        // m_buckets[i] = new item;
-        // m_buckets[i]->key = "empty";
-        // m_buckets[i].used = false;
-    }
 }
 
 // free all memory associated with hash table
@@ -75,20 +70,23 @@ template<typename KeyType, typename ValueType>
 inline
 MyHash<KeyType, ValueType>::~MyHash()
 {
+    // delete current hash table
     for(int i = 0; i < m_numBuckets; i++)
     {
-        // delete m_buckets[i];
-        if(table[i] != nullptr)
+        if(table != nullptr)
         {
             Bucket* currBucket = table[i];
             while(currBucket != nullptr)
             {
-                Bucket* temp = currBucket;
-                currBucket = currBucket->m_next;
-                delete temp;
+                table[i] = currBucket->m_next;
+                delete currBucket;
+                currBucket = nullptr;
+                currBucket = table[i];
+                
             }
         }
         delete[] table;
+        table = nullptr;
     }
 }
 
@@ -102,18 +100,36 @@ void MyHash<KeyType, ValueType>::reset()
     // delete current hash table
     for(int i = 0; i < m_numBuckets; i++)
     {
+        if(table != nullptr)
+        {
+            Bucket* currBucket = table[i];
+            while(currBucket != nullptr)
+            {
+                table[i] = currBucket->m_next;
+                delete currBucket;
+                currBucket = nullptr;
+                currBucket = table[i];
+                
+            }
+        }
+        delete[] table;
+        table = nullptr;
+        
+        /*
         // delete m_buckets[i];
         if(table[i] != nullptr)
         {
             Bucket* currBucket = table[i];
             while(currBucket != nullptr)
             {
+                
                 Bucket* temp = currBucket;
                 currBucket = currBucket->m_next;
                 delete temp;
             }
         }
         delete[] table;
+         */
     }
     
     // allocate a new empty hash table of default size of 100 buckets
@@ -194,9 +210,11 @@ void MyHash<KeyType, ValueType>::doubleSize()
                 prevBucket = currBucket;
                 currBucket = currBucket->m_next;
                 delete prevBucket;
+                prevBucket = nullptr;
             }
         }
         delete[] prevTable;
+        prevTable = nullptr;
     }
 }
 
@@ -241,10 +259,13 @@ const ValueType* MyHash<KeyType, ValueType>::find(const KeyType& key) const
 {
     int index = getBucketNumber(key);
     Bucket* currBucket = table[index];
-    while(currBucket->m_next != nullptr)
+    if(currBucket != nullptr)
     {
-        if(currBucket->m_key == key)
-            return &(currBucket->m_value);
+        while(currBucket->m_next != nullptr)
+        {
+            if(currBucket->m_key == key)
+                return &(currBucket->m_value);
+        }
     }
     return nullptr;
 }

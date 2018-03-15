@@ -142,7 +142,7 @@ string WordListImpl::pattern(const string& s)
                 m_labels.associate(upper[i], alphabets[count]);
                 count++;
                 
-                assert(count <= 26);
+                //assert(count <= 26);
                 
             }
             else if ( upper[i] == '\'')
@@ -155,11 +155,13 @@ string WordListImpl::pattern(const string& s)
     for (int i=0; i < upper.size(); i++)
     {
         char * temp = m_labels.find(upper[i]);
+        /*
         assert (temp != nullptr);
         {
             char mapping = *temp;
             value += mapping;
         }
+         */
     }
     
     return value;
@@ -368,6 +370,7 @@ int main() {
         cout << "Unable to load word list" << endl;
         return -1;
     }
+    cout << "Wordlist loaded!" << endl;
     if (wl.contains("onomatopoeia"))
         cout << "I found onomatopoeia!" << endl;
     else
