@@ -90,13 +90,13 @@ MyHash<KeyType, ValueType>::~MyHash()
         // delete m_buckets[i];
         if(table[i] != nullptr)
         {
-            Bucket* prevBucket = nullptr;
+            Bucket* temp = nullptr;
             Bucket* currBucket = table[i];
             while(currBucket != nullptr)
             {
-                prevBucket = currBucket;
+                temp = currBucket;
                 currBucket = currBucket->m_next;
-                delete prevBucket;
+                delete temp;
             }
         }
         delete[] table;

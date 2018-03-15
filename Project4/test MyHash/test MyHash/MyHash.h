@@ -16,19 +16,7 @@ public:
     ~MyHash();
     void reset();
     void associate(const KeyType& key, const ValueType& value);
-    
-    const ValueType* find(const KeyType& key) const
-    {
-        int index = getBucketNumber(key);
-        Bucket* currBucket = table[index];
-        while(currBucket->m_next != nullptr)
-        {
-            if(currBucket->m_key == key)
-                return &(currBucket->m_value);
-        }
-        return nullptr;
-    }
-    
+    const ValueType* find(const KeyType& key) const;
     ValueType* find(const KeyType& key)
     {
         return const_cast<ValueType*>(const_cast<const MyHash*>(this)->find(key));
@@ -63,6 +51,7 @@ private:
 
 // The constructor must initialize your hash table, setting the size of its initial dynamic array to 100 buckets
 template<typename KeyType, typename ValueType>
+inline
 MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor)
 :m_numBuckets(100), m_numItems(0)
 {
@@ -83,6 +72,7 @@ MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor)
 
 // free all memory associated with hash table
 template<typename KeyType, typename ValueType>
+inline
 MyHash<KeyType, ValueType>::~MyHash()
 {
     for(int i = 0; i < m_numBuckets; i++)
@@ -90,13 +80,12 @@ MyHash<KeyType, ValueType>::~MyHash()
         // delete m_buckets[i];
         if(table[i] != nullptr)
         {
-            Bucket* prevBucket = nullptr;
             Bucket* currBucket = table[i];
             while(currBucket != nullptr)
             {
-                prevBucket = currBucket;
+                Bucket* temp = currBucket;
                 currBucket = currBucket->m_next;
-                delete prevBucket;
+                delete temp;
             }
         }
         delete[] table;
@@ -105,6 +94,7 @@ MyHash<KeyType, ValueType>::~MyHash()
 
 // must free all of the memory associated with the current hash table, then allocate a new empty hash table of the default size of 100 buckets
 template<typename KeyType, typename ValueType>
+inline
 void MyHash<KeyType, ValueType>::reset()
 {
     double temp_loadfactor = getLoadFactor();
@@ -115,13 +105,12 @@ void MyHash<KeyType, ValueType>::reset()
         // delete m_buckets[i];
         if(table[i] != nullptr)
         {
-            Bucket* prevBucket = nullptr;
             Bucket* currBucket = table[i];
             while(currBucket != nullptr)
             {
-                prevBucket = currBucket;
+                Bucket* temp = currBucket;
                 currBucket = currBucket->m_next;
-                delete prevBucket;
+                delete temp;
             }
         }
         delete[] table;
@@ -129,17 +118,17 @@ void MyHash<KeyType, ValueType>::reset()
     
     // allocate a new empty hash table of default size of 100 buckets
     m_numBuckets = 100;
-    m_numItems = 0;
-    m_loadfactor = temp_loadfactor;
-    
     table = new Bucket* [m_numBuckets];
     for(int i = 0; i < m_numBuckets; i++)
     {
         table[i] = nullptr;
     }
+    m_numItems = 0;
+    m_loadfactor = temp_loadfactor;
 }
 
 template<typename KeyType, typename ValueType>
+inline
 void MyHash<KeyType, ValueType>::associate(const KeyType& key, const ValueType& value)
 {
     insert(key, value);
@@ -149,12 +138,14 @@ void MyHash<KeyType, ValueType>::associate(const KeyType& key, const ValueType& 
 }
 
 template<typename KeyType, typename ValueType>
+inline
 int MyHash<KeyType, ValueType>::getNumItems() const
 {
     return m_numItems;
 }
 
 template<typename KeyType, typename ValueType>
+inline
 double MyHash<KeyType, ValueType>::getLoadFactor() const
 {
     return m_loadfactor;
@@ -162,6 +153,7 @@ double MyHash<KeyType, ValueType>::getLoadFactor() const
 
 // Transform the values returned by the hash functions in WordList.cpp to produce a bucket number within the range of your array. p.17
 template<typename KeyType, typename ValueType>
+inline
 unsigned int MyHash<KeyType, ValueType>::getBucketNumber(const KeyType& key) const
 {
     unsigned int hash(const KeyType& k); // prototype
@@ -170,6 +162,7 @@ unsigned int MyHash<KeyType, ValueType>::getBucketNumber(const KeyType& key) con
 }
 
 template<typename KeyType, typename ValueType>
+inline
 void MyHash<KeyType, ValueType>::doubleSize()
 {
     // prepare
@@ -208,6 +201,7 @@ void MyHash<KeyType, ValueType>::doubleSize()
 }
 
 template<typename KeyType, typename ValueType>
+inline
 void MyHash<KeyType, ValueType>::insert(const KeyType& key, const ValueType& value)
 {
     // get the bucket number of where to insert
@@ -240,25 +234,20 @@ void MyHash<KeyType, ValueType>::insert(const KeyType& key, const ValueType& val
 }
 
 // for a map that can't be modified, return a pointer to const ValueType
-/*
- template<typename KeyType, typename ValueType>
- typename MyHash<KeyType, ValueType>::ValueType* MyHash<KeyType, ValueType>::find(const KeyType& key) const
- {
- Bucket* currBucket = table[index];
- while(currBucket->m_next != NULL)
- {
- if(currBucket->m_key == key)
- return &(currBucket->m_value);
- }
- return NULL;
- }
- 
- // for a modifiable map, return a pointer to modifiable ValueType
- template<typename KeyType, typename ValueType>
- typename MyHash<KeyType, ValueType>::ValueType* MyHash<KeyType, ValueType>::find(const KeyType& key)
- {
- return const_cast<ValueType*>(const_cast<const MyHash*>(this)->find(key));
- }
- */
+
+template<typename KeyType, typename ValueType>
+inline
+const ValueType* MyHash<KeyType, ValueType>::find(const KeyType& key) const
+{
+    int index = getBucketNumber(key);
+    Bucket* currBucket = table[index];
+    while(currBucket->m_next != nullptr)
+    {
+        if(currBucket->m_key == key)
+            return &(currBucket->m_value);
+    }
+    return nullptr;
+}
 
 #endif // MYHASH_INCLUDED
+
