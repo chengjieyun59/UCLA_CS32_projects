@@ -167,4 +167,3 @@ string Translator::getTranslation(const string& ciphertext) const
 {
     return m_impl->getTranslation(ciphertext);
 }
-

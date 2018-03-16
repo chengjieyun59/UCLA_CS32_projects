@@ -13,7 +13,6 @@ template<typename KeyType, typename ValueType>
 class MyHash;
 class Translator;
 
-// Your WordList implementation must use your MyHash class template in the implementation of its data structures and must not use any STL containers as data members, although you may use string, vector, list, and array in template arguments to your MyHash class template. Within the implementations of your WordList member functions, you must not use any STL containers other than string, vector, list, and array. You must use your MyHash class template for any map-like data structures.
 class WordListImpl
 {
 public:
@@ -190,4 +189,3 @@ vector<string> WordList::findCandidates(string cipherWord, string currTranslatio
 {
     return m_impl->findCandidates(cipherWord, currTranslation);
 }
-
