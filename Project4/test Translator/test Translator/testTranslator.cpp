@@ -7,10 +7,6 @@ using namespace std;
 
 /////////////////////////////////////// below is from translator.cpp /////////////
 
-// const int SIZE_OF_ALPHABET = 26;
-const string ALPHABET = "abcdefghijklmnopqrstuvwxyz";
-// const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
 class TranslatorImpl
 {
 public:
@@ -23,171 +19,127 @@ private:
     {
     public:
         Stack()
-        {
-            head = nullptr;
-            
-        }
-        
-        void push(string newestMap)
-        {
-            Node *temp = new Node(newestMap);
-            if(head == NULL)
-                temp->m_next = NULL;
-            else
-                temp->m_next = head;
-            head = temp;
-        }
-        
-        void pop()
-        {
-            cout << "pop from the stack" << endl;
-            if (head == nullptr)
-                return;
-            
-            Node* temp = head;
-            head = head->m_next;
-            delete temp;
-        }
-        
+        :m_head(nullptr)
+        {}
         string top()
         {
-            if (head == nullptr)
-                return "";
+            if (m_head != nullptr)
+                return m_head->m_map;
             else
-                return head->m_map;
+                return "";
         }
-        
+        void push(string newMap)
+        {
+            Node *temp = new Node(newMap);
+            if(m_head == nullptr)
+                temp->m_next = nullptr;
+            else
+                temp->m_next = m_head;
+            m_head = temp;
+        }
+        void pop()
+        {
+            if (m_head == nullptr)
+                return;
+            Node* temp = m_head;
+            m_head = m_head->m_next;
+            delete temp;
+        }
     private:
         struct Node
         {
             Node(string maps)
-            {    m_map = maps; }
-            
+            :m_map(maps)
+            {}
             string m_map;
             Node* m_next;
         };
-        
-        Node* head;
+        Node* m_head;
     };
-    
+    string m_currMap;
+    int m_numOfPush, m_numOfPop;
+    const string ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    MyHash<char, char> m_charMap;
     Stack m_stackOfMaps;
-    string m_currentMap;
-    
-    int m_pushCount;
-    int m_popCount;
 };
 
 TranslatorImpl::TranslatorImpl()
+:m_numOfPush(0), m_numOfPop(0), m_currMap("??????????????????????????")
 {
-    m_pushCount = 0;
-    m_popCount = 0;
-    
-    m_currentMap = "??????????????????????????";
-    m_stackOfMaps.push(m_currentMap);
+    m_stackOfMaps.push(m_currMap);
 }
 
 bool TranslatorImpl::pushMapping(string ciphertext, string plaintext)
 {
-    //FALSE CASES
     if (ciphertext.size() != plaintext.size())
         return false;
-    
-    MyHash<char, char> characterMap;
-    
-    // if it's not the first time pushing. Never went into this...
     if (m_stackOfMaps.top() != "")
-    {
-        m_currentMap = m_stackOfMaps.top();
-        //m_stackOfMaps.pop();
-    }
-    
+        m_currMap = m_stackOfMaps.top();
     for (int i = 0; i < ciphertext.size(); i++)
     {
         if (!isalpha(ciphertext[i]) || !isalpha(plaintext[i]))
             return false;
-        
-        if (characterMap.find(tolower(plaintext[i])) == nullptr)
-            characterMap.associate(tolower(plaintext[i]), tolower(ciphertext[i]));
-        else
-            if (*(characterMap.find(tolower(plaintext[i]))) != tolower(ciphertext[i]))
+        if (m_charMap.find(toupper(plaintext[i])) == nullptr)
+            m_charMap.associate(toupper(plaintext[i]), toupper(ciphertext[i]));
+        else if (*(m_charMap.find(toupper(plaintext[i]))) != toupper(ciphertext[i]))
                 return false;
     }
-    
-    for (int i = 0; i < ALPHABET.size(); i++)
-        if (characterMap.find(tolower(ALPHABET[i])) != nullptr)
-            m_currentMap[i] = *(characterMap.find(tolower(ALPHABET[i])));
-    cout << "m_currentMap is: " << m_currentMap << endl;
-    m_stackOfMaps.push(m_currentMap);
-    m_pushCount++;
+    for (int i = 0; i < ABC.size(); i++)
+        if (m_charMap.find(toupper(ABC[i])) != nullptr)
+            m_currMap[i] = *(m_charMap.find(toupper(ABC[i])));
+    m_stackOfMaps.push(m_currMap);
+    m_numOfPush++;
     return true;
 }
 
 bool TranslatorImpl::popMapping()
 {
-    if (m_popCount >= m_pushCount)
+    if (m_numOfPop >= m_numOfPush)
         return false;
-    
+    m_numOfPop++;
     m_stackOfMaps.pop();
-    m_currentMap = m_stackOfMaps.top();
-    
-    m_popCount++;
+    m_currMap = m_stackOfMaps.top();
     return true;
 }
 
 string TranslatorImpl::getTranslation(const string& ciphertext) const
 {
-    MyHash<char, char> characterMap;
-    
-    //Associate
-    string translatedString;
-    
+    string transCiphertext;
+    bool lowercase;
     for (int i = 0; i < ciphertext.size(); i++)
     {
-        // ciphertext[i] = tolower(ciphertext[i]);
-        translatedString += '?';
-    }
-    
-    for (int i = 0; i < ciphertext.size(); i++)
-    {
-        bool isUpper = false;
-        if (isupper(ciphertext[i]))
-            isUpper = true;
-        for (int j = 0; j < ALPHABET.size(); j++)
+        transCiphertext += '?';
+        lowercase = false;
+        if (islower(ciphertext[i]))
+            lowercase = true;
+        for (int j = 0; j < ABC.size(); j++)
         {
-            if (tolower(ciphertext[i]) == ALPHABET[j])
+            if (toupper(ciphertext[i]) == ABC[j])
             {
                 int count = 0;
-                bool addedLetter = false;
-                for (int count = 0; count < m_currentMap.size(); count++)
-                    if (tolower(ciphertext[i]) == m_currentMap[count])
+                bool toAdd = false;
+                for(int count = 0; count < m_currMap.size(); count++)
+                    if (toupper(ciphertext[i]) == m_currMap[count])
                     {
-                        char currentLetter = ALPHABET[count];
-                        if (isUpper)
-                            currentLetter = toupper(currentLetter);
-                        translatedString[i] = currentLetter;
-                        addedLetter = true;
+                        char curr = ABC[count];
+                        if (lowercase) curr = tolower(curr);
+                        transCiphertext[i] = curr;
+                        toAdd = true;
                     }
-                if (addedLetter)
+                if (toAdd)
                     break;
-                
-                if (m_currentMap[count] == '?')
-                    translatedString[i] = '?';
-                else if (isalpha(m_currentMap[i]))
-                {
-                    if (isupper(ciphertext[i]))
-                        translatedString[i] = toupper(m_currentMap[i]);
-                    else
-                        translatedString[i];
-                }
+                if (m_currMap[count] == '?')
+                    transCiphertext[i] = '?';
+                else if (isalpha(m_currMap[i]) && islower(ciphertext[i]))
+                        transCiphertext[i] = toupper(m_currMap[i]);
+                else if (isalpha(m_currMap[i]) && isupper(ciphertext[i]))
+                        transCiphertext[i];
                 else
-                    translatedString[i] = ciphertext[i];
+                    transCiphertext[i] = ciphertext[i];
             }
-            else if(!isalpha(ciphertext[i]))
-                translatedString[i] = ciphertext[i];
         }
     }
-    
-    return translatedString;
+    return transCiphertext;
 }
 
 /////////////////////////////////////// above is from translator.cpp /////////////
@@ -261,5 +213,4 @@ int main()
     // Pop again
     t.popMapping();
     cout << t.getTranslation(secret) << endl; // writes ?????!
-    
 }

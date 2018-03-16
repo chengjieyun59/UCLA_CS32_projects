@@ -26,7 +26,6 @@
 		5A23655E205B1F100086A591 /* test MyHash */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test MyHash"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A236561205B1F100086A591 /* WorkingWordList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WorkingWordList.cpp; sourceTree = "<group>"; };
 		5A236568205B1F450086A591 /* MyHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyHash.h; sourceTree = "<group>"; };
-		5A236569205B20280086A591 /* Tokenizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tokenizer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,7 +60,6 @@
 			children = (
 				5A236561205B1F100086A591 /* WorkingWordList.cpp */,
 				5A236568205B1F450086A591 /* MyHash.h */,
-				5A236569205B20280086A591 /* Tokenizer.h */,
 			);
 			path = "test MyHash";
 			sourceTree = "<group>";

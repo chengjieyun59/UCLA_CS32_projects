@@ -6,7 +6,7 @@
 //  Copyright © 2018 Jie-Yun Cheng. All rights reserved.
 //
 
-#include "substituteMyHash.h"
+#include "MyHash.h"
 #include <string>
 #include <vector>
 #include <functional>
@@ -15,11 +15,6 @@
 #include <cctype>
 using namespace std;
 
-template<typename KeyType, typename ValueType>
-class MyHash;
-class Translator;
-
-// Your WordList implementation must use your MyHash class template in the implementation of its data structures and must not use any STL containers as data members, although you may use string, vector, list, and array in template arguments to your MyHash class template. Within the implementations of your WordList member functions, you must not use any STL containers other than string, vector, list, and array. You must use your MyHash class template for any map-like data structures.
 class WordListImpl
 {
 public:
@@ -29,26 +24,23 @@ public:
     bool contains(string word) const;
     vector<string> findCandidates(string cipherWord, string currTranslation) const;
 private:
+    MyHash<char, char> charMap;
     MyHash<string, bool> containWord;
     MyHash<string, vector<string>> patternwordlist; // map to capitalized A to Z. Pattern, and the word
     string patternTranslator(const string word) const;
 };
 
 WordListImpl::WordListImpl()
-{
-    
-}
+{}
 
 WordListImpl::~WordListImpl()
-{
-    
-}
+{}
 
 bool WordListImpl::loadWordList(string filename)
 {
     patternwordlist.reset();
     ifstream infile(filename);
-    //"/Users/jycheng/Desktop/CS 32/UCLA_CS32_projects/Project4/workdlist.txt"
+    // path: "/Users/jycheng/Desktop/CS 32/UCLA_CS32_projects/Project4/wordlist.txt"
     if(! infile)
         return false; // cannot open the file
     string eachWord;
@@ -90,45 +82,46 @@ bool WordListImpl::contains(string word) const
     string lowercase_word = "";
     for(int i = 0; i < word.size(); i++)
         lowercase_word += tolower(word[i]);
-    
     return containWord.find(lowercase_word);
 }
 
 vector<string> WordListImpl::findCandidates(string cipherWord, string currTranslation) const
 {
-    for(int i = 0; i < cipherWord.size(); i++)
-    {
-        if(isalpha(currTranslation[i]))
-            if(tolower(cipherWord[i]) != tolower(currTranslation[i]))
-                return vector<string>();
-        if(currTranslation[i] == '?')
-            if(! isalpha(cipherWord[i]))
-                return vector<string>();
-        if(currTranslation[i] == '\'')
-            if(cipherWord[i] != '\'')
-                return vector<string>();
-    }
-    
+    MyHash<char, char> charMap;
     string patternCipherWord = patternTranslator(cipherWord);
     vector<string> linkedlist = *(patternwordlist.find(patternCipherWord));
-    vector<string> result;
-    for(vector<string>::iterator it = linkedlist.begin(); it != linkedlist.end(); it++)
+    
+    if (cipherWord.size() != currTranslation.size())
+        return vector<string>();
+    
+    for(int i = 0; i < cipherWord.size() && i < currTranslation.size(); i++)
     {
-        string w = *(it);
-        bool doesMatch = false;
-        for(int i = 0; i < cipherWord.size(); i++)
-        {
-            if((isalpha(currTranslation[i]) && tolower(w[i]) == tolower(currTranslation[i])) ||
-               (currTranslation[i] == '?' && isalpha(w[i])) ||
-               (currTranslation[i] == '\'' && w[i] != '\''))
-                doesMatch = true;
-            else
-                break;
-        }
-        if(doesMatch)
-            result.push_back(w);
+        if (isalpha(currTranslation[i]) && charMap.find(cipherWord[i]) == nullptr)
+            charMap.associate(cipherWord[i], currTranslation[i]);
+        if((isalpha(currTranslation[i]) && currTranslation[i] != *(charMap.find(cipherWord[i]))) ||
+           (isalpha(currTranslation[i]) && !isalpha(cipherWord[i])) ||
+           (currTranslation[i] == '?' && !isalpha(cipherWord[i])) ||
+           (currTranslation[i] == '\'' && cipherWord[i] != '\'') ||
+           (!isalpha(cipherWord[i]) && cipherWord[i] != '\''))
+            return vector<string>();
     }
-    return result;  // This compiles, but may not be correct
+    for(vector<string>::iterator index = linkedlist.begin(); index != linkedlist.end(); )
+    {
+        bool doesMatch = false;
+        string possibleWord = *index;
+        for (int i = 0; i < possibleWord.size(); i++)
+        {
+            if (currTranslation[i] == '?')
+                continue;
+            if (tolower(currTranslation[i]) != tolower(possibleWord[i]))
+                doesMatch = true;
+        }
+        if (doesMatch)
+            index = linkedlist.erase(index);
+        else
+            index++;
+    }
+    return linkedlist;
 }
 
 string WordListImpl::patternTranslator(const string word) const
@@ -151,9 +144,8 @@ string WordListImpl::patternTranslator(const string word) const
     }
     return result;
 }
-
 //***** hash functions for string, int, and char *****
-// may call from our MyHash class to obtain an unsigned int value between 0 and roughly 4 billion
+
 unsigned int hash(const std::string& s)
 {
     return std::hash<std::string>()(s);
@@ -221,10 +213,11 @@ int main() {
         cout << "Unable to load word list" << endl;
         return -1;
     }
+    cout << "Wordlist loaded!" << endl;
     if (wl.contains("onomatopoeia"))
         cout << "I found onomatopoeia!" << endl;
     else
-         cout << "Onomatopoeia is not in the word list!" << endl;
+        cout << "Onomatopoeia is not in the word list!" << endl;
     
     string cipher = "xyqbbq";
     string decodedSoFar = "?r????";

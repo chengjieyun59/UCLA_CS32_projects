@@ -31,46 +31,49 @@ class TokenizerImpl
 {
 public:
     TokenizerImpl(string separators);
-    vector<string> tokenize(const string& s) const;
+    vector<string> tokenize(const std::string& s) const;
 private:
+    bool isSeparator(const char pos) const; // TODO add const?
     string m_separator;
-    bool isSeparator(const char a) const;
 };
 
-TokenizerImpl::TokenizerImpl(string separators)
+bool TokenizerImpl::isSeparator(const char pos) const
 {
-    m_separator = separators;
-}
-
-vector<string> TokenizerImpl::tokenize(const string& s) const
-{
-    string temp;
-    
-    vector <string> tokens;
-    
-    for (int i = 0; i<s.size(); i++)
+    for(int i = 0; i < m_separator.size(); i++)
     {
-        if (!isSeparator(s[i]))
-        {
-            temp +=s[i];
-            continue;
-        }
-        if(temp != "")
-            tokens.push_back(temp);
-        temp = "";
-    }
-    return tokens;
-}
-
-bool TokenizerImpl::isSeparator(const char a) const
-{
-    for (int i = 0; i < m_separator.size(); i++)
-    {
-        if (m_separator[i] == a)
+        if(pos == m_separator[i])
             return true;
     }
-    
     return false;
+}
+
+// The Tokenizer constructor must initialize a new Tokenizer object. When you construct a Tokenizer object, you pass in a list of separators, e.g., " ,.$-!;".
+TokenizerImpl::TokenizerImpl(string separators)
+:m_separator(separators)
+{
+    //Tokenizer t(separators); // TODO: something wrong with this?
+}
+
+vector<string> TokenizerImpl::tokenize(const std::string& s) const
+{
+    vector<string> tokens;
+    string token;
+    
+    for(int i = 0; i < s.size(); i++)
+    {
+        char pos = s[i];
+        // record each full word
+        if(!isSeparator(pos))
+        {
+            token += pos;
+            continue;
+        }
+        // add that full word to the vector
+        if(token != "")
+            tokens.push_back(token);
+        token = "";
+    }
+    return tokens;
 }
 
 //******************** Tokenizer functions ************************************

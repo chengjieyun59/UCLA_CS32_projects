@@ -10,13 +10,13 @@ public:
     TokenizerImpl(string separators);
     vector<string> tokenize(const std::string& s) const;
 private:
-    bool isSeparator(char pos) const;
+    bool isSeparator(const char pos) const;
     string m_separator;
 };
 
-bool TokenizerImpl::isSeparator(char pos) const
+bool TokenizerImpl::isSeparator(const char pos) const
 {
-    for(int i = 0; i < m_separator.length(); i++)
+    for(int i = 0; i < m_separator.size(); i++)
     {
         if(pos == m_separator[i])
             return true;
@@ -27,26 +27,26 @@ bool TokenizerImpl::isSeparator(char pos) const
 // The Tokenizer constructor must initialize a new Tokenizer object. When you construct a Tokenizer object, you pass in a list of separators, e.g., " ,.$-!;".
 TokenizerImpl::TokenizerImpl(string separators)
 :m_separator(separators)
-{
-    Tokenizer t(separators); // TODO: something wrong with this?
-}
+{}
 
 vector<string> TokenizerImpl::tokenize(const std::string& s) const
 {
     vector<string> tokens;
     string token;
     
-    for(int i = 0; i < s.length(); i++)
+    for(int i = 0; i < s.size(); i++)
     {
         char pos = s[i];
         // record each full word
-        while(!isSeparator(pos))
+        if(!isSeparator(pos))
         {
             token += pos;
-            i++;
+            continue;
         }
         // add that full word to the vector
-        tokens.push_back(token);
+        if(token != "")
+            tokens.push_back(token);
+        token = "";
     }
     return tokens;
 }

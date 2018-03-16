@@ -7,298 +7,143 @@
 //
 
 #include "MyHash.h"
-#include "Tokenizer.h"
 #include <string>
 #include <vector>
-#include <algorithm>
-
 #include <functional>
 #include <iostream>
 #include <fstream>
 #include <cctype>
-#include <cassert> //TODO remove later
 using namespace std;
 
-//////////////////////////////////// start of WordList.cpp ////////////////////////
 class WordListImpl
 {
 public:
-    
+    WordListImpl();
     ~WordListImpl();
     bool loadWordList(string filename);
     bool contains(string word) const;
     vector<string> findCandidates(string cipherWord, string currTranslation) const;
-    
 private:
-    
-    void checkDuplicate (const string& w, vector<string>& vec);
-    bool validWord(const string& w) const;
-    bool validTranslation(const string& w) const;
-    static string pattern(const string& s) ;
-    
-    bool caseInsensitiveStringCompare(const string& str1, const string& str2) const;
-    bool caseInsensitiveCharCompare(const char& chr1, const char& chr2) const;
-    
-    MyHash<string,vector<string>> m_hash;
-    vector<vector<string>*> m_todelete;
-    
+    MyHash<char, char> charMap;
+    MyHash<string, bool> containWord;
+    MyHash<string, vector<string>> patternwordlist; // map to capitalized A to Z. Pattern, and the word
+    string patternTranslator(const string word) const;
 };
 
+WordListImpl::WordListImpl()
+{}
+
 WordListImpl::~WordListImpl()
-{
-    for (int i = 0; i < m_todelete.size(); i++)
-    {
-        delete m_todelete[i];
-    }
-}
-
-bool WordListImpl::caseInsensitiveStringCompare(const string& str1, const string& str2) const {
-    
-    if (str1.size() != str2.size())
-    {
-        return false;
-    }
-    
-    for (string::const_iterator c1 = str1.begin(), c2 = str2.begin(); c1 != str1.end(); ++c1, ++c2)
-    {
-        if (tolower(*c1) != tolower(*c2)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool WordListImpl::caseInsensitiveCharCompare(const char& chr1, const char& chr2) const
-{
-    
-    if ( tolower(chr1) != tolower(chr2) )
-        return false;
-    return true;
-}
-
-bool WordListImpl::validWord(const string& w) const
-{
-    for (int i=0; i < w.size(); i++)
-    {
-        if (!isalpha(w[i]))
-            if (w[i]!='\'')
-                return false;
-    }
-    
-    return true;
-}
-
-bool WordListImpl::validTranslation(const string& w) const
-{
-    for (int i=0; i < w.size(); i++)
-    {
-        if (!isalpha(w[i]))
-            if (w[i]!='\'' && w[i]!='?')
-                return false;
-        
-    }
-    
-    return true;
-}
-
-
-void WordListImpl::checkDuplicate (const string& w, vector<string> & vec)
-{
-    vector<string> :: const_iterator it;
-    
-    it = find(vec.begin(), vec.end(), w);
-    
-    if (it != vec.end())
-        it = vec.erase(it);
-    
-}
-
-
-string WordListImpl::pattern(const string& s)
-{
-    MyHash<char, char> m_labels;
-    
-    string word = s;
-    string upper = "";
-    
-    for (int i=0; i < word.size(); i++) //made to upper
-    {
-        char temp = toupper(word[i]);
-        upper += toupper(temp);
-    }
-    
-    const char alphabets[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    int count = 0;
-    
-    for (int i = 0; i < upper.size(); i++)
-    {
-        char * k = m_labels.find(upper[i]);
-        
-        //no valuetype associated with letter upper[i]
-        if (k == nullptr)
-        {
-            if (isalpha(upper[i]))
-            {
-                m_labels.associate(upper[i], alphabets[count]);
-                count++;
-                
-                //assert(count <= 26);
-                
-            }
-            else if ( upper[i] == '\'')
-                m_labels.associate(upper[i], '\'');
-        }
-        
-    }
-    
-    string value = "";
-    for (int i=0; i < upper.size(); i++)
-    {
-        char * temp = m_labels.find(upper[i]);
-        /*
-        assert (temp != nullptr);
-        {
-            char mapping = *temp;
-            value += mapping;
-        }
-         */
-    }
-    
-    return value;
-}
+{}
 
 bool WordListImpl::loadWordList(string filename)
 {
+    patternwordlist.reset();
     ifstream infile(filename);
-    if ( ! infile )
+    // path: "/Users/jycheng/Desktop/CS 32/UCLA_CS32_projects/Project4/wordlist.txt"
+    if(! infile)
+        return false; // cannot open the file
+    string eachWord;
+    vector<string> allWords;
+    bool doesIgnore = false;
+    
+    while(getline(infile, eachWord))
     {
-        cerr << "Error: Cannot open data.txt!" << endl;
-        return false;
-    }
-    
-    m_hash.reset();
-    
-    string s = "";
-    string add = "";
-    vector<string> words;
-    
-    while (getline(infile, add))
-    {
-        s += add + " ";
-        add = "";
-    }
-    
-    Tokenizer split(" ");
-    words = split.tokenize(s);
-    
-    
-    for (int i=0; i < words.size(); i++)
-    {
-        if (validWord(words[i]))
+        for(int i = 0; i < eachWord.size(); i++)
         {
-            string key = pattern(words[i]);
-            vector<string>* temp = m_hash.find(key);
+            if(eachWord[i] != '\'' && !isalpha(eachWord[i])) // not a letter or an apostrophe
+                doesIgnore = true;
+        }
+        if(!doesIgnore)
+        {
+            containWord.associate(eachWord, true);
+            string translatedPattern = patternTranslator(eachWord);
+            vector<string>* linkedlist = patternwordlist.find(translatedPattern);
             
-            if (temp == nullptr)
+            vector<string> temp;
+            temp.push_back(eachWord);
+            
+            if(linkedlist != NULL)
             {
-                temp = new vector<string>; //dynamically allocated
-                m_todelete.push_back(temp); //add to vector of pointers
-                temp->push_back(words[i]);
-                m_hash.associate(key, *temp);
+                linkedlist->push_back(eachWord);
+                patternwordlist.associate(translatedPattern, *linkedlist);
+                // m_allWords.push_back(eachWord);
             }
             else
-            {
-                checkDuplicate(words[i], *temp);
-                temp->push_back(words[i]);
-            }
+                patternwordlist.associate(translatedPattern, temp);
         }
-        
+        eachWord = "";
     }
-    
     return true;
 }
 
 bool WordListImpl::contains(string word) const
 {
-    
-    string k = pattern(word);
-    
-    const vector<string>* vp = m_hash.find(k); //returns a vector of words with same pattern
-    
-    if (vp == nullptr)
-        return false;
-    
-    else
-    {
-        vector<string> :: const_iterator it;
-        //it = find ((*vp).begin(),(*vp).end(), upperCandidate);
-        
-        for (it = (*vp).begin(); it != (*vp).end(); it++)
-        {
-            if ( caseInsensitiveStringCompare((*it), word) )
-                return true;
-        }
-        return false;
-    }
+    string lowercase_word = "";
+    for(int i = 0; i < word.size(); i++)
+        lowercase_word += tolower(word[i]);
+    return containWord.find(lowercase_word);
 }
 
-vector<string> WordListImpl::findCandidates(string cipherWord, string currTranslation)  const
+vector<string> WordListImpl::findCandidates(string cipherWord, string currTranslation) const
 {
-    vector<string> vec;
-    if (!validWord(cipherWord)||!validTranslation(currTranslation)||cipherWord.size()!=currTranslation.size())
-        return vec;
+    MyHash<char, char> charMap;
+    string patternCipherWord = patternTranslator(cipherWord);
+    vector<string> linkedlist = *(patternwordlist.find(patternCipherWord));
     
-    //normalize cipherWord and currTranslation for comparison
-    //string cw = cipherWord;
+    if (cipherWord.size() != currTranslation.size())
+        return vector<string>();
     
-    string k = pattern(cipherWord);
-    
-    const vector<string>* vp = m_hash.find(k);
-    
-    if (vp == nullptr)
-        return vec;
-    
-    else
+    for(int i = 0; i < cipherWord.size() && i < currTranslation.size(); i++)
     {
-        for (int j=0; j < currTranslation.size(); j++)
-        {
-            if (isalpha(currTranslation[j]) || currTranslation[j] == '?')
-            {
-                if (!isalpha(cipherWord[j]))
-                    return vec;
-            }
-            else if (currTranslation[j] == '\'')
-            {
-                if (cipherWord[j] != '\'')
-                    return vec;
-            }
-        }
-        
-        //compare current translation with each word from vector
-        vector<string> :: const_iterator it;
-        
-        for (it = (*vp).begin(); it != (*vp).end(); it++) //iterate through words
-        {
-            int i = 0;
-            for (; i < currTranslation.size(); i++)
-            {
-                if ( currTranslation[i] == '?' && !isalpha((*it)[i]) )
-                    break;
-                
-                else if (isalpha(currTranslation[i]) || currTranslation[i] == '\'')
-                    if ( !caseInsensitiveCharCompare(currTranslation[i], ((*it)[i])) )
-                        break;
-            }
-            
-            if (i == currTranslation.size())
-                vec.push_back(*it);
-        }
-        
-        return vec;
+        if (isalpha(currTranslation[i]) && charMap.find(cipherWord[i]) == nullptr)
+            charMap.associate(cipherWord[i], currTranslation[i]);
+        if((isalpha(currTranslation[i]) && currTranslation[i] != *(charMap.find(cipherWord[i]))) ||
+           (isalpha(currTranslation[i]) && !isalpha(cipherWord[i])) ||
+           (currTranslation[i] == '?' && !isalpha(cipherWord[i])) ||
+           (currTranslation[i] == '\'' && cipherWord[i] != '\'') ||
+           (!isalpha(cipherWord[i]) && cipherWord[i] != '\''))
+            return vector<string>();
     }
-    
+    for(vector<string>::iterator index = linkedlist.begin(); index != linkedlist.end(); )
+    {
+        bool doesMatch = false;
+        string possibleWord = *index;
+        for (int i = 0; i < possibleWord.size(); i++)
+        {
+            if (currTranslation[i] == '?')
+                continue;
+            if (tolower(currTranslation[i]) != tolower(possibleWord[i]))
+                doesMatch = true;
+        }
+        if (doesMatch)
+            index = linkedlist.erase(index);
+        else
+            index++;
+    }
+    return linkedlist;
 }
 
+string WordListImpl::patternTranslator(const string word) const
+{
+    string result = "";
+    string match = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for(int i = 0; i < word.size(); i++)
+    {
+        bool hasOccured = false;
+        for(int j = 0; j <= i; j++)
+        {
+            if(i != j && word[i] == word[j])
+            {
+                hasOccured = true;
+                result += match[j];
+            }
+        }
+        if(hasOccured == false)
+            result += match[i];
+    }
+    return result;
+}
 //***** hash functions for string, int, and char *****
 
 unsigned int hash(const std::string& s)
@@ -315,8 +160,6 @@ unsigned int hash(const char& c)
 {
     return std::hash<char>()(c);
 }
-
-//////////////////////////////////// end of WordList.cpp ////////////////////////
 
 class WordList
 {
@@ -388,4 +231,3 @@ int main() {
             cout << v[k] << endl; // writes grotto and troppo
     }
 }
-
