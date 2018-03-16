@@ -25,6 +25,7 @@ private:
         Stack()
         {
             head = nullptr;
+            
         }
         
         void push(string newestMap)
@@ -39,7 +40,7 @@ private:
         
         void pop()
         {
-            cout << "pop from the stack";
+            cout << "pop from the stack" << endl;
             if (head == nullptr)
                 return;
             
@@ -82,6 +83,7 @@ TranslatorImpl::TranslatorImpl()
     m_popCount = 0;
     
     m_currentMap = "??????????????????????????";
+    m_stackOfMaps.push(m_currentMap);
 }
 
 bool TranslatorImpl::pushMapping(string ciphertext, string plaintext)
@@ -92,11 +94,11 @@ bool TranslatorImpl::pushMapping(string ciphertext, string plaintext)
     
     MyHash<char, char> characterMap;
     
-    // if it's not the first time pushing
+    // if it's not the first time pushing. Never went into this...
     if (m_stackOfMaps.top() != "")
     {
         m_currentMap = m_stackOfMaps.top();
-        m_stackOfMaps.pop();
+        //m_stackOfMaps.pop();
     }
     
     for (int i = 0; i < ciphertext.size(); i++)
@@ -125,8 +127,8 @@ bool TranslatorImpl::popMapping()
     if (m_popCount >= m_pushCount)
         return false;
     
-    m_currentMap = m_stackOfMaps.top();
     m_stackOfMaps.pop();
+    m_currentMap = m_stackOfMaps.top();
     
     m_popCount++;
     return true;
@@ -244,16 +246,14 @@ int main()
     string translated = t.getTranslation(secret);
     cout << "The translated message is: " << translated << endl; // writes The translated message is: ?????!
     
-    Translator t1;
     // Submit the first collection of character mappings
-    t1.pushMapping("DHL", "ERD"); // D->E, H->R, L->D
-    cout << t1.getTranslation(secret) << endl; // writes Re?d?!
+    t.pushMapping("DHL", "ERD"); // D->E, H->R, L->D
+    cout << t.getTranslation(secret) << endl; // writes Re?d?!
     
     // Submit a second collection of character mappings
     t.pushMapping("QX", "AY"); // Q->A, X->Y
     cout << t.getTranslation(secret) << endl; // writes Ready!
     
-    /*
     // Pop the most recently pushed collection
     t.popMapping();
     cout << t.getTranslation(secret) << endl; // writes Re?d?!
@@ -261,6 +261,5 @@ int main()
     // Pop again
     t.popMapping();
     cout << t.getTranslation(secret) << endl; // writes ?????!
-    */
     
 }

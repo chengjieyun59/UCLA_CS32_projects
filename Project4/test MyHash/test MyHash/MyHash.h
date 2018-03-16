@@ -271,4 +271,3 @@ const ValueType* MyHash<KeyType, ValueType>::find(const KeyType& key) const
 }
 
 #endif // MYHASH_INCLUDED
-
