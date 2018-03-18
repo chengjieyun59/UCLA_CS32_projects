@@ -11,10 +11,10 @@ public:
     bool popMapping();
     string getTranslation(const string& ciphertext) const;
 private:
-    class Stack
+    class SelfMadeStack
     {
     public:
-        Stack()
+        SelfMadeStack()
         :m_head(nullptr)
         {}
         string top()
@@ -56,7 +56,7 @@ private:
     int m_numOfPush, m_numOfPop;
     const string ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     MyHash<char, char> m_charMap;
-    Stack m_stackOfMaps;
+    SelfMadeStack m_stackOfMaps;
 };
 
 TranslatorImpl::TranslatorImpl()

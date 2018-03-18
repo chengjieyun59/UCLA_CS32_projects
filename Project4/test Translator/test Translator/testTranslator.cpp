@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cassert>
 using namespace std;
 
 /////////////////////////////////////// below is from translator.cpp /////////////
@@ -137,6 +138,8 @@ string TranslatorImpl::getTranslation(const string& ciphertext) const
                 else
                     transCiphertext[i] = ciphertext[i];
             }
+            else if(!isalpha(ciphertext[i]))
+                transCiphertext[i] = ciphertext[i];
         }
     }
     return transCiphertext;
@@ -193,6 +196,12 @@ string Translator::getTranslation(const string& ciphertext) const
 
 int main()
 {
+    const char* q5bang = "?????" "!";  // Avoid trigraph
+    Translator c;
+    string ctranslated = c.getTranslation("Hdqlx!");
+    cout << ctranslated;
+    // assert(c.getTranslation("Hdqlx!") == q5bang);
+    
     Translator t; // Define a translator object
     string secret = "Hdqlx!";
     string translated = t.getTranslation(secret);

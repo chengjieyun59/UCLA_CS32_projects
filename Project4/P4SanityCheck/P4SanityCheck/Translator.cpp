@@ -56,6 +56,7 @@ private:
     int m_numOfPush, m_numOfPop;
     const string ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     MyHash<char, char> m_charMap;
+    MyHash<char, char> m_charMap1;
     Stack m_stackOfMaps;
 };
 
@@ -78,6 +79,11 @@ bool TranslatorImpl::pushMapping(string ciphertext, string plaintext)
         if (m_charMap.find(toupper(plaintext[i])) == nullptr)
             m_charMap.associate(toupper(plaintext[i]), toupper(ciphertext[i]));
         else if (*(m_charMap.find(toupper(plaintext[i]))) != toupper(ciphertext[i]))
+            return false;
+        
+        if (m_charMap1.find(toupper(ciphertext[i])) == nullptr)
+            m_charMap1.associate(toupper(ciphertext[i]), toupper(plaintext[i]));
+        else if (*(m_charMap1.find(toupper(ciphertext[i]))) != toupper(plaintext[i]))
             return false;
     }
     for (int i = 0; i < ABC.size(); i++)
@@ -133,6 +139,8 @@ string TranslatorImpl::getTranslation(const string& ciphertext) const
                 else
                     transCiphertext[i] = ciphertext[i];
             }
+            else if(!isalpha(ciphertext[i]))
+                transCiphertext[i] = ciphertext[i];
         }
     }
     return transCiphertext;
